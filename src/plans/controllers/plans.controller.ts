@@ -1,18 +1,22 @@
-import {Controller, Get, Param} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {PlansService} from "../services/plans.service";
+import {CreatePlanRequest} from "../requests/createPlan.request";
 
 @Controller('plans')
 export class PlansController {
 
+    constructor(
+        private readonly plansService: PlansService
+    ) {}
+
     @Get()
     getPlans() {
-        return ['123','456'];
+        return this.plansService.getAll();
     }
 
-    @Get(':id')
-    getPlanInfo(@Param() params) {
-        return {
-            id: params.id
-        }
+    @Post()
+    createPlan (@Body() body: CreatePlanRequest) {
+        return this.plansService.createPlan(body);
     }
 
 }
