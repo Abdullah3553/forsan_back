@@ -19,16 +19,6 @@ export class playersServices{
     }
 
     createNewPlayer(newInput: createNewPlayerRequest){
-        
-        const newPlayer = new player()
-        newPlayer.name = newInput.name
-        newPlayer.phoneNumber = newInput.phoneNumber
-        newPlayer.beginDate = newInput.beginDate
-        newPlayer.endDate = newInput.endDate
-        newPlayer.weight = newInput.weight
-        newPlayer.height = newInput.height
-        newPlayer.plan = newInput.plan
-        //photo
-        return this.playerRepo.save(newPlayer)
+
     }
 }

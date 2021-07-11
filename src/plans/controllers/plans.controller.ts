@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import {PlansService} from "../services/plans.service";
 import {CreatePlanRequest} from "../requests/createPlan.request";
 
@@ -17,6 +17,16 @@ export class PlansController {
     @Post()
     createPlan (@Body() body: CreatePlanRequest) {
         return this.plansService.createPlan(body);
+    }
+
+    @Get("/activate/:id")
+    activatePlan(@Param() params) {
+        return this.plansService.activatePLan(params.id);
+    }
+
+    @Delete(":id")
+    deletePlan(@Param() params) {
+        return this.plansService.deletePlan(params.id);
     }
 
 }

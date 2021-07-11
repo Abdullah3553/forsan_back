@@ -15,11 +15,6 @@ export class player{
     @Column({unique: true})
     phoneNumber: string
 
-    //photo
-
-    @Column()
-    plan : string
-
     @Column('double')
     weight: number
 

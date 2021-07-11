@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Plan} from "../entities/plan.entity";
 import {Repository} from "typeorm";
@@ -29,12 +29,42 @@ export class PlansService {
         return this.plansRepo.save(newPlan)
     }
 
-    updatePlan () {}
+    // updatePlan () {}
 
-    deletePlan () {}
+    async deletePlan(id: number) {
+        await this.checkPlanExist(id);
+        await this.plansRepo.delete(id);
+        return {message: 'Plan Deleted'};
+    }
 
-    activatePLan () {}
+    async activatePLan(id: number) {
+        // const plan = this.plansRepo.findOneOrFail(id)
+        const plan = await this.checkPlanExist(id);
+        if (plan.isActivated) {
+            throw new BadRequestException({
+                message: "Plan is already activated"
+            })
+        }
+        plan.isActivated = true
+        return this.plansRepo.save(plan);
+    }
 
+    // TODO
     deActivatePlan () {}
+
+
+    async checkPlanExist(id: number) {
+        const plan = await this.plansRepo.findOne({
+            where: {
+                id: id,
+            }
+        })
+        if (!plan) {
+            throw new NotFoundException({
+                message: 'Plan not found'
+            })
+        }
+        return plan
+    }
 
 }
