@@ -10,13 +10,13 @@ export class playersController{
         private readonly playerService : playersServices
     ){}
 
-    @Get()
+    @Get("/getAll")
     getAllPlayers(){
         return this.playerService.getAll();
     }
 
-    @Post()
-    PlayerCreation(@Body() body: createNewPlayerRequest){
+    @Post("/newPlayer")
+    CreateNewPlayer(@Body() body: createNewPlayerRequest){
         return this.playerService.createNewPlayer(body);
     }
 

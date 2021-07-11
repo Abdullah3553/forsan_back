@@ -8,10 +8,10 @@ export class createNewPlayerRequest{
     @IsNotEmpty()
     phoneNumber: string
 
-    @IsDate()
+    @IsDateString()
     beginDate: string 
 
-    @IsDate()
+    @IsDateString()
     endDate: string
     
     //photo

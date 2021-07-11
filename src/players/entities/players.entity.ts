@@ -12,14 +12,8 @@ export class player{
     @Column()
     name: string
 
-    @Column()
+    @Column({unique: true})
     phoneNumber: string
-
-    @Column({type: 'date'})
-    beginDate : string
-
-    @Column({type: 'date'})
-    endDate: string
 
     //photo
 
