@@ -23,6 +23,7 @@ export class PlansService {
         // store plan
         const newPlan = new Plan()
         newPlan.name = req.name
+        newPlan.months = req.months
         newPlan.price = req.price
         newPlan.description = req.description
         newPlan.isActivated = req.isActivated

@@ -8,14 +8,6 @@ export class createNewPlayerRequest{
     @IsNotEmpty()
     phoneNumber: string
 
-    @IsDateString()
-    beginDate: string 
-
-    @IsDateString()
-    endDate: string
-    
-    //photo
-
     @IsNotEmpty()
     height: number
 
@@ -23,5 +15,5 @@ export class createNewPlayerRequest{
     weight: number
 
     @IsNotEmpty()
-    plan: string
+    plan: number
 }

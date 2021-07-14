@@ -8,6 +8,9 @@ export class CreatePlanRequest {
     price: number
 
     @IsNotEmpty()
+    months: number
+
+    @IsNotEmpty()
     description: string
 
     isActivated?: boolean
