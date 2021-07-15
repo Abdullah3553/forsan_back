@@ -23,8 +23,4 @@ export class Activity {
     @Column('text')
     description: string
 
-    // ech pl has many subs
-    // @OneToMany(() => Subscription, sub => sub.player)
-    // subscriptions: Subscription[]
-
 }

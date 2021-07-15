@@ -30,7 +30,7 @@ export class activitiesController {
         return this.activityrService.editActivity(body, parametars.id)
     }
 
-    @Get('/:id')
+    @Get('view/:id')
     viewActivityById(@Param() parametars){
         return this.activityrService.viewById(parametars.id)
     }
