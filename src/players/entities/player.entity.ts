@@ -26,7 +26,7 @@ export class Player {
     photo: string
 
     // ech pl has many subs
-    @OneToMany(() => Subscription, sub => sub.player)
-    subscriptions: Subscription[]
+    //@OneToMany(() => Subscription, sub => sub.player)
+    //subscriptions: Subscription[]
 
 }

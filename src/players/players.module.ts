@@ -12,7 +12,7 @@ const storage = diskStorage({
         cb(null,'./storage')
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);    //we will not face this case propaply
         const extension = file.mimetype.split('/')[1];
         cb(null, uniqueSuffix + `.${extension}`)
     }

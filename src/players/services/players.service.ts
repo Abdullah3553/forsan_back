@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
@@ -15,9 +15,10 @@ export class playersServices{
 
     getAll(){
         // Get all players from the table 
-        return this.playersRepo.find({
-            relations: ['subscriptions']
-        });
+        // return this.playersRepo.find({
+        //     relations: ['subscriptions']
+        // });
+        return this.playersRepo.find()
     }
 
     // think of a better way to handle the validation of the existence of the phone number
@@ -39,4 +40,31 @@ export class playersServices{
             // throw BadRequest Exception telling the user he has enter invalid data
         }
     }
+
+    // delete player
+    async deletePlayer(id: number){
+        await this.playersRepo.delete(id);
+        return {
+            message: 'Player has been deleted!'
+        }
+    }
+    //Edit player
+    async EditPlayer(newInf: createNewPlayerRequest, photo: Express.Multer.File, requestedId:number){
+
+        const newPlayerInfo = await this.playersRepo.findOneOrFail({where: {id: requestedId}})
+        newPlayerInfo.name = newInf.name
+        newPlayerInfo.phoneNumber = newInf.phoneNumber
+        newPlayerInfo.height = newInf.height
+        newPlayerInfo.weight = newInf.weight
+        newPlayerInfo.photo = photo.path
+        this.playersRepo.save(newPlayerInfo)
+    }
+
+    async viewPlayer(requestedId: number){
+        // Search by id at the database
+        const showPlayer = await this.playersRepo.findOneOrFail({where: {id: requestedId}})
+        return(showPlayer) 
+    }
+
+
 }

@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, UseInterceptors, UploadedFile} from "@nestjs/common";
+import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param} from "@nestjs/common";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
 import { playersServices } from "../services/players.service";
 import {FileInterceptor} from "@nestjs/platform-express";
@@ -16,10 +16,22 @@ export class playersController{
         return this.playerService.getAll();
     }
 
+    @Get ("/viewPlayer/:id")
+    viewPlayer(@Param() params){
+        return this.playerService.viewPlayer(params.id);
+    }
+
     @Post("/newPlayer")
     @UseInterceptors(FileInterceptor('photo'))
     createNewPlayer(@Body() body: createNewPlayerRequest,@UploadedFile() photo: Express.Multer.File){
         return this.playerService.createNewPlayer(body,photo);
     }
 
+    @Post("/editPlayer/:id")
+    editPlayer(@Body() body: createNewPlayerRequest, @UploadedFile() photo: Express.Multer.File, @Param() params){
+        return this.playerService.EditPlayer(body, photo, params.id);
+    }
+
+    
 }
+
