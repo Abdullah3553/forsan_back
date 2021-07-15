@@ -6,13 +6,15 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { db_config } from './config'
 import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
+import {ActivitiesModule} from "../activities/activities.module";
 
 @Module({
   imports: [
       TypeOrmModule.forRoot(db_config),
       PlansModule,
       PlayersModule,
-      SubscriptionsModule
+      SubscriptionsModule,
+      ActivitiesModule
   ],
   controllers: [AppController],
   providers: [AppService],
