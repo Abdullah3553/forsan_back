@@ -21,7 +21,7 @@ export class activityPlayersController{
 
     @Post("/new-Activity-player")
     createNewActPlayer(@Body() body: addNewActPlayer){
-        return this.actPlayerService.createNewPlayer(body)
+        return this.actPlayerService.createNewActPlayer(body)
     }
 
     @Post("/Edit-Activity-player/:id")

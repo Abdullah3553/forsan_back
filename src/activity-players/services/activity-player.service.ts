@@ -7,7 +7,6 @@ import { addNewActPlayer } from "../requests/add-new-act-player.request";
 
 @Injectable()
 export class activityPlayerServices{
-    [x: string]: any;
 
     constructor(
         @InjectRepository(ActivityPlayer)
