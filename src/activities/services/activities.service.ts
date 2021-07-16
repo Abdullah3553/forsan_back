@@ -38,7 +38,7 @@ export class activityServices{
     }
 
     async editActivity(request : createNewActivityRequest, requsetId:number){
-        const search_activity = await this.doesActivityExists(requsetId)
+        const search_activity = await this.doesActivityExists(requsetId) // search function :D
         search_activity.name = request.name
         search_activity.coachName = request.coachName
         search_activity.coachPhoneNumber = request.coachPhoneNumber

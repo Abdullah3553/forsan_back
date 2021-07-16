@@ -8,6 +8,7 @@ import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 import {ActivitiesModule} from "../activities/activities.module";
 import { ActivityPlayerModule } from 'src/activity-players/activity-player.module';
+import {ServicessModule} from "../servicess/servicess.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ActivityPlayerModule } from 'src/activity-players/activity-player.modul
       PlayersModule,
       SubscriptionsModule,
       ActivitiesModule,
+      ServicessModule,
       ActivityPlayerModule
   ],
   controllers: [AppController],
