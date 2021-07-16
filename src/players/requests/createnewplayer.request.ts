@@ -14,6 +14,6 @@ export class createNewPlayerRequest{
     @IsNotEmpty()
     weight: number
 
-    // @IsNotEmpty()
-    // plan: number
+    @IsNotEmpty()
+    plan: number
 }
