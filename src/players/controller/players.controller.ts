@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param} from "@nestjs/common";
+import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param, Delete} from "@nestjs/common";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
 import { playersServices } from "../services/players.service";
 import {FileInterceptor} from "@nestjs/platform-express";
@@ -32,6 +32,10 @@ export class playersController{
         return this.playerService.EditPlayer(body, photo, params.id);
     }
 
+    @Delete("/delete-player/:id")
+    deletePlayer(@Param() params){
+        return this.playerService.deletePlayer(params.id)
+    }
     
 }
 

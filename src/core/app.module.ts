@@ -7,6 +7,7 @@ import { db_config } from './config'
 import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 import {ActivitiesModule} from "../activities/activities.module";
+import { ActivityPlayerModule } from 'src/activity-players/activity-player.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import {ActivitiesModule} from "../activities/activities.module";
       PlansModule,
       PlayersModule,
       SubscriptionsModule,
-      ActivitiesModule
+      ActivitiesModule,
+      ActivityPlayerModule
   ],
   controllers: [AppController],
   providers: [AppService],
