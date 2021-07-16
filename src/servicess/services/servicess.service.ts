@@ -14,21 +14,28 @@ export class servicessServices{
     ) {}
 
     // Add New Service Method
-    addNewService(request : createNewServiceRequest){
+    async addNewService(request : createNewServiceRequest){
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
-        return this.serviceRepo.save(newService)
+        await this.serviceRepo.save(newService)
+        return {message:"service added."}
     }
 
     //view all services
-    viewAllServices(){
-        return this.serviceRepo.find()
+    async viewAllServices(){
+        const allServices = await this.serviceRepo.find()
+        if(allServices.length==0){
+            // there are no services ...
+            return {message:"There are no services."}
+        }
+        return allServices
     }
 
     // delete a service
-    deleteService(requsetId : number){
-        return this.serviceRepo.delete(requsetId)
+    async deleteService(requsetId : number){
+        await this.serviceRepo.remove( await this.doesExist(requsetId))
+        return {message:"The service has been deleted."}
     }
 
     //edit a service

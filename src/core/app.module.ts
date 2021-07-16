@@ -17,8 +17,7 @@ import {ServicessModule} from "../servicess/servicess.module";
       PlayersModule,
       SubscriptionsModule,
       ActivitiesModule,
-      ServicessModule
-      ActivitiesModule,
+      ServicessModule,
       ActivityPlayerModule
   ],
   controllers: [AppController],
