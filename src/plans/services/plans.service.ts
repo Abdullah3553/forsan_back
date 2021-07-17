@@ -68,9 +68,7 @@ export class PlansService {
         if(planStatus.isActivated){
             planStatus.isActivated = false
             this.plansRepo.save(planStatus)
-            throw new BadRequestException({
-                message: "Plan is de-activated successfully !"
-            })
+            return {message: "Plan is de-activated successfully !"}
         }else{
             throw new BadRequestException({
                 message: "Plan is already de-activated !"
