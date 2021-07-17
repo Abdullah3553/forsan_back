@@ -67,7 +67,7 @@ export class PlansService {
         const planStatus = await this.checkPlanExist(id)
         if(planStatus.isActivated){
             planStatus.isActivated = false
-            this.plansRepo.save(planStatus)
+            await this.plansRepo.save(planStatus)
             return {message: "Plan is de-activated successfully !"}
         }else{
             throw new BadRequestException({
