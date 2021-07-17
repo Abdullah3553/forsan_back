@@ -30,7 +30,17 @@ export class PlansService {
         return this.plansRepo.save(newPlan)
     }
 
-    // updatePlan () {}
+    async updatePlan (newInf: CreatePlanRequest, id: number) {
+        //To get the current plan's data from the data base 
+        //We search by id in the plans data base and then update the data
+        const result = await this.checkPlanExist(id)
+        result.name = newInf.name
+        result.months = newInf.months
+        result.price = newInf.price
+        result.description = newInf.description
+        result.isActivated = newInf.isActivated
+        return this.plansRepo.save(result)
+    }
 
     async deletePlan(id: number) {
         await this.checkPlanExist(id);
@@ -49,9 +59,24 @@ export class PlansService {
         plan.isActivated = true
         return this.plansRepo.save(plan);
     }
-
-    // TODO
-    deActivatePlan () {}
+    
+    //we create an object to get the current plan status
+    //if the plan is already De-Acticated we throw an exception
+    //if not we De-Activate it! 
+    async deActivatePlan (id: number) {
+        const planStatus = await this.checkPlanExist(id)
+        if(planStatus.isActivated){
+            planStatus.isActivated = false
+            this.plansRepo.save(planStatus)
+            throw new BadRequestException({
+                message: "Plan is de-activated successfully !"
+            })
+        }else{
+            throw new BadRequestException({
+                message: "Plan is already de-activated !"
+            })
+        }
+    }
 
 
     async checkPlanExist(id: number) {

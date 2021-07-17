@@ -29,4 +29,14 @@ export class PlansController {
         return this.plansService.deletePlan(params.id);
     }
 
+    @Post("/update-plan/:id")
+    updatePlan(@Body() body: CreatePlanRequest, @Param() params){
+        return this.plansService.updatePlan(body, params.id)
+    }
+
+    @Get("/de-activate/:id")
+    De_ActivePlan(@Param() params){
+        return this.plansService.deActivatePlan(params.id)
+    }
+
 }
