@@ -21,7 +21,7 @@ export class playersServices{
         });
     }
 
-    async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File){
+    async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File) : Promise<Player> {
         const player = new Player();
         const result = await this.playersRepo.findOne(
             {
@@ -34,32 +34,32 @@ export class playersServices{
             player.phoneNumber = newInput.phoneNumber
             player.height = newInput.height
             player.weight = newInput.weight
-            this.playersRepo.save(player)
-        }else{
+            return await this.playersRepo.save(player)
+        } else {
             unlink(photo.path, (err) => {
-                if (err) throw err;
+                if (err)
+                    console.log(err)
             });
-            throw new BadRequestException("PhoneNumber is already exist!")
+            throw new BadRequestException("PhoneNumber is already in use!")
         }
     }
 
     // delete player
-    async deletePlayer(id: number){
+    async deletePlayer(id: number) {
         await this.playersRepo.delete(id);
         return {
             message: 'Player has been deleted!'
         }
     }
-    //Edit player
-    async EditPlayer(newInf: createNewPlayerRequest, photo: Express.Multer.File, requestedId:number){
 
+    //Edit player
+    async EditPlayer(newInf: createNewPlayerRequest, requestedId:number){
         const newPlayerInfo = await this.playersRepo.findOneOrFail({where: {id: requestedId}})
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
         newPlayerInfo.height = newInf.height
         newPlayerInfo.weight = newInf.weight
-        newPlayerInfo.photo = photo.path
-        this.playersRepo.save(newPlayerInfo)
+        return await this.playersRepo.save(newPlayerInfo)
     }
 
     async viewPlayer(requestedId: number){
@@ -71,5 +71,7 @@ export class playersServices{
         return(showPlayer) 
     }
 
+
+    // TODO: create the service method to update the player photo
 
 }

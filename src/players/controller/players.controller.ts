@@ -28,14 +28,16 @@ export class playersController{
     }
 
     @Post("/editPlayer/:id")
-    editPlayer(@Body() body: createNewPlayerRequest, @UploadedFile() photo: Express.Multer.File, @Param() params){
-        return this.playerService.EditPlayer(body, photo, params.id);
+    editPlayer(@Body() body: createNewPlayerRequest, @Param() params){
+        return this.playerService.EditPlayer(body, params.id);
     }
 
     @Delete("/delete-player/:id")
     deletePlayer(@Param() params){
         return this.playerService.deletePlayer(params.id)
     }
+
+    // TODO create an endpoint just for updating the photo
     
 }
 
