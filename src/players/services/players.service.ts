@@ -6,7 +6,7 @@ import {Player} from "../entities/player.entity";
 import { unlink } from 'fs';
 
 @Injectable()
-export class playersServices{
+export class PlayersServices{
 
     // Creating player's object 
     constructor(
@@ -14,11 +14,27 @@ export class playersServices{
         private readonly playersRepo:  Repository<Player>
     ) {}
 
-    getAll(){
+    async getAll() {
         // Get all players from the table 
-        return this.playersRepo.find({
+        const data = await this.playersRepo.find({
             relations: ['subscriptions']
         });
+        const newObj = data.map((player: Player) => {
+            return {
+                id:player.id,
+                name: player.name,
+                photo: player.photo,
+                height: player.height,
+                weight: player.weight,
+                phoneNumber: player.phoneNumber,
+                price: player.subscriptions[player.subscriptions.length-1]?.price,
+                beginDate: player.subscriptions[player.subscriptions.length-1]?.beginDate,
+                endDate: player.subscriptions[player.subscriptions.length-1]?.endDate,
+                plan: player.subscriptions[player.subscriptions.length-1]?.plan.name,
+                subscriptions: player.subscriptions,
+            }
+        })
+        return newObj
     }
 
     async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File) : Promise<Player> {
@@ -68,7 +84,7 @@ export class playersServices{
             where: {id: requestedId},
             relations: ['subscriptions']
         })
-        return(showPlayer) 
+        return showPlayer;
     }
 
 

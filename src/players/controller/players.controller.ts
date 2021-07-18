@@ -1,6 +1,6 @@
 import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param, Delete} from "@nestjs/common";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
-import { playersServices } from "../services/players.service";
+import { PlayersServices } from "../services/players.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 
 
@@ -8,7 +8,7 @@ import {FileInterceptor} from "@nestjs/platform-express";
 export class playersController{
 
     constructor(
-        private readonly playerService : playersServices
+        private readonly playerService : PlayersServices
     ){}
 
     @Get("/getAll")

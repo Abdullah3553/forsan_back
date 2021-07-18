@@ -1,7 +1,7 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
 import { playersController } from "./controller/players.controller";
-import { playersServices } from "./services/players.service";
+import {PlayersServices} from "./services/players.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {Player} from "./entities/player.entity";
@@ -34,6 +34,7 @@ const storage = diskStorage({
         })
     ],
     controllers: [playersController], 
-    providers: [playersServices]
+    providers: [PlayersServices],
+    exports: [PlayersServices]
 })
 export class PlayersModule{}
