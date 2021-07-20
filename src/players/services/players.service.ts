@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
 import {Player} from "../entities/player.entity";
 import { unlink } from 'fs';
+import {PartialSubscriptionService} from "../../subscriptions/services/partialSubscription.service";
 
 @Injectable()
 export class PlayersServices{
@@ -11,7 +12,8 @@ export class PlayersServices{
     // Creating player's object 
     constructor(
         @InjectRepository(Player)
-        private readonly playersRepo:  Repository<Player>
+        private readonly playersRepo:  Repository<Player>,
+        private readonly SubscriptionService : PartialSubscriptionService,
     ) {}
 
     async getAll() {
@@ -62,7 +64,22 @@ export class PlayersServices{
 
     // delete player
     async deletePlayer(id: number) {
-        await this.playersRepo.delete(id);
+        /*
+        To Delete A player, We need to delete all his subscriptions,
+         the personal picture and
+          the player data it self
+          once all these things deleted, the played has been completly deleted
+        */
+        const player = await this.doesPlayerExist(id) // To get the player :d
+        await this.SubscriptionService.deleteAllSubscriptionsForPlayer(player) // Delete subs of that player
+        unlink(player.photo, (err)=>{ // delete photo of that player
+            if(err){
+                console.log(err)
+                throw new BadRequestException({message:"Photo error ..."})
+            }
+        })
+
+        await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
         }
@@ -87,7 +104,14 @@ export class PlayersServices{
         return showPlayer;
     }
 
+    async doesPlayerExist(id:number){
+        const player = await this.playersRepo.findOne({where:{id:id}})
+        if(!player){
+            throw new NotFoundException({mesaage:"Player Not Found"})
+        }
+        return player
+
+    }
 
     // TODO: create the service method to update the player photo
-
 }

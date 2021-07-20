@@ -29,6 +29,17 @@ export class SubscriptionsService {
         return await this.subscriptionsRepo.save(subscribtion);
     }
 
+    async deleteSubscriptions(PlayerId:number){
+        while(true){
+            const player_sub = await this.subscriptionsRepo.find({where:{player_id:PlayerId}})
+            if(!player_sub){
+                break;
+            }
+            await this.subscriptionsRepo.remove(player_sub)
+        }
+        return {message:"Subscriptions deleted..."}
+    }
+
 
 
 }

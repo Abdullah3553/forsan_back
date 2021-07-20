@@ -19,6 +19,12 @@ export class PlansService {
         return this.plansRepo.find();
     }
 
+    getActivePlans(){
+        return this.plansRepo.find({where:{
+            isActivated : true
+            }})
+    }
+
     createPlan (req: CreatePlanRequest) {
         // store plan
         const newPlan = new Plan()
@@ -48,7 +54,7 @@ export class PlansService {
         return {message: 'Plan Deleted'};
     }
 
-    async activatePLan(id: number) {
+    async activatePlan(id: number) {
         // const plan = this.plansRepo.findOneOrFail(id)
         const plan = await this.checkPlanExist(id);
         if (plan.isActivated) {

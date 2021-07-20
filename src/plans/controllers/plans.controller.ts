@@ -14,6 +14,11 @@ export class PlansController {
         return this.plansService.getAll();
     }
 
+    @Get('/AllActive')
+    getActivePLans(){
+        return this.plansService.getActivePlans()
+    }
+
     @Post()
     createPlan (@Body() body: CreatePlanRequest) {
         return this.plansService.createPlan(body);
@@ -21,7 +26,7 @@ export class PlansController {
 
     @Get("/activate/:id")
     activatePlan(@Param() params) {
-        return this.plansService.activatePLan(params.id);
+        return this.plansService.activatePlan(params.id);
     }
 
     @Delete(":id")
