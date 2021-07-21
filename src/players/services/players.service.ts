@@ -22,6 +22,7 @@ export class PlayersServices{
             relations: ['subscriptions']
         });
         const newObj = data.map((player: Player) => {
+            
             return {
                 id:player.id,
                 name: player.name,
@@ -32,7 +33,7 @@ export class PlayersServices{
                 price: player.subscriptions[player.subscriptions.length-1]?.price,
                 beginDate: player.subscriptions[player.subscriptions.length-1]?.beginDate,
                 endDate: player.subscriptions[player.subscriptions.length-1]?.endDate,
-                plan: player.subscriptions[player.subscriptions.length-1]?.plan.name,
+                plan: player.subscriptions[player.subscriptions.length-1]?.plan?.name,
                 subscriptions: player.subscriptions,
             }
         })
@@ -40,6 +41,11 @@ export class PlayersServices{
     }
 
     async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File) : Promise<Player> {
+        if (!photo) {
+            throw new BadRequestException({
+                message: "Player photo is missing"
+            })
+        }
         const player = new Player();
         const result = await this.playersRepo.findOne(
             {

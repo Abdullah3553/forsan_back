@@ -23,7 +23,10 @@ export class Subscription {
     @Column()
     price: number
 
-    @ManyToOne( () => Player, player => player.id)
+    @ManyToOne( () => Player, player => player.id,{
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    })
     @JoinColumn()
     player: Player
 

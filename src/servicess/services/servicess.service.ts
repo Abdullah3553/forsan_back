@@ -33,6 +33,7 @@ export class servicessServices{
 
     // delete a service
     async deleteService(requsetId : number){
+        await this.serviceRepo.remove( await this.doesExist(requsetId))
         return {message:"The service has been deleted."}
     }
 
