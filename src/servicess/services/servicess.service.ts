@@ -18,8 +18,7 @@ export class servicessServices{
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
-        await this.serviceRepo.save(newService)
-        return {message:"service added."}
+        return {service: await this.serviceRepo.save(newService), message:"Service Added"}
     }
 
     //view all services
@@ -34,7 +33,6 @@ export class servicessServices{
 
     // delete a service
     async deleteService(requsetId : number){
-        await this.serviceRepo.remove( await this.doesExist(requsetId))
         return {message:"The service has been deleted."}
     }
 
