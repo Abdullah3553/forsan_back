@@ -1,10 +1,11 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Module } from "@nestjs/common";
+import {forwardRef, Module} from "@nestjs/common";
 import { playersController } from "./controller/players.controller";
 import {PlayersServices} from "./services/players.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {Player} from "./entities/player.entity";
+import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 
 
 const storage = diskStorage({
@@ -31,7 +32,9 @@ const storage = diskStorage({
                 }
                 callback(null,true);
             }
-        })
+        }),
+        SubscriptionsModule,
+
     ],
     controllers: [playersController], 
     providers: [PlayersServices],

@@ -18,8 +18,7 @@ export class servicessServices{
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
-        await this.serviceRepo.save(newService)
-        return {message:"service added."}
+        return {service: await this.serviceRepo.save(newService), message:"Service Added"}
     }
 
     //view all services
