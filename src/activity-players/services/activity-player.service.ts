@@ -23,7 +23,7 @@ export class activityPlayerServices{
         newPlayer.beginDate = newInput.beginDate
         newPlayer.endDate = newInput.endDate
         newPlayer.activity = newInput.activity
-        this.actPlayerRepo.save(newPlayer)
+        return this.actPlayerRepo.save(newPlayer)
     }
 
     async EditActPlayer(newInput: addNewActPlayer, reqId){
@@ -32,7 +32,7 @@ export class activityPlayerServices{
         newActPlayer.beginDate = newInput.beginDate
         newActPlayer.endDate = newInput.endDate
         newActPlayer.activity = newInput.activity
-        this.actPlayerRepo.save(newActPlayer)
+        return this.actPlayerRepo.save(newActPlayer)
     }
 
     async deleteActPlayer(id: number){

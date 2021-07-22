@@ -44,8 +44,8 @@ export class activityServices{
         search_activity.coachPhoneNumber = request.coachPhoneNumber
         search_activity.price = request.price
         search_activity.description = request.description
-        await this.activityRepo.save(search_activity)
-        return {message:"Activity Edited :D"}
+        return await this.activityRepo.save(search_activity)
+        
     }
 
     viewById(requestId){
