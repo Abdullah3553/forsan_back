@@ -1,7 +1,7 @@
 import { IsDate, IsNotEmpty, IsNumber } from "class-validator";
 
 
-export class services_incomeRequest{
+export class ServiceIncomeRequest {
     @IsNumber()
     soldItems: number
 }
