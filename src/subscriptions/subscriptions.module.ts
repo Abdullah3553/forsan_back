@@ -2,7 +2,6 @@ import {forwardRef, Module} from '@nestjs/common';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Subscription} from "./entities/subscription.entity";
 import { SubscriptionsService } from './services/subscriptions.service';
-import {PartialSubscriptionService} from './services/partialSubscription.service'
 import { SubscriptionsController } from './controllers/subscriptions.controller';
 import {PlayersModule} from "../players/players.module";
 import {PlansModule} from "../plans/plans.module";
@@ -13,8 +12,8 @@ import {PlansModule} from "../plans/plans.module";
         forwardRef(()=>PlayersModule),
         PlansModule
     ],
-    providers: [SubscriptionsService, PartialSubscriptionService],
+    providers: [SubscriptionsService],
     controllers: [SubscriptionsController],
-    exports:[PartialSubscriptionService]
+    exports:[SubscriptionsService]
 })
 export class SubscriptionsModule {}

@@ -1,6 +1,7 @@
 import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Plan} from "../../plans/entities/plan.entity";
 import {Player} from "../../players/entities/player.entity";
+import moment from 'moment'
 
 @Entity({
     name: 'subscriptions'
@@ -20,12 +21,10 @@ export class Subscription {
     })
     endDate: Date
 
-    @Column()
-    price: number
-
     @ManyToOne( () => Player, player => player.id,{
         onDelete: "CASCADE",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
+        eager:false
     })
     @JoinColumn()
     player: Player

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Subscription} from "../entities/subscription.entity";
 import {Repository} from "typeorm";
 import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
+import * as moment from "moment";
 
 @Injectable()
 export class SubscriptionsService {
@@ -25,21 +26,22 @@ export class SubscriptionsService {
         subscribtion.plan = plan
         subscribtion.beginDate = request.beginDate
         subscribtion.endDate = request.endDate
-        subscribtion.price = plan.price
         return await this.subscriptionsRepo.save(subscribtion);
     }
 
-    async deleteSubscriptions(PlayerId:number){
-        while(true){
-            const player_sub = await this.subscriptionsRepo.find({where:{player_id:PlayerId}})
-            if(!player_sub){
-                break;
-            }
-            await this.subscriptionsRepo.remove(player_sub)
-        }
-        return {message:"Subscriptions deleted..."}
+    async updateSubDate(request : SubscribeRequest, requestId:number){
+        const sub = await this.doesSubExist(requestId)
+        sub.beginDate = request.beginDate
+        sub.endDate = request.endDate
+        return this.subscriptionsRepo.save(sub)
     }
 
-
+    private async doesSubExist(id:number){
+        const sub = await this.subscriptionsRepo.findOne({where:{id:id}})
+        if(!sub){
+            throw new BadRequestException("Subscirption does'nt exist")
+        }
+        return sub
+    }
 
 }

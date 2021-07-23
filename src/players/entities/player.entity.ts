@@ -15,16 +15,22 @@ export class Player {
     @Column({unique: true})
     phoneNumber: string
 
-    @Column('double')
-    weight: number
+    @Column()
+    weight: string
 
-    @Column('double')
-    height: number
+    @Column()
+    height: string
 
     @Column()
     photo: string
 
-    // ech pl has many subs
+    @Column('text')
+    trainingPlan:string // this is not the subscription plan :d
+
+    @Column('text')
+    dietPlan:string
+
+    // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
     subscriptions: Subscription[]
 

@@ -13,11 +13,19 @@ export class createNewPlayerRequest{
 
     @IsNotEmpty()
     @IsDecimal()
-    height: number
+    height: string
 
     @IsNotEmpty()
     @IsDecimal()
-    weight: number
+    weight: string
+
+    @IsNotEmpty()
+    @IsString()
+    trainingPlan: string
+
+    @IsNotEmpty()
+    @IsString()
+    dietPlan: string
 
     // @IsNotEmpty()
     // plan: number
