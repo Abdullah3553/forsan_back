@@ -47,10 +47,8 @@ export class servicessServices{
 
     }
 
-    //private functions
-
     // a function to check if the element exist on the database or not
-    private async doesExist(id:number){
+    async doesExist(id:number){
         const service = await this.serviceRepo.findOne({where:{id:id}})
         if(!service){
             // the service does not exist

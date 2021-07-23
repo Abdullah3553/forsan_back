@@ -8,7 +8,8 @@ import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 import {ActivitiesModule} from "../activities/activities.module";
 import { ActivityPlayerModule } from 'src/activity-players/activity-player.module';
-import {ServicessModule} from "../servicess/servicess.module";
+import { ServicessModule} from "../servicess/servicess.module";
+import {ServiceIncomeModule} from "../services_income/service_income.module";
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import {ServicessModule} from "../servicess/servicess.module";
       SubscriptionsModule,
       ActivitiesModule,
       ServicessModule,
-      ActivityPlayerModule
+      ActivityPlayerModule,
+      ServiceIncomeModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,5 @@
-import { type } from "os";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Service} from "../../servicess/entities/servicess.entity";
 
 
 @Entity({
@@ -14,8 +14,12 @@ export class ServiceIncome{
     soldItems: number
 
     @Column({type: 'date'})
-    dayDate: Date
+    dayDate: string
     
     
-    //serviceId: number
+    @OneToOne(() => Service, service => service.id,{
+        eager: true
+    })
+    @JoinColumn()
+    service:Service
 }
