@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { createNewPlayerRequest } from "../requests/createnewplayer.request";
 import {Player} from "../entities/player.entity";
 import { unlink } from 'fs';
-import {PartialSubscriptionService} from "../../subscriptions/services/partialSubscription.service";
 
 @Injectable()
 export class PlayersServices{
@@ -12,8 +11,7 @@ export class PlayersServices{
     // Creating player's object 
     constructor(
         @InjectRepository(Player)
-        private readonly playersRepo:  Repository<Player>,
-        private readonly SubscriptionService : PartialSubscriptionService,
+        private readonly playersRepo:  Repository<Player>
     ) {}
 
     async getAll() {
@@ -22,7 +20,7 @@ export class PlayersServices{
             relations: ['subscriptions']
         });
         const newObj = data.map((player: Player) => {
-            
+
             return {
                 id:player.id,
                 name: player.name,
@@ -30,11 +28,9 @@ export class PlayersServices{
                 height: player.height,
                 weight: player.weight,
                 phoneNumber: player.phoneNumber,
-                price: player.subscriptions[player.subscriptions.length-1]?.price,
-                beginDate: player.subscriptions[player.subscriptions.length-1]?.beginDate,
-                endDate: player.subscriptions[player.subscriptions.length-1]?.endDate,
-                plan: player.subscriptions[player.subscriptions.length-1]?.plan?.name,
-                subscriptions: player.subscriptions,
+                dietPlan: player.dietPlan,
+                trainingPlan: player.trainingPlan,
+                subscription:player.subscriptions[player.subscriptions.length-1]
             }
         })
         return newObj
@@ -42,6 +38,7 @@ export class PlayersServices{
 
     async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File) : Promise<Player> {
         if (!photo) {
+            // Validate for photo ...
             throw new BadRequestException({
                 message: "Player photo is missing"
             })
@@ -58,6 +55,8 @@ export class PlayersServices{
             player.phoneNumber = newInput.phoneNumber
             player.height = newInput.height
             player.weight = newInput.weight
+            player.dietPlan = newInput.dietPlan
+            player.trainingPlan = newInput.trainingPlan
             return await this.playersRepo.save(player)
         } else {
             unlink(photo.path, (err) => {
@@ -77,7 +76,6 @@ export class PlayersServices{
           once all these things deleted, the played has been completly deleted
         */
         const player = await this.doesPlayerExist(id) // To get the player :d
-        await this.SubscriptionService.deleteAllSubscriptionsForPlayer(player) // Delete subs of that player
         unlink(player.photo, (err)=>{ // delete photo of that player
             if(err){
                 console.log(err)
@@ -93,21 +91,21 @@ export class PlayersServices{
 
     //Edit player
     async EditPlayer(newInf: createNewPlayerRequest, requestedId:number){
-        const newPlayerInfo = await this.playersRepo.findOneOrFail({where: {id: requestedId}})
+        const newPlayerInfo = await this.doesPlayerExist(requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
         newPlayerInfo.height = newInf.height
         newPlayerInfo.weight = newInf.weight
+        newPlayerInfo.dietPlan = newInf.dietPlan
+        newPlayerInfo.trainingPlan = newInf.trainingPlan
         return await this.playersRepo.save(newPlayerInfo)
     }
 
-    async viewPlayer(requestedId: number){
+    viewPlayer(requestedId: number){
         // Search by id at the database
-        const showPlayer = await this.playersRepo.findOneOrFail({
+        return this.playersRepo.findOneOrFail({
             where: {id: requestedId},
-            relations: ['subscriptions']
-        })
-        return showPlayer;
+        });
     }
 
     async doesPlayerExist(id:number){
