@@ -8,7 +8,7 @@ import { PlanIncome } from "../entities/planIncome.entity";
 
 
 @Injectable()
-export class planIncomeService{
+export class PlanIncomeService {
 
     constructor(
         @InjectRepository(PlanIncome)

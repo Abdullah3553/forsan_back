@@ -2,7 +2,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module} from "@nestjs/common";
 import { PlanIncome } from "./entities/planIncome.entity";
 import { planIncomeController } from "./controller/planIncome.controller";
-import { planIncomeService } from "./services/planIncome.service";
+import { PlanIncomeService } from "./services/plan-income.service";
 import { PlansModule } from "src/plans/plans.module";
 
 
@@ -12,7 +12,7 @@ import { PlansModule } from "src/plans/plans.module";
         PlansModule
     ],
     controllers: [planIncomeController],
-    providers: [planIncomeService],
-    exports: [planIncomeService]
+    providers: [PlanIncomeService],
+    exports: [PlanIncomeService]
 })
 export class PlanIncomeModule{}

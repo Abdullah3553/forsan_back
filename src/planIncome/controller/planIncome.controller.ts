@@ -1,12 +1,12 @@
 import {Controller, Get, Param} from "@nestjs/common";
-import {planIncomeService} from "../services/planIncome.service";
+import {PlanIncomeService} from "../services/plan-income.service";
 
 
 @Controller("planIncome")
 export class planIncomeController{
 
     constructor(
-        private readonly planIncomeService: planIncomeService
+        private readonly planIncomeService: PlanIncomeService
     ){}
 
     @Get('/')
