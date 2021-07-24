@@ -15,7 +15,7 @@ export class PlanIncome{
     @Column({type: 'date'})
     dayDate: string
 
-    @Column()
+    @Column({default:0})
     numberOfPlayers: number
 
     @OneToOne ( () => Plan, plan => plan.id, {

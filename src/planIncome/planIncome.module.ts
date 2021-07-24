@@ -1,10 +1,8 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module} from "@nestjs/common";
-import {ServicessModule} from "../servicess/servicess.module";
 import { PlanIncome } from "./entities/planIncome.entity";
 import { planIncomeController } from "./controller/planIncome.controller";
 import { planIncomeService } from "./services/planIncome.service";
-import { PlansService } from "src/plans/services/plans.service";
 import { PlansModule } from "src/plans/plans.module";
 
 
@@ -15,6 +13,6 @@ import { PlansModule } from "src/plans/plans.module";
     ],
     controllers: [planIncomeController],
     providers: [planIncomeService],
-    exports: [PlansService]
+    exports: [planIncomeService]
 })
 export class PlanIncomeModule{}

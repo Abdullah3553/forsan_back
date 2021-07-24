@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import {Controller, Get, Param} from "@nestjs/common";
 import {planIncomeService} from "../services/planIncome.service";
 
 
@@ -12,6 +12,11 @@ export class planIncomeController{
     @Get('/')
     getToday(){
         return this.planIncomeService.getTodayPlansIncome()
+    }
+
+    @Get('/new/:id')
+    planSubscribe(@Param() parametars){
+        return this.planIncomeService.subscripePlan(parametars.id)
     }
     
 }
