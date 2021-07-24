@@ -18,6 +18,8 @@ export class ServiceIncome{
     
     
     @OneToOne(() => Service, service => service.id,{
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
         eager: true
     })
     @JoinColumn()
