@@ -1,5 +1,6 @@
 import { ActivityPlayer } from "src/activity-players/entities/activity-player.entity";
 import {Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {ActivityPlayersSubscription} from "../../activity-playersSubscription/entities/activity-playersSubscription.entity";
 
 @Entity({
     name: "activities",
@@ -24,11 +25,6 @@ export class Activity {
     @Column('text')
     description: string
 
-    @OneToMany( () => ActivityPlayer, player => player.id, {
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-        eager: true
-    })
-    @JoinColumn()
-    players: ActivityPlayer[]
+    @OneToMany( () => ActivityPlayersSubscription, sub => sub.activity)
+    activitySubscriptions: ActivityPlayersSubscription[]
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
-import { addNewActPlayer } from "../requests/add-new-act-player.request";
-import { activityPlayerServices } from "../services/activity-player.service";
+import { addNewActPlayer } from "../requests/add-new-act-playerSubscription.request";
+import { activityPlayerServices } from "../services/activity-playersSubscription.service";
 
 
 @Controller('activity-player')

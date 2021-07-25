@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ActivityPlayer } from "../entities/activity-player.entity";
-import { addNewActPlayer } from "../requests/add-new-act-player.request";
+import { ActivityPlayer } from "../entities/activity-playersSubscription.entity";
+import { addNewActPlayer } from "../requests/add-new-act-playerSubscription.request";
 
 
 @Injectable()
