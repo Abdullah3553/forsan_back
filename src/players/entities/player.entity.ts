@@ -1,5 +1,6 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Subscription} from "../../subscriptions/entities/subscription.entity";
+import {PlayerWeights} from "../../playersWeights/entities/playersWeights.entity";
 
 @Entity({
     name: "players",
@@ -32,6 +33,9 @@ export class Player {
 
     // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
-    subscriptions: Subscription[]
+    subscriptions: Subscription []
+
+    @OneToMany(()=>PlayerWeights, playerWeights=>playerWeights.player)
+    weights: PlayerWeights []
 
 }
