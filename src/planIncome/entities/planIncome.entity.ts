@@ -1,5 +1,6 @@
 import { Plan } from "src/plans/entities/plan.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, PrimaryGeneratedColumn } from "typeorm";
+import {ManyToOne} from "typeorm/browser";
 
 
 @Entity({
@@ -18,7 +19,7 @@ export class PlanIncome{
     @Column({default:0})
     numberOfPlayers: number
 
-    @OneToOne ( () => Plan, plan => plan.id, {
+    @ManyToOne ( () => Plan, plan => plan.id, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         eager: true
