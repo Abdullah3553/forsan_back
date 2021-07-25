@@ -17,7 +17,9 @@ export class PlanIncomeService {
     ){}
     getTodayPlansIncome(){
         const todayDate = moment().format("yyyy-MM-DD")
-        return this.planIncomeRepo.find({where:todayDate})
+        return this.planIncomeRepo.find({where:{
+            dayDate:todayDate
+            }})
     }
 
     async subscripePlan(reqId: number){
