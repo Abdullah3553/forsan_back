@@ -1,6 +1,5 @@
 import { Plan } from "src/plans/entities/plan.entity";
-import { Column, Entity, JoinColumn, PrimaryGeneratedColumn } from "typeorm";
-import {ManyToOne} from "typeorm/browser";
+import { Column, Entity, JoinColumn, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 
 
 @Entity({
