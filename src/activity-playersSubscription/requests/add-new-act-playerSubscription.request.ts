@@ -1,10 +1,11 @@
 import { IsDateString, IsNotEmpty } from "class-validator";
 import { Activity } from "src/activities/entities/activity.entity";
+import {ActivityPlayer} from "../../activity-players/entities/activity-player.entity";
 
 
 export class addNewActPlayer{
     @IsNotEmpty()
-    name: string
+    activityPlayer : ActivityPlayer
 
     @IsDateString()
     beginDate: Date

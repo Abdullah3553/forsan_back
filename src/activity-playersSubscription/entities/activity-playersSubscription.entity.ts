@@ -6,7 +6,7 @@ import {ActivityPlayer} from "../../activity-players/entities/activity-player.en
     name: "activity-playerSubscriptions",
 })
 
-export class ActivityPlayersSubscription{
+export class ActivityPlayerSubscription {
     @PrimaryGeneratedColumn()
     id: number
 

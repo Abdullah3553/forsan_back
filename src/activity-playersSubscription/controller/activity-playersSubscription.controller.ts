@@ -1,32 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { addNewActPlayer } from "../requests/add-new-act-playerSubscription.request";
-import { activityPlayerServices } from "../services/activity-playersSubscription.service";
+import {ActivityPlayersSubscriptionService} from "../services/activity-playersSubscription.service";
 
 
-@Controller('activity-player')
-export class activityPlayersController{
+@Controller('activity-playerSub')
+export class ActivityPlayersSubscriptionController{
     constructor(
-        private readonly actPlayerService: activityPlayerServices
+        private readonly actPlayerSubService: ActivityPlayersSubscriptionService
     ){}
 
-    @Get()
-    getAllActivityPlayers(){
-        return this.actPlayerService.getAll()
+    @Get('')
+    seeAll(){
+        return
     }
-
-    @Delete("/delete-activity-player/:id")
-    deleteActPlayer(@Param() params){
-        return this.actPlayerService.deleteActPlayer(params.id)
-    }
-
-    @Post("/new-Activity-player")
-    createNewActPlayer(@Body() body: addNewActPlayer){
-        return this.actPlayerService.createNewActPlayer(body)
-    }
-
-    @Post("/Edit-Activity-player/:id")
-    editActivityPlayer(@Body() body: addNewActPlayer, @Param() params){
-        return this.actPlayerService.EditActPlayer(body, params.id)
-    }
-
 }

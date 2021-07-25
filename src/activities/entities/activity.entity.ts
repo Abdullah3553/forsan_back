@@ -1,6 +1,6 @@
 import { ActivityPlayer } from "src/activity-players/entities/activity-player.entity";
 import {Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {ActivityPlayersSubscription} from "../../activity-playersSubscription/entities/activity-playersSubscription.entity";
+import {ActivityPlayerSubscription} from "../../activity-playersSubscription/entities/activity-playersSubscription.entity";
 
 @Entity({
     name: "activities",
@@ -25,6 +25,6 @@ export class Activity {
     @Column('text')
     description: string
 
-    @OneToMany( () => ActivityPlayersSubscription, sub => sub.activity)
-    activitySubscriptions: ActivityPlayersSubscription[]
+    @OneToMany( () => ActivityPlayerSubscription, sub => sub.activity)
+    activitySubscriptions: ActivityPlayerSubscription[]
 }
