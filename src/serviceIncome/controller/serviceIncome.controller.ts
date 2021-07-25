@@ -15,7 +15,7 @@ export class ServiceIncomeController {
     }
 
     //add item to a service
-    @Post("/add/:id")
+    @Get("/add/:id")
     buyService(@Param() parametars){
         return this.serviceIncomeService.buyService(parametars.id)
     }

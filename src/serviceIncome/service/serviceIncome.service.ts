@@ -27,10 +27,12 @@ export class ServiceIncomeService {
         return this.serviceIncomeRepo.save(serviceIncome)
 
     }
-
+        
     async doesServiceIncomeExist(id:number){
         const service = await this.servicessService.doesExist(id)
-        let serviceIncome = await this.serviceIncomeRepo.findOne({where:{service:service}})
+        let serviceIncome = await this.serviceIncomeRepo.findOne({where:{
+                                                                        service:service,
+                                                                        dayDate : moment().format("yyyy-MM-DD")}})
         if(!serviceIncome){
             // service does not exist
             // then add the serviceIncome to table

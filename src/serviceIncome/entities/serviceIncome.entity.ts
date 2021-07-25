@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Service} from "../../servicess/entities/servicess.entity";
 
 
@@ -17,7 +17,9 @@ export class ServiceIncome{
     dayDate: string
     
     
-    @OneToOne(() => Service, service => service.id,{
+    @ManyToOne(() => Service, service => service.id,{
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
         eager: true
     })
     @JoinColumn()
