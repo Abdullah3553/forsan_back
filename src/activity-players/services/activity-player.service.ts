@@ -22,7 +22,6 @@ export class activityPlayerServices{
         newPlayer.name = newInput.name
         newPlayer.beginDate = newInput.beginDate
         newPlayer.endDate = newInput.endDate
-        newPlayer.activity = newInput.activity
         return this.actPlayerRepo.save(newPlayer)
     }
 
@@ -31,7 +30,6 @@ export class activityPlayerServices{
         newActPlayer.name = newInput.name
         newActPlayer.beginDate = newInput.beginDate
         newActPlayer.endDate = newInput.endDate
-        newActPlayer.activitys.push(newInput.activity)
         return this.actPlayerRepo.save(newActPlayer)
     }
 

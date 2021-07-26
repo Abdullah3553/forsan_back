@@ -9,6 +9,7 @@ import {Activity} from "./entities/activity.entity";
         TypeOrmModule.forFeature([Activity]),
     ],
     controllers: [activitiesController],
-    providers: [activityServices]
+    providers: [activityServices],
+    exports:[activityServices]
 })
 export class ActivitiesModule {}

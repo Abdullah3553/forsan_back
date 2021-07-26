@@ -1,17 +1,16 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { activitiesController } from "src/activities/controller/activities.controller";
-import { activityPlayersController } from "./controller/activity-playersSubscription.controller";
-import { ActivityPlayer } from "./entities/activity-playersSubscription.entity";
-import { activityPlayerServices } from "./services/activity-playersSubscription.service";
-
+import {ActivityPlayerSubscription} from "./entities/activity-playersSubscription.entity";
+import {ActivityPlayersSubscriptionController} from "./controller/activity-playersSubscription.controller";
+import {ActivityPlayersSubscriptionService} from "./services/activity-playersSubscription.service";
 
 @Module({
 
     imports: [
-        TypeOrmModule.forFeature([ActivityPlayer])
+        TypeOrmModule.forFeature([ActivityPlayerSubscription])
     ],
-    controllers: [activityPlayersController],
-    providers: [activityPlayerServices]    
+    controllers: [ActivityPlayersSubscriptionController],
+    providers: [ActivityPlayersSubscriptionService],
+    exports:[ActivityPlayersSubscriptionService]
 })
 export class ActivityPlayersSubscriptionModule {}

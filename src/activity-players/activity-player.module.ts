@@ -12,6 +12,7 @@ import { activityPlayerServices } from "./services/activity-player.service";
         TypeOrmModule.forFeature([ActivityPlayer])
     ],
     controllers: [activityPlayersController],
-    providers: [activityPlayerServices]    
+    providers: [activityPlayerServices],
+    exports:[activityPlayerServices]
 })
 export class ActivityPlayerModule{}

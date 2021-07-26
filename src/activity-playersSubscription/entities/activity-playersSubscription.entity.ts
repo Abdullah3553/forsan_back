@@ -16,7 +16,7 @@ export class ActivityPlayerSubscription {
     @Column({type: 'date'})
     endDate: Date
 
-    @ManyToOne(()=>ActivityPlayer, activityPlayer=>activityPlayer.id, {
+    @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         eager: true
