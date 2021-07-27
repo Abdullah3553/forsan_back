@@ -10,6 +10,9 @@ export class ActivityPlayerSubscription {
     @PrimaryGeneratedColumn()
     id: number
 
+    @Column('double')
+    price: number
+
     @Column({type: 'date'})
     beginDate: Date
 
@@ -19,7 +22,6 @@ export class ActivityPlayerSubscription {
     @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
-        eager: true
     })
     @JoinColumn()
     activityPlayer: ActivityPlayer

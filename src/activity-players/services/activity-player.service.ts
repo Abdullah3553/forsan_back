@@ -13,23 +13,37 @@ export class activityPlayerServices{
         private readonly actPlayerRepo: Repository<ActivityPlayer>
     ){}
     
-    getAll(){
-        return this.actPlayerRepo.find()
+
+    getSinglePlayer (player_id: number) {
+        return this.actPlayerRepo.findOne(player_id);
+    }
+
+    async getAll(){
+        const data = await this.actPlayerRepo.find({
+            relations: ['activitySubscriptions']
+        })
+        return data.map(item => {
+            return {
+                id: item.id,
+                name: item.name,
+                beginDate: item.activitySubscriptions[0]?.beginDate,
+                endDate: item.activitySubscriptions[0]?.endDate,
+                activity: item.activitySubscriptions[0]?.activity.name,
+                activity_id: item.activitySubscriptions[0]?.activity.id
+
+            }
+        })
     }
 
     createNewActPlayer(newInput: addNewActPlayer){
         const newPlayer = new ActivityPlayer()
         newPlayer.name = newInput.name
-        newPlayer.beginDate = newInput.beginDate
-        newPlayer.endDate = newInput.endDate
         return this.actPlayerRepo.save(newPlayer)
     }
 
     async EditActPlayer(newInput: addNewActPlayer, reqId){
         const newActPlayer = await this.actPlayerRepo.findOneOrFail({where: {id: reqId}})
         newActPlayer.name = newInput.name
-        newActPlayer.beginDate = newInput.beginDate
-        newActPlayer.endDate = newInput.endDate
         return this.actPlayerRepo.save(newActPlayer)
     }
 

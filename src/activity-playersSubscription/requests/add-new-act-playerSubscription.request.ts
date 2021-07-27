@@ -5,7 +5,7 @@ import {ActivityPlayer} from "../../activity-players/entities/activity-player.en
 
 export class addNewActPlayer{
     @IsNotEmpty()
-    activityPlayer : ActivityPlayer
+    player_id: number
 
     @IsDateString()
     beginDate: Date
@@ -14,5 +14,5 @@ export class addNewActPlayer{
     endDate: Date
 
     @IsNotEmpty()
-    activity: Activity
+    activity_id: number
 }

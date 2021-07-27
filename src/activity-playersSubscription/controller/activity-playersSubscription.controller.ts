@@ -9,8 +9,8 @@ export class ActivityPlayersSubscriptionController{
         private readonly actPlayerSubService: ActivityPlayersSubscriptionService
     ){}
 
-    @Get('')
-    seeAll(){
-        return
+    @Post()
+    newActPlayerSub (@Body() body: addNewActPlayer) {
+        return this.actPlayerSubService.subscribe(body)
     }
 }

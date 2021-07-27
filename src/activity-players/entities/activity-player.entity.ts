@@ -13,12 +13,6 @@ export class ActivityPlayer{
     @Column()
     name: string
     
-    @Column({type: 'date'})
-    beginDate: Date
-
-    @Column({type: 'date'})
-    endDate: Date
-
     @OneToMany( () => ActivityPlayerSubscription, sub => sub.activityPlayer)
     activitySubscriptions: ActivityPlayerSubscription[]
 }
