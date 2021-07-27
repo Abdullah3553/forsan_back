@@ -9,7 +9,7 @@ export class PlansController {
         private readonly plansService: PlansService
     ) {}
 
-    @Get()
+    @Get('/')
     getPlans() {
         return this.plansService.getAll();
     }
