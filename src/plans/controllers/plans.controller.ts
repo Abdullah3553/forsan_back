@@ -29,7 +29,7 @@ export class PlansController {
         return this.plansService.activatePlan(params.id);
     }
 
-    @Delete(":id")
+    @Delete("/delete/:id")
     deletePlan(@Param() params) {
         return this.plansService.deletePlan(params.id);
     }

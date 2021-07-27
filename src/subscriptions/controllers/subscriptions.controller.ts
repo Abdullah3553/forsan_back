@@ -13,7 +13,7 @@ export class SubscriptionsController {
         return this.subscriptionsService.getAll()
     }
 
-    @Post("/subscribe")
+    @Post("/new")
     subscribe(@Body() body: SubscribeRequest) {
         return this.subscriptionsService.subscribe(body);
     }
