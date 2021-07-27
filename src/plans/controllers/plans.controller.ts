@@ -15,12 +15,12 @@ export class PlansController {
     }
 
     @Get('/AllActive')
-    getActivePLans(){
+    getActivePlans(){
         return this.plansService.getActivePlans()
     }
 
     @Post('/new')
-    createPlan (@Body() body: CreateNewPlanRequest) {
+    newPlan (@Body() body: CreateNewPlanRequest) {
         return this.plansService.newPlan(body);
     }
 
