@@ -2,7 +2,6 @@ import {Controller, Get, Post, Body, Param, Delete} from "@nestjs/common";
 import { CreateNewPlayersWeightsRequest } from "../requests/createNewPlayersWeightsRequest";
 import { PlayersWeightsServices } from "../services/playersWeights.service";
 
-
 @Controller('playerWeight')
 export class PlayersWeightsController {
 
@@ -24,7 +23,6 @@ export class PlayersWeightsController {
     deleteWeight(@Param() parameters){
         return this.playersWeightsService.deleteWeight(parameters.id)
     }
-
 
 }
 
