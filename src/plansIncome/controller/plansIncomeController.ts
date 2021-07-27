@@ -2,7 +2,7 @@ import {Controller, Get, Param} from "@nestjs/common";
 import {PlansIncomeService} from "../services/plansIncome.service";
 
 
-@Controller("plansIncome")
+@Controller("planIncome")
 export class PlansIncomeController {
 
     constructor(

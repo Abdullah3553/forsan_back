@@ -4,7 +4,7 @@ import { PlayersServices } from "../services/players.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 
 
-@Controller('players')
+@Controller('player')
 export class PlayersController {
 
     constructor(

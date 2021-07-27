@@ -3,7 +3,7 @@ import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import { ServicessServices } from "../services/servicess.service";
 
 
-@Controller('services')
+@Controller('service')
 export class ServicessController {
 
     constructor(

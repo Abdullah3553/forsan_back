@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import {PlansService} from "../services/plans.service";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 
-@Controller('plans')
+@Controller('plan')
 export class PlansController {
 
     constructor(
