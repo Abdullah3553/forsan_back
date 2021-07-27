@@ -1,5 +1,5 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {ServiceIncome} from "../../serviceIncome/entities/serviceIncome.entity";
+import {ServiceIncome} from "../../servicesIncome/entities/servicesIncome.entity";
 
 @Entity({
     name: "services",

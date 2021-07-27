@@ -1,6 +1,6 @@
 import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import {PlansService} from "../services/plans.service";
-import {CreatePlanRequest} from "../requests/createPlan.request";
+import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 
 @Controller('plans')
 export class PlansController {
@@ -20,8 +20,8 @@ export class PlansController {
     }
 
     @Post()
-    createPlan (@Body() body: CreatePlanRequest) {
-        return this.plansService.createPlan(body);
+    createPlan (@Body() body: CreateNewPlanRequest) {
+        return this.plansService.newPlan(body);
     }
 
     @Get("/activate/:id")
@@ -35,7 +35,7 @@ export class PlansController {
     }
 
     @Post("/update-plan/:id")
-    updatePlan(@Body() body: CreatePlanRequest, @Param() params){
+    updatePlan(@Body() body: CreateNewPlanRequest, @Param() params){
         return this.plansService.updatePlan(body, params.id)
     }
 

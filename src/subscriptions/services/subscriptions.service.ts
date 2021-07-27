@@ -1,11 +1,10 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
-import {Subscription} from "../entities/subscription.entity";
+import {Subscription} from "../entities/subscriptions.entity";
 import {Repository} from "typeorm";
 import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
-import * as moment from "moment";
 
 @Injectable()
 export class SubscriptionsService {
@@ -16,30 +15,36 @@ export class SubscriptionsService {
         private readonly plansService: PlansService
     ) {}
 
+
+    getAll(){
+        return this.subscriptionsRepo.find()
+    }
+
     // create subscriptions or renew subscriptions
     // both will add new row in the table
     async subscribe(request: SubscribeRequest) {
         const player = await this.playersService.viewPlayer(request.player_id);
-        const plan = await this.plansService.checkPlanExist(request.plan_id);
-        const subscribtion = new Subscription();
-        subscribtion.player = player;
-        subscribtion.plan = plan
-        subscribtion.beginDate = request.beginDate
-        subscribtion.endDate = request.endDate
-        return await this.subscriptionsRepo.save(subscribtion);
+        const plan = await this.plansService.doesPlanExist(request.plan_id);
+        const subscription = new Subscription();
+        subscription.player = player;
+        subscription.plan = plan
+        subscription.beginDate = request.beginDate
+        subscription.endDate = request.endDate
+        subscription.price = plan.price
+        return await this.subscriptionsRepo.save(subscription);
     }
 
-    async updateSubDate(request : SubscribeRequest, requestId:number){
-        const sub = await this.doesSubExist(requestId)
+    async updateDate(request , requestId:number){
+        const sub = await this.doesSubscriptionExist(requestId)
         sub.beginDate = request.beginDate
         sub.endDate = request.endDate
         return this.subscriptionsRepo.save(sub)
     }
 
-    private async doesSubExist(id:number){
+    private async doesSubscriptionExist(id:number){
         const sub = await this.subscriptionsRepo.findOne({where:{id:id}})
         if(!sub){
-            throw new BadRequestException("Subscirption does'nt exist")
+            throw new BadRequestException("Subscription doesn't exist")
         }
         return sub
     }

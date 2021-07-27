@@ -1,9 +1,8 @@
 import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
-import {Plan} from "../entities/plan.entity";
+import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
-import {isNumber} from "util";
-import {CreatePlanRequest} from "../requests/createPlan.request";
+import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 
 @Injectable()
 export class PlansService {
@@ -25,7 +24,7 @@ export class PlansService {
             }})
     }
 
-    createPlan (req: CreatePlanRequest) {
+    newPlan (req: CreateNewPlanRequest) {
         // store plan
         const newPlan = new Plan()
         newPlan.name = req.name
@@ -36,10 +35,10 @@ export class PlansService {
         return this.plansRepo.save(newPlan)
     }
 
-    async updatePlan (newInf: CreatePlanRequest, id: number) {
+    async updatePlan (newInf: CreateNewPlanRequest, id: number) {
         //To get the current plan's data from the data base 
         //We search by id in the plans data base and then update the data
-        const result = await this.checkPlanExist(id)
+        const result = await this.doesPlanExist(id)
         result.name = newInf.name
         result.months = newInf.months
         result.price = newInf.price
@@ -49,14 +48,14 @@ export class PlansService {
     }
 
     async deletePlan(id: number) {
-        await this.checkPlanExist(id);
+        await this.doesPlanExist(id);
         await this.plansRepo.delete(id);
         return {message: 'Plan Deleted'};
     }
 
     async activatePlan(id: number) {
         // const plan = this.plansRepo.findOneOrFail(id)
-        const plan = await this.checkPlanExist(id);
+        const plan = await this.doesPlanExist(id);
         if (plan.isActivated) {
             throw new BadRequestException({
                 message: "Plan is already activated"
@@ -70,7 +69,7 @@ export class PlansService {
     //if the plan is already De-Acticated we throw an exception
     //if not we De-Activate it! 
     async deActivatePlan (id: number) {
-        const planStatus = await this.checkPlanExist(id)
+        const planStatus = await this.doesPlanExist(id)
         if(planStatus.isActivated){
             planStatus.isActivated = false
             await this.plansRepo.save(planStatus)
@@ -83,7 +82,7 @@ export class PlansService {
     }
 
 
-    async checkPlanExist(id: number) {
+    async doesPlanExist(id: number) {
         const plan = await this.plansRepo.findOne({
             where: {
                 id: id,

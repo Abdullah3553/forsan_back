@@ -1,8 +1,8 @@
 import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { createNewPlayerRequest } from "../requests/createnewplayer.request";
-import {Player} from "../entities/player.entity";
+import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
+import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class PlayersServices{
         const data = await this.playersRepo.find({
             relations: ['subscriptions']
         });
-        const newObj = data.map((player: Player) => {
+        return  data.map((player: Player) => {
 
             return {
                 id:player.id,
@@ -33,10 +33,9 @@ export class PlayersServices{
                 subscription:player.subscriptions[player.subscriptions.length-1]
             }
         })
-        return newObj
     }
 
-    async createNewPlayer(newInput: createNewPlayerRequest,photo : Express.Multer.File) : Promise<Player> {
+    async newPlayer(newInput: CreateNewPlayerRequest, photo : Express.Multer.File) : Promise<Player> {
         if (!photo) {
             // Validate for photo ...
             throw new BadRequestException({
@@ -69,12 +68,6 @@ export class PlayersServices{
 
     // delete player
     async deletePlayer(id: number) {
-        /*
-        To Delete A player, We need to delete all his subscriptions,
-         the personal picture and
-          the player data it self
-          once all these things deleted, the played has been completly deleted
-        */
         const player = await this.doesPlayerExist(id) // To get the player :d
         unlink(player.photo, (err)=>{ // delete photo of that player
             if(err){
@@ -90,7 +83,7 @@ export class PlayersServices{
     }
 
     //Edit player
-    async EditPlayer(newInf: createNewPlayerRequest, requestedId:number){
+    async editPlayer(newInf: CreateNewPlayerRequest, requestedId:number){
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
