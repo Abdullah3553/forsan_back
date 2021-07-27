@@ -1,4 +1,4 @@
-import {Body, Controller, Param, Post} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
 import {SubscriptionsService} from "../services/subscriptions.service";
 import {SubscribeRequest} from "../requests/subscribe.request";
 
@@ -8,13 +8,18 @@ export class SubscriptionsController {
         private readonly subscriptionsService: SubscriptionsService
     ) {}
 
-    @Post("/subscribe")
-    subscribePlayer(@Body() body: SubscribeRequest) {
+    @Get('/')
+    getAll(){
+        return this.subscriptionsService.getAll()
+    }
+
+    @Post("/new")
+    subscribe(@Body() body: SubscribeRequest) {
         return this.subscriptionsService.subscribe(body);
     }
     @Post("updateDate/:id")
-    updateDate(@Body() body:SubscribeRequest, @Param() parametars){
-        return this.subscriptionsService.updateSubDate(body, parametars.id)
+    updateDate(@Body() body, @Param() parametars){
+        return this.subscriptionsService.updateDate(body, parametars.id)
     }
 
 }

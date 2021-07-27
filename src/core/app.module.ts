@@ -10,7 +10,6 @@ import {ActivitiesModule} from "../activities/activities.module";
 import { ActivityPlayerModule } from 'src/activity-players/activity-player.module';
 import { ServicessModule} from "../servicess/servicess.module";
 import {ServiceIncomeModule} from "../serviceIncome/serviceIncome.module";
-import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {PlanIncomeModule} from "../planIncome/planIncome.module";
 
 @Module({
@@ -25,6 +24,10 @@ import {PlanIncomeModule} from "../planIncome/planIncome.module";
       ServiceIncomeModule,
       PlayersWeightsModule,
       PlanIncomeModule
+      ActivityPlayersModule,
+      ServicesIncomeModule,
+      PlansIncomeModule,
+      ActivityPlayerSubscriptionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

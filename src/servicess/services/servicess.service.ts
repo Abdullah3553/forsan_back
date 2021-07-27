@@ -1,11 +1,11 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { createNewServiceRequest } from "../requests/CreateNewService.request";
+import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import {Service} from "../entities/servicess.entity";
 
 @Injectable()
-export class servicessServices{
+export class ServicessServices {
 
     // Creating player's object 
     constructor(
@@ -14,7 +14,7 @@ export class servicessServices{
     ) {}
 
     // Add New Service Method
-    async addNewService(request : createNewServiceRequest){
+    async newService(request : CreateNewServiceRequest){
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
@@ -22,7 +22,7 @@ export class servicessServices{
     }
 
     //view all services
-    async viewAllServices(){
+    async getAll(){
         const allServices = await this.serviceRepo.find()
         if(allServices.length==0){
             // there are no services ...
@@ -32,23 +32,22 @@ export class servicessServices{
     }
 
     // delete a service
-    async deleteService(requsetId : number){
-        await this.serviceRepo.remove( await this.doesExist(requsetId))
+    async deleteService(requestId : number){
+        await this.serviceRepo.remove( await this.doesServiceExist(requestId))
         return {message:"The service has been deleted."}
     }
 
     //edit a service
-    async editService(requsetId : number, request:createNewServiceRequest){
-        const searched_service = await this.doesExist(requsetId)
+    async editService(requestId : number, request:CreateNewServiceRequest){
+        const searched_service = await this.doesServiceExist(requestId)
         searched_service.name = request.name
         searched_service.price = request.price
-        await this.serviceRepo.save(searched_service)
-        return {message:'The service has been Edited'}
+        return this.serviceRepo.save(searched_service)
 
     }
 
     // a function to check if the element exist on the database or not
-    async doesExist(id:number){
+    async doesServiceExist(id:number){
         const service = await this.serviceRepo.findOne({where:{id:id}})
         if(!service){
             // the service does not exist

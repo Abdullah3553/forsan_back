@@ -1,6 +1,6 @@
 import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import {PlansService} from "../services/plans.service";
-import {CreatePlanRequest} from "../requests/createPlan.request";
+import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 
 @Controller('plans')
 export class PlansController {
@@ -9,19 +9,19 @@ export class PlansController {
         private readonly plansService: PlansService
     ) {}
 
-    @Get()
+    @Get('/')
     getPlans() {
         return this.plansService.getAll();
     }
 
     @Get('/AllActive')
-    getActivePLans(){
+    getActivePlans(){
         return this.plansService.getActivePlans()
     }
 
-    @Post()
-    createPlan (@Body() body: CreatePlanRequest) {
-        return this.plansService.createPlan(body);
+    @Post('/new')
+    newPlan (@Body() body: CreateNewPlanRequest) {
+        return this.plansService.newPlan(body);
     }
 
     @Get("/activate/:id")
@@ -29,13 +29,13 @@ export class PlansController {
         return this.plansService.activatePlan(params.id);
     }
 
-    @Delete(":id")
+    @Delete("/delete/:id")
     deletePlan(@Param() params) {
         return this.plansService.deletePlan(params.id);
     }
 
     @Post("/update-plan/:id")
-    updatePlan(@Body() body: CreatePlanRequest, @Param() params){
+    updatePlan(@Body() body: CreateNewPlanRequest, @Param() params){
         return this.plansService.updatePlan(body, params.id)
     }
 

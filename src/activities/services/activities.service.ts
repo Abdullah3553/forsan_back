@@ -1,11 +1,11 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { createNewActivityRequest } from "../requests/CreateNewActivity.request";
-import {Activity} from "../entities/activity.entity";
+import { CreateNewActivityRequest } from "../requests/createNewActivity.request";
+import {Activity} from "../entities/activities.entity";
 
 @Injectable()
-export class activityServices{
+export class ActivitiesService {
 
     // Creating player's object 
     constructor(
@@ -14,11 +14,11 @@ export class activityServices{
     ) {}
 
     getAll(){
-        // Get all players from the table 
+        // Get all Activities from the table
         return this.activityRepo.find();
     }
 
-    async creatActivity(body : createNewActivityRequest){
+    async newActivity(body : CreateNewActivityRequest){
         // here we will make the new object and add it to the database
         const activity = new Activity()
         activity.name = body.name
@@ -37,7 +37,7 @@ export class activityServices{
         return{message:"Activity Deleted :d"}
     }
 
-    async editActivity(request : createNewActivityRequest, requsetId:number){
+    async editActivity(request : CreateNewActivityRequest, requsetId:number){
         const search_activity = await this.doesActivityExists(requsetId) // search function :D
         search_activity.name = request.name
         search_activity.coachName = request.coachName
@@ -52,8 +52,7 @@ export class activityServices{
         return this.doesActivityExists(requestId)
     }
 
-    // Non Callable Functions
-    private async doesActivityExists(activityId : number){
+     async doesActivityExists(activityId : number){
         const searched_activity = (await this.activityRepo.findOne({where:{id:activityId}}))
         if(!searched_activity){
             // if the activity doesn't exist then throw an exception
