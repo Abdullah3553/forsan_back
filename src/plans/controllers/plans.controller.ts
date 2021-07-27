@@ -19,7 +19,7 @@ export class PlansController {
         return this.plansService.getActivePlans()
     }
 
-    @Post()
+    @Post('/new')
     createPlan (@Body() body: CreateNewPlanRequest) {
         return this.plansService.newPlan(body);
     }
