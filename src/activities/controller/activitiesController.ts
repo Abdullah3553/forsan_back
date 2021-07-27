@@ -3,7 +3,7 @@ import { CreateNewActivityRequest } from "../requests/createNewActivity.request"
 import { ActivitiesService } from "../services/activities.service";
 
 
-@Controller('activities')
+@Controller('activity')
 export class ActivitiesController {
 
     constructor(

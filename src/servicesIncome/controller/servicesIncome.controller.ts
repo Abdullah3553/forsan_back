@@ -2,7 +2,7 @@ import {Controller, Get, Param} from "@nestjs/common";
 import {ServicesIncomeService} from "../service/servicesIncome.service";
 
 
-@Controller("servicesIncome")
+@Controller("serviceIncome")
 export class ServicesIncomeController {
     constructor(
         private readonly serviceIncomeService : ServicesIncomeService
