@@ -1,17 +1,16 @@
 import {IsDate, IsDecimal, IsNotEmpty,} from "class-validator"
-import {Player} from "../../players/entities/player.entity";
 
-export class createNewPlayersWeightsRequest {
+export class CreateNewPlayersWeightsRequest {
 
     @IsNotEmpty()
     @IsDate()
-    date:string
+    date:Date
 
     @IsNotEmpty()
     @IsDecimal()
     weight:string
 
     @IsNotEmpty()
-    player:Player
+    player_id: number
 
 }

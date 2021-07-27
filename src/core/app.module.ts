@@ -7,10 +7,12 @@ import { db_config } from './config'
 import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 import {ActivitiesModule} from "../activities/activities.module";
-import { ActivityPlayerModule } from 'src/activity-players/activity-player.module';
 import { ServicessModule} from "../servicess/servicess.module";
-import {ServiceIncomeModule} from "../serviceIncome/serviceIncome.module";
-import {PlanIncomeModule} from "../planIncome/planIncome.module";
+import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
+import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
+import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
+import {PlansIncomeModule} from "../plansIncome/plansIncome.module";
+import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 
 @Module({
   imports: [
@@ -20,14 +22,11 @@ import {PlanIncomeModule} from "../planIncome/planIncome.module";
       SubscriptionsModule,
       ActivitiesModule,
       ServicessModule,
-      ActivityPlayerModule,
-      ServiceIncomeModule,
-      PlayersWeightsModule,
-      PlanIncomeModule
       ActivityPlayersModule,
       ServicesIncomeModule,
+      PlayersWeightsModule,
       PlansIncomeModule,
-      ActivityPlayerSubscriptionsModule
+      ActivityPlayerSubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

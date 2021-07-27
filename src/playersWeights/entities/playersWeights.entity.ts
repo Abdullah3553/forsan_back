@@ -1,11 +1,11 @@
 import {Column, Entity,ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Player} from "../../players/entities/player.entity";
+import {Player} from "../../players/entities/players.entity";
 
 @Entity({
     name: "playersWeights",
 })
 
-export class PlayerWeights {
+export class PlayerWeight {
     @PrimaryGeneratedColumn()
     id: number
 

@@ -1,5 +1,5 @@
-import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param, Delete} from "@nestjs/common";
-import { createNewPlayersWeightsRequest } from "../requests/createNewPlayersWeights.request";
+import {Controller, Get, Post, Body, Param, Delete} from "@nestjs/common";
+import { CreateNewPlayersWeightsRequest } from "../requests/createNewPlayersWeightsRequest";
 import { PlayersWeightsServices } from "../services/playersWeights.service";
 
 
@@ -10,7 +10,21 @@ export class PlayersWeightsController {
         private readonly playersWeightsService : PlayersWeightsServices
     ){}
 
-    // TODO create an endpoint just for updating the photo
-    
+    @Get("/:id")
+    getAll(@Param() parameters){
+        return this.playersWeightsService.getAll(parameters.id)
+    }
+
+    @Post('/new/:id')
+    createNewWeight(@Body() body:CreateNewPlayersWeightsRequest, @Param() parameters){
+        return this.playersWeightsService.createNewWeight(body, parameters.id)
+    }
+
+    @Delete('delete/:id')
+    deleteWeight(@Param() parameters){
+        return this.playersWeightsService.deleteWeight(parameters.id)
+    }
+
+
 }
 

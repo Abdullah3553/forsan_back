@@ -1,6 +1,4 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {Subscription} from "../../subscriptions/entities/subscription.entity";
-import {PlayerWeights} from "../../playersWeights/entities/playersWeights.entity";
 import {Subscription} from "../../subscriptions/entities/subscriptions.entity";
 
 @Entity({
