@@ -7,9 +7,10 @@ import { db_config } from './config'
 import {PlayersModule} from "../players/players.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 import {ActivitiesModule} from "../activities/activities.module";
-import { ActivityPlayersModule } from 'src/activityPlayers/activityPlayers.module';
 import { ServicessModule} from "../servicess/servicess.module";
+import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
 import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
+import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {PlansIncomeModule} from "../plansIncome/plansIncome.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 
@@ -23,8 +24,9 @@ import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/
       ServicessModule,
       ActivityPlayersModule,
       ServicesIncomeModule,
+      PlayersWeightsModule,
       PlansIncomeModule,
-      ActivityPlayerSubscriptionsModule
+      ActivityPlayerSubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
