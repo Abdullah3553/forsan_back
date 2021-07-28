@@ -15,10 +15,6 @@ export class CreateNewPlayerRequest {
     height: string
 
     @IsNotEmpty()
-    @IsDecimal()
-    weight: string
-
-    @IsNotEmpty()
     @IsString()
     trainingPlan: string
 

@@ -17,9 +17,6 @@ export class Player {
     phoneNumber: string
 
     @Column()
-    weight: string
-
-    @Column()
     height: string
 
     @Column()

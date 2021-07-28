@@ -14,14 +14,19 @@ export class PlayersWeightsController {
         return this.playersWeightsService.getAll(parameters.id)
     }
 
-    @Post('/new/:id')
-    createNewWeight(@Body() body:CreateNewPlayersWeightsRequest, @Param() parameters){
-        return this.playersWeightsService.createNewWeight(body, parameters.id)
+    @Post('/new')
+    createNewWeight(@Body() body:CreateNewPlayersWeightsRequest){
+        return this.playersWeightsService.createNewWeight(body)
     }
 
     @Delete('delete/:id')
     deleteWeight(@Param() parameters){
         return this.playersWeightsService.deleteWeight(parameters.id)
+    }
+
+    @Post('edit/:id')
+    editWeight(@Body() body:CreateNewPlayersWeightsRequest, @Param() parameters){
+        return this.playersWeightsService.editWeight(body, parameters.id)
     }
 
 }

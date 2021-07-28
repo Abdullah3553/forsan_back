@@ -17,22 +17,23 @@ export class PlayersServices{
     async getAll() {
         // Get all players from the table 
         const data = await this.playersRepo.find({
-            relations: ['subscriptions']
+            relations: ['subscriptions' ,'playerWeights']
         });
-        return  data.map((player: Player) => {
+        const retTmp =   data.map((player: Player) => {
 
             return {
                 id:player.id,
                 name: player.name,
                 photo: player.photo,
                 height: player.height,
-                weight: player.weight,
+                weights: player.playerWeights,
                 phoneNumber: player.phoneNumber,
                 dietPlan: player.dietPlan,
                 trainingPlan: player.trainingPlan,
                 subscription:player.subscriptions[player.subscriptions.length-1]
             }
         })
+        return retTmp
     }
 
     async newPlayer(newInput: CreateNewPlayerRequest, photo : Express.Multer.File) : Promise<Player> {
@@ -53,7 +54,6 @@ export class PlayersServices{
             player.photo = photo.path
             player.phoneNumber = newInput.phoneNumber
             player.height = newInput.height
-            player.weight = newInput.weight
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
             return await this.playersRepo.save(player)
@@ -88,7 +88,6 @@ export class PlayersServices{
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
         newPlayerInfo.height = newInf.height
-        newPlayerInfo.weight = newInf.weight
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
         return await this.playersRepo.save(newPlayerInfo)

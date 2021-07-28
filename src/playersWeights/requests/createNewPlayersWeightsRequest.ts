@@ -1,9 +1,9 @@
-import {IsDate, IsDecimal, IsNotEmpty,} from "class-validator"
+import { IsDateString, IsDecimal, IsNotEmpty,} from "class-validator"
 
 export class CreateNewPlayersWeightsRequest {
 
     @IsNotEmpty()
-    @IsDate()
+    @IsDateString()
     date:Date
 
     @IsNotEmpty()
