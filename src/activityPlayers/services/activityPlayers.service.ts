@@ -21,9 +21,7 @@ export class ActivityPlayersService {
             return {
                 id: item.id,
                 name: item.name,
-                beginDate: item.activitySubscriptions[0]?.beginDate,
-                endDate: item.activitySubscriptions[0]?.endDate,
-                activity: item.activitySubscriptions[0]?.activity
+                subscription: item.activitySubscriptions[item.activitySubscriptions.length-1]
             }
         })
     }
