@@ -1,6 +1,6 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module} from "@nestjs/common";
-import { PlayersController } from "./controller/playersController";
+import { PlayersController } from "./controller/players.controller";
 import {PlayersServices} from "./services/players.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";

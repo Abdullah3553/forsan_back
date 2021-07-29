@@ -31,7 +31,9 @@ export class PlayersServices{
                 phoneNumber: player.phoneNumber,
                 dietPlan: player.dietPlan,
                 trainingPlan: player.trainingPlan,
-                subscription:player.subscriptions[player.subscriptions.length-1]
+                subscription:player.subscriptions[player.subscriptions.length-1],
+                freeze:player.freeze,
+                invited:player.invited
             }
         })
     }
@@ -111,9 +113,13 @@ export class PlayersServices{
 
     async inviteFriend(requestId:number, numberOfInvitedPLayers:number){
         const player = await this.doesPlayerExist(requestId)
+        const subscriptions = await this.getPlayerSubscriptions(requestId)
+        if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
+            throw new BadRequestException("This player subscription has ended")
+        }
         if(!player.freeze){
             // he didn't freeze before
-            if(player.invited + numberOfInvitedPLayers <= player.subscriptions[player.subscriptions.length-1].plan.numberOfExceptions ){
+            if(player.invited + numberOfInvitedPLayers <= subscriptions[subscriptions.length-1].plan.numberOfExceptions ){
                 player.invited += numberOfInvitedPLayers
                 return this.playersRepo.save(player)
             }
@@ -124,6 +130,10 @@ export class PlayersServices{
 
     async freezePlayer(requestId:number){
         const player = await this.doesPlayerExist(requestId)
+        const subscriptions = await  this.getPlayerSubscriptions(requestId)
+        if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
+            throw new BadRequestException("This player subscription has ended")
+        }
         if(player.invited == 0){
             // He didn't invite any Players
             if(!player.freeze){
@@ -135,6 +145,22 @@ export class PlayersServices{
         }
         throw new BadRequestException("You have invited a player before so You CANNOT freeze")
 
+    }
+    async getPlayerSubscriptions(id:number){
+        const player = await this.playersRepo.findOne({
+            relations:['subscriptions'],
+            where:{
+                id:id
+            }
+        })
+        if(!player){
+            throw new NotFoundException("Player doesn't Exist")
+        }
+        return player.subscriptions
+    }
+
+    isEndedSubscription(subscription){
+        return moment(subscription.endDate).isBefore(moment())
     }
 
 
