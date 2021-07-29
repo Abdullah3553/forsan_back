@@ -1,4 +1,4 @@
-import {IsNotEmpty} from "class-validator";
+import {IsDateString, IsNotEmpty} from "class-validator";
 
 export class SubscribeRequest {
     @IsNotEmpty()
@@ -6,7 +6,9 @@ export class SubscribeRequest {
     @IsNotEmpty()
     plan_id: number
     @IsNotEmpty()
-    beginDate: Date
+    @IsDateString()
+    beginDate: string
     @IsNotEmpty()
-    endDate: Date
+    @IsDateString()
+    endDate: string
 }

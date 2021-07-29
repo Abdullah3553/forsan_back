@@ -13,12 +13,12 @@ export class Subscription {
     @Column({
         type: 'date'
     })
-    beginDate: Date
+    beginDate: string
 
     @Column({
         type: 'date'
     })
-    endDate: Date
+    endDate: string
 
     @Column('double')
     price:number

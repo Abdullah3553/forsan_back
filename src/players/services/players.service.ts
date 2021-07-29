@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
+import * as moment from "moment";
 
 @Injectable()
 export class PlayersServices{
@@ -19,7 +20,7 @@ export class PlayersServices{
         const data = await this.playersRepo.find({
             relations: ['subscriptions' ,'playerWeights']
         });
-        const retTmp =   data.map((player: Player) => {
+        return data.map((player: Player) => {
 
             return {
                 id:player.id,
@@ -33,7 +34,6 @@ export class PlayersServices{
                 subscription:player.subscriptions[player.subscriptions.length-1]
             }
         })
-        return retTmp
     }
 
     async newPlayer(newInput: CreateNewPlayerRequest, photo : Express.Multer.File) : Promise<Player> {
@@ -103,11 +103,40 @@ export class PlayersServices{
     async doesPlayerExist(id:number){
         const player = await this.playersRepo.findOne({where:{id:id}})
         if(!player){
-            throw new NotFoundException({mesaage:"Player Not Found"})
+            throw new NotFoundException({message:"Player Not Found"})
         }
         return player
 
     }
+
+    async inviteFriend(requestId:number, numberOfInvitedPLayers:number){
+        const player = await this.doesPlayerExist(requestId)
+        if(!player.freeze){
+            // he didn't freeze before
+            if(player.invited + numberOfInvitedPLayers <= player.subscriptions[player.subscriptions.length-1].plan.numberOfExceptions ){
+                player.invited += numberOfInvitedPLayers
+                return this.playersRepo.save(player)
+            }
+            throw new BadRequestException("You have used all your invitations")
+        }
+        throw new BadRequestException("You can't invite a friend because You Froze before")
+    }
+
+    async freezePlayer(requestId:number){
+        const player = await this.doesPlayerExist(requestId)
+        if(player.invited == 0){
+            // He didn't invite any Players
+            if(!player.freeze){
+                // he didn't freeze before
+                player.freeze = true
+                return this.playersRepo.save(player)
+            }
+            throw new BadRequestException("You have already froze this player before")
+        }
+        throw new BadRequestException("You have invited a player before so You CANNOT freeze")
+
+    }
+
 
     // TODO: create the service method to update the player photo
 }

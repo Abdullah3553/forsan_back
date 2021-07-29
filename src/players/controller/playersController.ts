@@ -37,6 +37,16 @@ export class PlayersController {
         return this.playersService.deletePlayer(params.id)
     }
 
+    @Post("/inviteFriend/:id")
+    inviteFriend(@Param() parameters, @Body() body){
+        return this.playersService.inviteFriend(parameters.id, body.numberOfInvitedPlayers)
+    }
+
+    @Get("/freeze/:id")
+    freezePlayer(@Param() parameters){
+        return this.playersService.freezePlayer(parameters.id)
+    }
+
     // TODO create an endpoint just for updating the photo
     
 }

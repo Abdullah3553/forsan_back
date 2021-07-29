@@ -32,6 +32,7 @@ export class PlansService {
         newPlan.price = req.price
         newPlan.description = req.description
         newPlan.isActivated = req.isActivated
+        newPlan.numberOfExceptions = req.numberOfExceptions
         return this.plansRepo.save(newPlan)
     }
 
@@ -44,6 +45,7 @@ export class PlansService {
         result.price = newInf.price
         result.description = newInf.description
         result.isActivated = newInf.isActivated
+        result.numberOfExceptions = newInf.numberOfExceptions
         return this.plansRepo.save(result)
     }
 

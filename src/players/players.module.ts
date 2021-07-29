@@ -5,6 +5,7 @@ import {PlayersServices} from "./services/players.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {Player} from "./entities/players.entity";
+import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 
 
 const storage = diskStorage({

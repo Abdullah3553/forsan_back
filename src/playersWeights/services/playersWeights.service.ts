@@ -40,6 +40,7 @@ export class PlayersWeightsServices {
         const weight = await this.doesWeightExist(requestedId)
         weight.weight = request.weight
         weight.date = request.date
+        return this.playersWeightsRepo.save(weight)
     }
 
     async doesWeightExist(id){

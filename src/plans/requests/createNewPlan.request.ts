@@ -1,4 +1,4 @@
-import {IsNotEmpty} from "class-validator";
+import {IsNotEmpty, IsNumber} from "class-validator";
 
 export class CreateNewPlanRequest {
     @IsNotEmpty()
@@ -14,4 +14,8 @@ export class CreateNewPlanRequest {
     description: string
 
     isActivated?: boolean
+
+    @IsNotEmpty()
+    @IsNumber()
+    numberOfExceptions:number
 }

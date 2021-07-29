@@ -28,6 +28,12 @@ export class Player {
     @Column('text')
     dietPlan:string
 
+    @Column({type:'tinyint', default:false, width:1})
+    freeze:boolean
+
+    @Column({type:'smallint', default:0})
+    invited:number
+
     // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
     subscriptions: Subscription[]

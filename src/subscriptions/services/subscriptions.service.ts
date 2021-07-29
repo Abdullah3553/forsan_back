@@ -41,7 +41,7 @@ export class SubscriptionsService {
         return this.subscriptionsRepo.save(sub)
     }
 
-    private async doesSubscriptionExist(id:number){
+    async doesSubscriptionExist(id:number){
         const sub = await this.subscriptionsRepo.findOne({where:{id:id}})
         if(!sub){
             throw new BadRequestException("Subscription doesn't exist")

@@ -23,6 +23,8 @@ export class Plan {
     @Column()
     months: number
 
+    @Column('smallint')
+    numberOfExceptions: number
 
     @Column({
         default: false
