@@ -28,8 +28,8 @@ export class Player {
     @Column('text')
     dietPlan:string
 
-    @Column({type:'tinyint', default:false, width:1})
-    freeze:boolean
+    @Column({type:'smallint', default:0})
+    freeze:number
 
     @Column({type:'smallint', default:0})
     invited:number

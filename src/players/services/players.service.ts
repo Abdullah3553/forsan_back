@@ -91,37 +91,40 @@ export class PlayersServices{
         return await this.playersRepo.save(newPlayerInfo)
     }
 
-    async inviteFriend(requestId:number, numberOfInvitedPLayers:number){
+    async inviteFriend(requestId:number, invites:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
+
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
+            // validate for ended subscription
             throw new BadRequestException("This player subscription has ended")
         }
-        if(!player.freeze){
+
+        if(player.freeze === 0){
             // he didn't freeze before
-            if(player.invited + numberOfInvitedPLayers <= subscriptions[subscriptions.length-1].plan.invites ){
-                player.invited += numberOfInvitedPLayers
+            if(player.invited + invites <= subscriptions[subscriptions.length-1].plan.invites ){
+                player.invited += invites
                 return this.playersRepo.save(player)
             }
-            throw new BadRequestException("You have used all your invitations")
+            throw new BadRequestException("You have exeeded the limit of invites ")
         }
         throw new BadRequestException("You can't invite a friend because You Froze before")
     }
 
-    async freezePlayer(requestId:number){
+    async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await  this.getPlayerSubscriptions(requestId)
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }
-        if(player.invited == 0){
+        if(player.invited === 0){
             // He didn't invite any Players
-            if(!player.freeze){
+            if(player.freeze + freezeDays <= subscriptions[subscriptions.length].plan.freezeDays){
                 // he didn't freeze before
-                player.freeze = true
+                player.freeze += freezeDays
                 return this.playersRepo.save(player)
             }
-            throw new BadRequestException("You have already froze this player before")
+            throw new BadRequestException("You have exeeded the limit of freeze days ")
         }
         throw new BadRequestException("You have invited a player before so You CANNOT freeze")
 
