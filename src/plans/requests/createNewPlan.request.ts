@@ -17,5 +17,9 @@ export class CreateNewPlanRequest {
 
     @IsNotEmpty()
     @IsNumber()
-    numberOfExceptions:number
+    invites:number
+
+    @IsNotEmpty()
+    @IsNumber()
+    freezeDays:number
 }

@@ -23,7 +23,7 @@ export class SubscriptionsService {
     // create subscriptions or renew subscriptions
     // both will add new row in the table
     async subscribe(request: SubscribeRequest) {
-        const player = await this.playersService.viewPlayer(request.player_id);
+        const player = await this.playersService.doesPlayerExist(request.player_id);
         const plan = await this.plansService.doesPlanExist(request.plan_id);
         const subscription = new Subscription();
         subscription.player = player;

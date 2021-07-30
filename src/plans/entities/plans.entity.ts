@@ -24,10 +24,15 @@ export class Plan {
     months: number
 
     @Column('smallint')
-    numberOfExceptions: number
+    invites: number
+
+    @Column('smallint')
+    freezeDays: number
 
     @Column({
-        default: false
+        default: false,
+        type:"smallint",
+        width:1
     })
     isActivated: boolean
 

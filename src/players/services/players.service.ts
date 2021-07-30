@@ -46,12 +46,7 @@ export class PlayersServices{
             })
         }
         const player = new Player();
-        const result = await this.playersRepo.findOne(
-            {
-                where:{phoneNumber: newInput.phoneNumber}
-            }
-        )
-        if(!result){
+        if(!await this.doesPhoneNumberExist(newInput.phoneNumber, player.id)){
             player.name = newInput.name
             player.photo = photo.path
             player.phoneNumber = newInput.phoneNumber
@@ -87,28 +82,13 @@ export class PlayersServices{
     //Edit player
     async editPlayer(newInf: CreateNewPlayerRequest, requestedId:number){
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
+        await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
         newPlayerInfo.height = newInf.height
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
         return await this.playersRepo.save(newPlayerInfo)
-    }
-
-    viewPlayer(requestedId: number){
-        // Search by id at the database
-        return this.playersRepo.findOneOrFail({
-            where: {id: requestedId},
-        });
-    }
-
-    async doesPlayerExist(id:number){
-        const player = await this.playersRepo.findOne({where:{id:id}})
-        if(!player){
-            throw new NotFoundException({message:"Player Not Found"})
-        }
-        return player
-
     }
 
     async inviteFriend(requestId:number, numberOfInvitedPLayers:number){
@@ -119,7 +99,7 @@ export class PlayersServices{
         }
         if(!player.freeze){
             // he didn't freeze before
-            if(player.invited + numberOfInvitedPLayers <= subscriptions[subscriptions.length-1].plan.numberOfExceptions ){
+            if(player.invited + numberOfInvitedPLayers <= subscriptions[subscriptions.length-1].plan.invites ){
                 player.invited += numberOfInvitedPLayers
                 return this.playersRepo.save(player)
             }
@@ -161,6 +141,31 @@ export class PlayersServices{
 
     isEndedSubscription(subscription){
         return moment(subscription.endDate).isBefore(moment())
+    }
+
+    // Validation methods
+    async doesPlayerExist(id:number){
+        const player = await this.playersRepo.findOne({where:{id:id}})
+        if(!player){
+            throw new NotFoundException({message:"Player Not Found"})
+        }
+        return player
+
+    }
+
+    async doesPhoneNumberExist(phoneNumber:string, playerId:number){
+        const player = await this.playersRepo.findOne({where:{phoneNumber:phoneNumber}})
+        if(!player){
+            // that means that phone number is availbe
+            return false
+        }
+        // here it means that phoneNumber found
+        if(player.id != playerId){
+            // means that the phone number is for another player
+            throw new BadRequestException("This phone number is already in use")
+        }
+        // means that the phone number is fond but it's for the player him self
+        return false
     }
 
 

@@ -18,7 +18,7 @@ export class PlayersController {
 
     @Get("/:id")
     viewPlayer(@Param() params){
-        return this.playersService.viewPlayer(params.id);
+        return this.playersService.doesPlayerExist(params.id);
     }
 
     @Post("/new")
