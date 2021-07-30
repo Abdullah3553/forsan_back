@@ -16,7 +16,7 @@ export class PlayerWeight {
     weight:string
 
     @ManyToOne(()=>Player, player=>player.id, {
-        eager : true,
+        eager : false,
         onDelete : "CASCADE",
         onUpdate : "CASCADE"
     })

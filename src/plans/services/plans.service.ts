@@ -3,6 +3,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
+import * as moment from "moment/moment";
 
 @Injectable()
 export class PlansService {
@@ -53,6 +54,7 @@ export class PlansService {
 
     async deletePlan(id: number) {
         await this.doesPlanExist(id);
+        await this.isPlanDeletable(id)
         await this.plansRepo.delete(id);
         return {message: 'Plan Deleted'};
     }
@@ -85,7 +87,6 @@ export class PlansService {
         }
     }
 
-
     async doesPlanExist(id: number) {
         const plan = await this.plansRepo.findOne({
             where: {
@@ -98,6 +99,27 @@ export class PlansService {
             })
         }
         return plan
+    }
+
+    async isPlanDeletable(planId:number){
+        // find all subscription of a plan
+        const plan = await this.plansRepo.findOne({
+            relations:['subscriptions'],
+            where:{
+                id:planId
+            }
+        })
+        for(let i=0;i<plan.subscriptions.length;i++){
+            if(moment(plan.subscriptions[i].endDate).isAfter(moment())){
+                // this is an active subscription
+                throw new BadRequestException("You CANNOT delete a plan if it has at least 1 active subscription")
+            }
+        }
+        return true
+    }
+
+    async test(body){
+        return { message:"This is a test message "}
     }
 
 }

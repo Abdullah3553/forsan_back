@@ -26,6 +26,8 @@ export class SubscriptionsService {
         const player = await this.playersService.doesPlayerExist(request.player_id);
         const plan = await this.plansService.doesPlanExist(request.plan_id);
         const subscription = new Subscription();
+        player.freeze = 0
+        player.invited = 0
         subscription.player = player;
         subscription.plan = plan
         subscription.beginDate = request.beginDate
