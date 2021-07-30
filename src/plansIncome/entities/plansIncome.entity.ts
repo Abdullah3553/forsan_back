@@ -18,7 +18,7 @@ export class PlanIncome{
     numberOfPlayers: number
 
     @ManyToOne ( () => Plan, plan => plan.id, {
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
         onUpdate: "CASCADE",
         eager: true
     })

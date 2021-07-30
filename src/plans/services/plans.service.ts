@@ -3,14 +3,15 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
-import * as moment from "moment/moment";
+import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
 
 @Injectable()
 export class PlansService {
 
     constructor(
         @InjectRepository(Plan)
-        private readonly plansRepo:  Repository<Plan>
+        private readonly plansRepo:  Repository<Plan>,
+        private readonly partialSubscriptionService : PartialSubscriptionsService
     ) {}
 
     getAll () {
@@ -53,10 +54,13 @@ export class PlansService {
     }
 
     async deletePlan(id: number) {
-        await this.doesPlanExist(id);
-        await this.isPlanDeletable(id)
-        await this.plansRepo.delete(id);
-        return {message: 'Plan Deleted'};
+
+        if(!await this.partialSubscriptionService.doesPlanHasActiveSubscriptions(id) && await this.doesPlanExist(id)){
+            //if this condition is true , that means the plan is ok to be deleted
+            await this.plansRepo.delete(id);
+            return {message: 'Plan Deleted'};
+        }
+        // if the condition is not true, each function call will throw an exception if it's false
     }
 
     async activatePlan(id: number) {
@@ -72,7 +76,7 @@ export class PlansService {
     }
     
     //we create an object to get the current plan status
-    //if the plan is already De-Acticated we throw an exception
+    //if the plan is already De-Activated we throw an exception
     //if not we De-Activate it! 
     async deActivatePlan (id: number) {
         const planStatus = await this.doesPlanExist(id)
@@ -101,25 +105,9 @@ export class PlansService {
         return plan
     }
 
-    async isPlanDeletable(planId:number){
-        // find all subscription of a plan
-        const plan = await this.plansRepo.findOne({
-            relations:['subscriptions'],
-            where:{
-                id:planId
-            }
-        })
-        for(let i=0;i<plan.subscriptions.length;i++){
-            if(moment(plan.subscriptions[i].endDate).isAfter(moment())){
-                // this is an active subscription
-                throw new BadRequestException("You CANNOT delete a plan if it has at least 1 active subscription")
-            }
-        }
-        return true
-    }
-
     async test(body){
-        return { message:"This is a test message "}
+        return {message:"test"}
+
     }
 
 }
