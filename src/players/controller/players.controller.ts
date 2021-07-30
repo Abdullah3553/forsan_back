@@ -39,12 +39,12 @@ export class PlayersController {
 
     @Post("/inviteFriend/:id")
     inviteFriend(@Param() parameters, @Body() body){
-        return this.playersService.inviteFriend(parameters.id, body.numberOfInvitedPlayers)
+        return this.playersService.inviteFriend(parameters.id, body.invites)
     }
 
-    @Get("/freeze/:id")
-    freezePlayer(@Param() parameters){
-        return this.playersService.freezePlayer(parameters.id)
+    @Post("/freeze/:id")
+    freezePlayer(@Param() parameters, @Body() body){
+        return this.playersService.freezePlayer(parameters.id, body.freezeDays)
     }
 
     // TODO create an endpoint just for updating the photo

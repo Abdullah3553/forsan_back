@@ -113,13 +113,13 @@ export class PlayersServices{
 
     async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
-        const subscriptions = await  this.getPlayerSubscriptions(requestId)
+        const subscriptions = await this.getPlayerSubscriptions(requestId)
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }
         if(player.invited === 0){
             // He didn't invite any Players
-            if(player.freeze + freezeDays <= subscriptions[subscriptions.length].plan.freezeDays){
+            if(player.freeze + freezeDays <= subscriptions[subscriptions.length-1].plan.freezeDays){
                 // he didn't freeze before
                 player.freeze += freezeDays
                 return this.playersRepo.save(player)
@@ -137,6 +137,9 @@ export class PlayersServices{
             }
         })
         if(!player){
+            if(player.subscriptions.length===0){
+                throw new NotFoundException("Player has no subscriptions")
+            }
             throw new NotFoundException("Player doesn't Exist")
         }
         return player.subscriptions
