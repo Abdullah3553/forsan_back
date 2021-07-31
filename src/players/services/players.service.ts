@@ -114,7 +114,7 @@ export class PlayersServices{
     async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
-        if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
+        if(!this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }
         if(player.invited === 0){
@@ -146,6 +146,7 @@ export class PlayersServices{
     }
 
     isEndedSubscription(subscription){
+        
         return moment(subscription.endDate).isBefore(moment())
     }
 

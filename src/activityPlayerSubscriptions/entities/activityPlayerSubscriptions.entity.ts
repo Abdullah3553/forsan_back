@@ -22,6 +22,7 @@ export class ActivityPlayerSubscription {
     @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
+        eager:true
     })
     @JoinColumn()
     activityPlayer: ActivityPlayer

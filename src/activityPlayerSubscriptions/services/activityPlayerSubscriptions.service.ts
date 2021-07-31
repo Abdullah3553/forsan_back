@@ -17,8 +17,20 @@ export class ActivityPlayerSubscriptionsService {
         private readonly activityPlayerService : ActivityPlayersService,
     ){}
 
-    getAll(){
-        return this.activityPlayerSubscriptionRepo.find()
+    async getAll(){
+        return await this.activityPlayerSubscriptionRepo.find()
+       // return allSubscriptions.map(item=>{
+      //      return{
+      //          ...item,
+      //          player_id:item.activityPlayer
+     //       }
+       // })
+    }
+
+    getAllActiviyPlayerSubscription(activityPlayerId:number){
+        return this.activityPlayerSubscriptionRepo.find(
+            {where: {activityPlayer:{id:activityPlayerId}}}
+        )
     }
 
     async newSubscription(request:CreateNewActivityPlayerSubscriptionRequest){
@@ -45,4 +57,6 @@ export class ActivityPlayerSubscriptionsService {
         }
         return subscription
     }
+
+
 }
