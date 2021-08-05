@@ -17,7 +17,28 @@ export class ActivityPlayerSubscriptionsService {
         private readonly activityPlayerService : ActivityPlayersService,
     ){}
 
-    async getAll(){
+    async getSinglePlayer(playerId: number){
+        return await this.activityPlayerSubscriptionRepo.find({where:{
+            activityPlayer:{
+                id:playerId
+            }
+        } })
+    }
+    async getAll(limit, page) {
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1)* limit)
+
+        const data: any = await this.activityPlayerSubscriptionRepo.findAndCount({
+            take: limit,
+            skip: offset,
+        })
+        return {
+            items: data[0],
+            count: data[1]
+        }
+        
+        
         return await this.activityPlayerSubscriptionRepo.find()
        // return allSubscriptions.map(item=>{
       //      return{
@@ -26,6 +47,8 @@ export class ActivityPlayerSubscriptionsService {
      //       }
        // })
     }
+
+
 
     getAllActiviyPlayerSubscription(activityPlayerId:number){
         return this.activityPlayerSubscriptionRepo.find(
