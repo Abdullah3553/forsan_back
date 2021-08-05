@@ -17,6 +17,13 @@ export class ActivityPlayerSubscriptionsService {
         private readonly activityPlayerService : ActivityPlayersService,
     ){}
 
+    async getSinglePlayer(playerId: number){
+        return await this.activityPlayerSubscriptionRepo.find({where:{
+            activityPlayer:{
+                id:playerId
+            }
+        } })
+    }
     async getAll(limit, page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
@@ -40,6 +47,8 @@ export class ActivityPlayerSubscriptionsService {
      //       }
        // })
     }
+
+
 
     getAllActiviyPlayerSubscription(activityPlayerId:number){
         return this.activityPlayerSubscriptionRepo.find(
