@@ -18,6 +18,11 @@ export class SubscriptionsController {
         return this.subscriptionsService.getAllToday()
     }
 
+    @Get('/:id')
+    getAllForPlayer(@Param() param){
+        return this.subscriptionsService.getAllForPlayer(param.id)
+    }
+
     @Post("/new")
     subscribe(@Body() body: SubscribeRequest) {
         return this.subscriptionsService.subscribe(body);

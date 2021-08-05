@@ -27,6 +27,19 @@ export class SubscriptionsService {
             }
         })
     }
+    async getAllForPlayer(playerId:number){
+        const subscriptions = await this.subscriptionsRepo.find({
+            where:{
+                player:{
+                    id:playerId
+                }
+            }
+        })
+        if(subscriptions.length === 0){
+            throw new BadRequestException("This player has no subscriptions")
+        }
+        return subscriptions
+    }
 
     // create subscriptions or renew subscriptions
     // both will add new row in the table

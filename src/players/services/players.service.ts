@@ -5,6 +5,7 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
 import * as moment from "moment";
+import {log} from "util";
 
 @Injectable()
 export class PlayersServices{
@@ -113,7 +114,7 @@ export class PlayersServices{
     async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
-        if(!this.isEndedSubscription(subscriptions[subscriptions.length-1])){
+        if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }
         if(player.invited === 0){
