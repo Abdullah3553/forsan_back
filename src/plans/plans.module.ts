@@ -1,4 +1,4 @@
-import {forwardRef, Module} from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { PlansController } from './controllers/plans.controller';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Plan} from "./entities/plans.entity";

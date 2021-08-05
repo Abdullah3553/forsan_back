@@ -94,7 +94,6 @@ export class PlayersServices{
     async inviteFriend(requestId:number, invites:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
-
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             // validate for ended subscription
             throw new BadRequestException("This player subscription has ended")
@@ -145,12 +144,19 @@ export class PlayersServices{
         return player.subscriptions
     }
 
-    isEndedSubscription(subscription){
-        
-        return moment(subscription.endDate).isBefore(moment())
+    async resetFreezeAndInvites(playerId:number){
+        const player = await this.doesPlayerExist(playerId)
+        player.freeze = 0
+        player.invited = 0
+        return this.playersRepo.save(player)
     }
 
+
     // Validation methods
+    isEndedSubscription(subscription){
+        
+            return moment(subscription.endDate).isBefore(moment())
+        }
     async doesPlayerExist(id:number){
         const player = await this.playersRepo.findOne({where:{id:id}})
         if(!player){

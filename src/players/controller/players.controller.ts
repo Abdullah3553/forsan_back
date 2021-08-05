@@ -47,6 +47,11 @@ export class PlayersController {
         return this.playersService.freezePlayer(parameters.id, body.freezeDays)
     }
 
+    @Post("test")
+    test(@Body() body){
+        return this.playersService.resetFreezeAndInvites(body.id)
+    }
+
     // TODO create an endpoint just for updating the photo
     
 }

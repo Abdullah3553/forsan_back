@@ -1,6 +1,5 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Subscription} from "../../subscriptions/entities/subscriptions.entity";
-import { PlanIncome } from "src/plansIncome/entities/plansIncome.entity";
 
 
 
@@ -40,6 +39,4 @@ export class Plan {
     @OneToMany(() => Subscription, sub => sub.plan )
     subscriptions: Subscription[]
 
-    @OneToMany( () => PlanIncome, planIncome => planIncome.plan)
-    plansIncome: PlanIncome[]
 }

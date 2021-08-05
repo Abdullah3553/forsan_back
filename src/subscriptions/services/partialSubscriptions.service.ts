@@ -13,6 +13,7 @@ export class PartialSubscriptionsService{
     ) {}
 
     async getAllActiveSubscriptionsForPlan(planId:number){
+        // this function for a better readiblity
         return await this.subscriptionRepo.find({
             where:{
                 plan:{

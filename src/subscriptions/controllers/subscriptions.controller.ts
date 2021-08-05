@@ -13,13 +13,21 @@ export class SubscriptionsController {
         return this.subscriptionsService.getAll()
     }
 
+    @Get('/today')
+    getAllToday(){
+        return this.subscriptionsService.getAllToday()
+    }
+
     @Post("/new")
     subscribe(@Body() body: SubscribeRequest) {
         return this.subscriptionsService.subscribe(body);
     }
     @Post("updateDate/:id")
     updateDate(@Body() body, @Param() parametars){
-        return this.subscriptionsService.updateDate(body, parametars.id)
+        return this.subscriptionsService.updateDate({beginDate: body.beginDate,
+            endDate: body.endDate,
+        }
+        , parametars.id)
     }
 
 }

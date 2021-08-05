@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Plan} from "../../plans/entities/plans.entity";
 import {Player} from "../../players/entities/players.entity";
 
@@ -21,7 +21,12 @@ export class Subscription {
     endDate: string
 
     @Column('double')
-    price:number
+    payedMoney:number
+
+    @Column('date')
+    creationDate:string
+
+    //Relations :-
 
     @ManyToOne( () => Player, player => player.id,{
         onDelete: "CASCADE",
@@ -37,5 +42,8 @@ export class Subscription {
     })
     @JoinColumn()
     plan: Plan
+
+    // @OneToOne( () => SubscriptionIncome, subscriptionIncome => subscriptionIncome.id)
+    // subscriptionIncome: SubscriptionIncome
 }
 

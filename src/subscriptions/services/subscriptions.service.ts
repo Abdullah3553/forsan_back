@@ -5,6 +5,7 @@ import {Repository} from "typeorm";
 import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
+import * as moment from "moment";
 
 @Injectable()
 export class SubscriptionsService {
@@ -19,20 +20,26 @@ export class SubscriptionsService {
     getAll(){
         return this.subscriptionsRepo.find()
     }
+    getAllToday(){
+        return this.subscriptionsRepo.find({
+            where:{
+                creationDate:moment().format("yyyy-MM-DD")
+            }
+        })
+    }
 
     // create subscriptions or renew subscriptions
     // both will add new row in the table
     async subscribe(request: SubscribeRequest) {
-        const player = await this.playersService.doesPlayerExist(request.player_id);
+        const player = await this.playersService.resetFreezeAndInvites(request.player_id)
         const plan = await this.plansService.doesPlanExist(request.plan_id);
         const subscription = new Subscription();
-        player.freeze = 0
-        player.invited = 0
         subscription.player = player;
         subscription.plan = plan
         subscription.beginDate = request.beginDate
         subscription.endDate = request.endDate
-        subscription.price = plan.price
+        subscription.payedMoney = plan.price
+        subscription.creationDate = moment().format('yyyy-MM-DD')
         return await this.subscriptionsRepo.save(subscription);
     }
 

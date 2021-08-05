@@ -11,7 +11,6 @@ import { ServicessModule} from "../servicess/servicess.module";
 import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
 import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
 import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
-import {PlansIncomeModule} from "../plansIncome/plansIncome.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 
 @Module({
@@ -25,7 +24,6 @@ import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/
       ActivityPlayersModule,
       ServicesIncomeModule,
       PlayersWeightsModule,
-      PlansIncomeModule,
       ActivityPlayerSubscriptionsModule,
   ],
   controllers: [AppController],
