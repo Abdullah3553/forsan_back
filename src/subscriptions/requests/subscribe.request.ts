@@ -1,4 +1,4 @@
-import {IsDateString, IsNotEmpty} from "class-validator";
+import {IsDateString, IsNotEmpty, IsNumber} from "class-validator";
 
 export class SubscribeRequest {
     @IsNotEmpty()
@@ -11,4 +11,7 @@ export class SubscribeRequest {
     @IsNotEmpty()
     @IsDateString()
     endDate: string
+    @IsNotEmpty()
+    @IsNumber()
+    payedMoney:number
 }

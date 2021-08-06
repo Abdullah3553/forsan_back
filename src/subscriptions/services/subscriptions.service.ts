@@ -51,7 +51,7 @@ export class SubscriptionsService {
         subscription.plan = plan
         subscription.beginDate = request.beginDate
         subscription.endDate = request.endDate
-        subscription.payedMoney = plan.price
+        subscription.payedMoney = request.payedMoney
         subscription.creationDate = moment().format('yyyy-MM-DD')
         return await this.subscriptionsRepo.save(subscription);
     }
