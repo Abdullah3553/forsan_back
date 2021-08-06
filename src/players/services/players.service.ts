@@ -5,7 +5,6 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
 import * as moment from "moment";
-import {log} from "util";
 
 @Injectable()
 export class PlayersServices{
@@ -159,11 +158,34 @@ export class PlayersServices{
             return moment(subscription.endDate).isBefore(moment())
         }
     async doesPlayerExist(id:number){
-        const player = await this.playersRepo.findOne({where:{id:id}})
+        const player = await this.playersRepo.findOne({where:{id:id},
+            relations: ['subscriptions' ,'playerWeights']})
         if(!player){
             throw new NotFoundException({message:"Player Not Found"})
         }
         return player
+
+    }
+
+    async viewPlayer(id:number){
+        const player = await this.playersRepo.findOne({where:{id:id},
+            relations: ['subscriptions' ,'playerWeights']})
+        if(!player){
+            throw new NotFoundException({message:"Player Not Found"})
+        }
+        return {
+            id:player.id,
+            name: player.name,
+            photo: player.photo,
+            height: player.height,
+            weights: player.playerWeights,
+            phoneNumber: player.phoneNumber,
+            dietPlan: player.dietPlan,
+            trainingPlan: player.trainingPlan,
+            subscription:player.subscriptions[player.subscriptions.length-1],
+            freeze:player.freeze,
+            invited:player.invited
+        }
 
     }
 
