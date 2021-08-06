@@ -5,7 +5,7 @@ import {ActivityPlayerSubscription} from "../entities/activityPlayerSubscription
 import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
-import * as moment from "moment";
+import * as moment from "moment/moment";
 
 
 @Injectable()

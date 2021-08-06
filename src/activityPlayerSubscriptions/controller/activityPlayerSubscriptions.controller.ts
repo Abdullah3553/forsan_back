@@ -3,12 +3,16 @@ import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewA
 import {ActivityPlayerSubscriptionsService} from "../services/activityPlayerSubscriptions.service";
 
 
-
 @Controller('activityPlayerSubscription')
 export class ActivityPlayerSubscriptionsController {
     constructor(
         private readonly activityPlayerSubService: ActivityPlayerSubscriptionsService
     ){}
+
+    @Get('/today')
+    getToday(){
+        return this.activityPlayerSubService.todaySubscriptions()
+    }
 
     @Get('/')
     getAll(@Query() { limit, page}){
@@ -31,8 +35,5 @@ export class ActivityPlayerSubscriptionsController {
         return this.activityPlayerSubService.updateSubDate(body, parametars.id)
     }
 
-    @Get('/today')
-    getToday(){
-        return this.activityPlayerSubService.todaySubscriptions()
-    }
+
 }
