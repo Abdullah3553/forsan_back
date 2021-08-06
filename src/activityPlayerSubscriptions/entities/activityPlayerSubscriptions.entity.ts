@@ -14,10 +14,10 @@ export class ActivityPlayerSubscription {
     price: number
 
     @Column({type: 'date'})
-    beginDate: Date
+    beginDate: string
 
     @Column({type: 'date'})
-    endDate: Date
+    endDate: string
 
     @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {
         onDelete: "CASCADE",
@@ -26,6 +26,9 @@ export class ActivityPlayerSubscription {
     })
     @JoinColumn()
     activityPlayer: ActivityPlayer
+
+    @Column({type: 'date'})
+    creationDate: string
 
     @ManyToOne( () => Activity, activity => activity.id, {
         onDelete: "SET NULL",

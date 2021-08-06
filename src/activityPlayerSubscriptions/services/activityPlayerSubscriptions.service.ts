@@ -5,6 +5,7 @@ import {ActivityPlayerSubscription} from "../entities/activityPlayerSubscription
 import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
+import moment from "moment";
 
 
 @Injectable()
@@ -48,22 +49,21 @@ export class ActivityPlayerSubscriptionsService {
        // })
     }
 
-
-
-    getAllActiviyPlayerSubscription(activityPlayerId:number){
-        return this.activityPlayerSubscriptionRepo.find(
-            {where: {activityPlayer:{id:activityPlayerId}}}
-        )
-    }
-
     async newSubscription(request:CreateNewActivityPlayerSubscriptionRequest){
         const newSub = new ActivityPlayerSubscription()
         newSub.activity = await this.activityService.doesActivityExists(request.activity_id)
         newSub.activityPlayer = await this.activityPlayerService.doesActivityPlayerExist(request.player_id)
         newSub.beginDate = request.beginDate
         newSub.endDate = request.endDate
-        newSub.price = newSub.activity.price
+        newSub.price = request.price
+        newSub.creationDate = moment().format("YYYY-MM-DD")
         return this.activityPlayerSubscriptionRepo.save(newSub)
+    }
+    async todaySubscriptions(){
+        const holder = await this.activityPlayerSubscriptionRepo.find({
+            where: {creationDate: moment().format("YYYY-MM-DD")}
+        })
+        return holder
     }
 
     async updateSubDate(request, requestId:number){
