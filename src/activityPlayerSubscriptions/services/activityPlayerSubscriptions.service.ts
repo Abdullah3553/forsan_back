@@ -5,7 +5,7 @@ import {ActivityPlayerSubscription} from "../entities/activityPlayerSubscription
 import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
-import moment from "moment";
+import * as moment from "moment";
 
 
 @Injectable()
@@ -56,14 +56,14 @@ export class ActivityPlayerSubscriptionsService {
         newSub.beginDate = request.beginDate
         newSub.endDate = request.endDate
         newSub.price = request.price
-        newSub.creationDate = moment().format("YYYY-MM-DD")
+        newSub.creationDate = moment().format("yyyy-MM-DD")
         return this.activityPlayerSubscriptionRepo.save(newSub)
     }
+
     async todaySubscriptions(){
-        const holder = await this.activityPlayerSubscriptionRepo.find({
-            where: {creationDate: moment().format("YYYY-MM-DD")}
+        return await this.activityPlayerSubscriptionRepo.find({
+            where: {creationDate: moment().format("yyyy-MM-DD")}
         })
-        return holder
     }
 
     async updateSubDate(request, requestId:number){

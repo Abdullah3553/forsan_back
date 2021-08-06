@@ -30,4 +30,9 @@ export class ActivityPlayerSubscriptionsController {
     updateDate(@Body() body, @Param() parametars){
         return this.activityPlayerSubService.updateSubDate(body, parametars.id)
     }
+
+    @Get('/today')
+    getToday(){
+        return this.activityPlayerSubService.todaySubscriptions()
+    }
 }

@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateNewActivityPlayerSubscriptionRequest {
     @IsNotEmpty()
@@ -14,5 +14,6 @@ export class CreateNewActivityPlayerSubscriptionRequest {
     activity_id: number
 
     @IsNotEmpty()
+    @IsNumber()
     price: number
 }
