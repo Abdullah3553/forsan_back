@@ -29,7 +29,7 @@ export class Subscription {
     //Relations :-
 
     @ManyToOne( () => Player, player => player.id,{
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
         onUpdate: "CASCADE",
         eager:false
     })
