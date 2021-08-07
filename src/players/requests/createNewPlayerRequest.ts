@@ -22,6 +22,9 @@ export class CreateNewPlayerRequest {
     @IsString()
     dietPlan: string
 
+    @IsString()
+    photo:string
+
     // @IsNotEmpty()
     // plan: number
 }

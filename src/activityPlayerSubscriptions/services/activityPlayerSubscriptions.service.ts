@@ -62,7 +62,9 @@ export class ActivityPlayerSubscriptionsService {
 
     async todaySubscriptions(){
         return await this.activityPlayerSubscriptionRepo.find({
-            where: {creationDate: moment().format("yyyy-MM-DD")}
+            where:{
+                creationDate:moment().format("yyyy-MM-DD")
+            }
         })
     }
 

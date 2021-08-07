@@ -19,7 +19,9 @@ export class Player {
     @Column()
     height: string
 
-    @Column()
+    @Column({
+        nullable:true
+    })
     photo: string
 
     @Column('text')

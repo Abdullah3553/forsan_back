@@ -9,20 +9,14 @@ export class ActivityPlayerSubscriptionsController {
         private readonly activityPlayerSubService: ActivityPlayerSubscriptionsService
     ){}
 
-    @Get('/today')
-    getToday(){
-        return this.activityPlayerSubService.todaySubscriptions()
-    }
+
 
     @Get('/')
     getAll(@Query() { limit, page}){
         
         return this.activityPlayerSubService.getAll(limit,page)
     }
-    @Get('/:id')
-    getSingleActivityPlayer(@Param() param){
-        return this.activityPlayerSubService.getSinglePlayer(param.id)
-    }
+
 
     @Post('/new')
     newSubscription(@Body() body:CreateNewActivityPlayerSubscriptionRequest){
@@ -33,6 +27,17 @@ export class ActivityPlayerSubscriptionsController {
     @Post('/updateDate/:id')
     updateDate(@Body() body, @Param() parametars){
         return this.activityPlayerSubService.updateSubDate(body, parametars.id)
+    }
+
+    @Get('/today')
+    getToday(){
+
+        return this.activityPlayerSubService.todaySubscriptions()
+    }
+
+    @Get('/:id')
+    getSingleActivityPlayer(@Param() param){
+        return this.activityPlayerSubService.getSinglePlayer(param.id)
     }
 
 

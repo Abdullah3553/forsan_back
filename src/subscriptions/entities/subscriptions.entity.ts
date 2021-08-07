@@ -18,7 +18,7 @@ export class Subscription {
     @Column({
         type: 'date'
     })
-    endDate: string
+    endDate: string | Date
 
     @Column('double')
     payedMoney:number

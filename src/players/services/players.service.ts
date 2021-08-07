@@ -38,40 +38,38 @@ export class PlayersServices{
         })
     }
 
-    async newPlayer(newInput: CreateNewPlayerRequest, photo : Express.Multer.File) : Promise<Player> {
-        if (!photo) {
-            // Validate for photo ...
-            throw new BadRequestException({
-                message: "Player photo is missing"
-            })
-        }
+    async newPlayer(newInput: CreateNewPlayerRequest, photo : string) : Promise<Player> {
+        // if (!photo) {
+        //     // Validate for photo ...
+        //     throw new BadRequestException({
+        //         message: "Player photo is missing"
+        //     })
+        // }
         const player = new Player();
         if(!await this.doesPhoneNumberExist(newInput.phoneNumber, player.id)){
             player.name = newInput.name
-            player.photo = photo.path
+            player.photo = photo
             player.phoneNumber = newInput.phoneNumber
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
             return await this.playersRepo.save(player)
         } else {
-            unlink(photo.path, (err) => {
-                if (err)
-                    console.log(err)
-            });
-            throw new BadRequestException("PhoneNumber is already in use!")
+            throw new BadRequestException("Phone Number is already in use!")
         }
     }
 
     // delete player
     async deletePlayer(id: number) {
         const player = await this.doesPlayerExist(id) // To get the player :d
-        unlink(player.photo, (err)=>{ // delete photo of that player
-            if(err){
-                console.log(err)
-                throw new BadRequestException({message:"Photo error ..."})
-            }
-        })
+        //TODO DELETE PHOTOOOOOOOOOOO
+
+        // unlink(player.photo, (err)=>{ // delete photo of that player
+        //     if(err){
+        //         console.log(err)
+        //         throw new BadRequestException({message:"Photo error ..."})
+        //     }
+        // })
 
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
