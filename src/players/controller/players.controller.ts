@@ -22,9 +22,8 @@ export class PlayersController {
     }
 
     @Post("/new")
-    @UseInterceptors(FileInterceptor('photo'))
-    createNewPlayer(@Body() body: CreateNewPlayerRequest, @UploadedFile() photo: Express.Multer.File){
-        return this.playersService.newPlayer(body,photo);
+    createNewPlayer(@Body() body: CreateNewPlayerRequest){
+        return this.playersService.newPlayer(body);
     }
 
     @Post("/edit/:id")

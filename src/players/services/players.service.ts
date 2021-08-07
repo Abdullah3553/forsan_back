@@ -38,7 +38,7 @@ export class PlayersServices{
         })
     }
 
-    async newPlayer(newInput: CreateNewPlayerRequest, photo : string) : Promise<Player> {
+    async newPlayer(newInput: CreateNewPlayerRequest) : Promise<Player> {
         // if (!photo) {
         //     // Validate for photo ...
         //     throw new BadRequestException({
@@ -48,7 +48,7 @@ export class PlayersServices{
         const player = new Player();
         if(!await this.doesPhoneNumberExist(newInput.phoneNumber, player.id)){
             player.name = newInput.name
-            player.photo = photo
+            player.photo = newInput.photo
             player.phoneNumber = newInput.phoneNumber
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
