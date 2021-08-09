@@ -38,6 +38,11 @@ export class PlayersServices{
         })
     }
 
+    async getPlayersNumber(){
+        const players = await this.playersRepo.find()
+        return players.length
+    }
+
     async newPlayer(newInput: CreateNewPlayerRequest) : Promise<Player> {
         // if (!photo) {
         //     // Validate for photo ...

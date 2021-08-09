@@ -1,7 +1,6 @@
-import {Controller, Get, Post, Body, UseInterceptors, UploadedFile, Param, Delete} from "@nestjs/common";
+import {Controller, Get, Post, Body, Param, Delete} from "@nestjs/common";
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import { PlayersServices } from "../services/players.service";
-import {FileInterceptor} from "@nestjs/platform-express";
 
 
 @Controller('player')
@@ -14,6 +13,11 @@ export class PlayersController {
     @Get("/")
     getAll(){
         return this.playersService.getAll();
+    }
+
+    @Get('/number')
+    getPlayersNumber(){
+        return this.playersService.getPlayersNumber()
     }
 
     @Get("/:id")
