@@ -52,6 +52,7 @@ export class ServicesIncomeService {
         serviceIncome.dayDate = moment().format("yyyy-MM-DD")
          serviceIncome.payedMoeny = service.price
         serviceIncome.service = service
+         serviceIncome.serviceName = service.name
 
         return this.serviceIncomeRepo.save(serviceIncome)
 

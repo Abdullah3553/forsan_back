@@ -18,24 +18,46 @@ export class PlayersServices{
     async getAll() {
         // Get all players from the table 
         const data = await this.playersRepo.find({
-            relations: ['subscriptions' ,'playerWeights']
+            relations: ['subscriptions']
         });
         return data.map((player: Player) => {
 
             return {
                 id:player.id,
                 name: player.name,
-                photo: player.photo,
-                height: player.height,
-                weights: player.playerWeights,
                 phoneNumber: player.phoneNumber,
-                dietPlan: player.dietPlan,
-                trainingPlan: player.trainingPlan,
-                subscription:player.subscriptions[player.subscriptions.length-1],
-                freeze:player.freeze,
-                invited:player.invited
+                subscription:{
+                    beginDate:player.subscriptions[player.subscriptions.length-1].beginDate,
+                    endDate:player.subscriptions[player.subscriptions.length-1].endDate,
+                    plan:{
+                        id:player.subscriptions[player.subscriptions.length-1].plan.id,
+                        name:player.subscriptions[player.subscriptions.length-1].plan.name
+                    }
+                }
             }
         })
+    }
+
+    async viewPlayer(id:number){
+        const player = await this.playersRepo.findOne({where:{id:id},
+            relations: ['subscriptions' ,'playerWeights']})
+        if(!player){
+            throw new NotFoundException({message:"Player Not Found"})
+        }
+        return {
+            id:player.id,
+            name: player.name,
+            photo: player.photo,
+            height: player.height,
+            weights: player.playerWeights,
+            phoneNumber: player.phoneNumber,
+            dietPlan: player.dietPlan,
+            trainingPlan: player.trainingPlan,
+            subscription:player.subscriptions[player.subscriptions.length-1],
+            freeze:player.freeze,
+            invited:player.invited
+        }
+
     }
 
     async getPlayersNumber(){
@@ -159,7 +181,7 @@ export class PlayersServices{
     isEndedSubscription(subscription){
         
             return moment(subscription.endDate).isBefore(moment())
-        }
+    }
     async doesPlayerExist(id:number){
         const player = await this.playersRepo.findOne({where:{id:id},
             relations: ['subscriptions' ,'playerWeights']})
@@ -167,28 +189,6 @@ export class PlayersServices{
             throw new NotFoundException({message:"Player Not Found"})
         }
         return player
-
-    }
-
-    async viewPlayer(id:number){
-        const player = await this.playersRepo.findOne({where:{id:id},
-            relations: ['subscriptions' ,'playerWeights']})
-        if(!player){
-            throw new NotFoundException({message:"Player Not Found"})
-        }
-        return {
-            id:player.id,
-            name: player.name,
-            photo: player.photo,
-            height: player.height,
-            weights: player.playerWeights,
-            phoneNumber: player.phoneNumber,
-            dietPlan: player.dietPlan,
-            trainingPlan: player.trainingPlan,
-            subscription:player.subscriptions[player.subscriptions.length-1],
-            freeze:player.freeze,
-            invited:player.invited
-        }
 
     }
 

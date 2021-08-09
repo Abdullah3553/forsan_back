@@ -18,6 +18,9 @@ export class ServiceIncome{
 
     @Column()
     payedMoeny:number
+
+    @Column()
+    serviceName:string
     
     @ManyToOne(() => Service, service => service.id,{
         onDelete: "SET NULL",
