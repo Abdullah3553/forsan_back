@@ -15,10 +15,12 @@ export class ServiceIncome{
 
     @Column({type: 'date'})
     dayDate: string
-    
+
+    @Column()
+    payedMoeny:number
     
     @ManyToOne(() => Service, service => service.id,{
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
         onUpdate: "CASCADE",
         eager: true
     })

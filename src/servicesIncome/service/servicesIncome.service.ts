@@ -50,6 +50,7 @@ export class ServicesIncomeService {
         // service never sold today
         const serviceIncome = new ServiceIncome()
         serviceIncome.dayDate = moment().format("yyyy-MM-DD")
+         serviceIncome.payedMoeny = service.price
         serviceIncome.service = service
 
         return this.serviceIncomeRepo.save(serviceIncome)
