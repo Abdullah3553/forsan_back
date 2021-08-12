@@ -12,6 +12,7 @@ import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
 import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
 import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
+import {AdminsModule} from "../admins/admins.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/
       ServicesIncomeModule,
       PlayersWeightsModule,
       ActivityPlayerSubscriptionsModule,
+      AdminsModule
   ],
   controllers: [AppController],
   providers: [AppService],
