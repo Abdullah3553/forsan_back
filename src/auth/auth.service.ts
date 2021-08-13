@@ -28,7 +28,7 @@ export class AuthService {
         const _admin = admin instanceof Admin ? admin : null;
         const token = await this.sign(_admin);
         return {
-            data: {
+            user: {
                 id: _admin.id,
                 username: _admin.username,
                 name: _admin.name
@@ -45,4 +45,12 @@ export class AuthService {
     register(body) {
         return this.adminsService.createAdmin(body)
     }
+
+    async getAdminInfo(user) {
+        const admin = await this.adminsService.getAdminById(user.id);
+        const _admin = admin instanceof Admin ? admin : null;
+        delete _admin.password
+        return _admin
+    }
+
 }
