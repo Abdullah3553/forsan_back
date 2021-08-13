@@ -4,6 +4,8 @@ require("dotenv").config({
     path: __dirname+'/../../.env'
 })
 
+export const JWT_SECRET = process.env.JWT_SECRET || "secret123hushJkMbCxzaws"
+
 // environment vars // env vars
 export const db_config: TypeOrmModuleOptions = {
     type: 'mysql',

@@ -13,9 +13,11 @@ import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
 import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 import {AdminsModule} from "../admins/admins.module";
+import {AuthModule} from "../auth/auth.module";
 
 @Module({
   imports: [
+      AuthModule,
       TypeOrmModule.forRoot(db_config),
       PlansModule,
       PlayersModule,

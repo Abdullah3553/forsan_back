@@ -18,7 +18,7 @@ export class Admin {
     @Column({
         unique: true
     })
-    email: string
+    username: string
 
     @Column({
         type: "text"

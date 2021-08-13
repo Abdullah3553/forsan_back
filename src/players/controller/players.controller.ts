@@ -1,9 +1,11 @@
-import {Controller, Get, Post, Body, Param, Delete} from "@nestjs/common";
+import {Controller, Get, Post, Body, Param, Delete, UseGuards} from "@nestjs/common";
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import { PlayersServices } from "../services/players.service";
+import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
 
 @Controller('player')
+@UseGuards(JwtAuthGuard)
 export class PlayersController {
 
     constructor(
@@ -56,6 +58,6 @@ export class PlayersController {
     }
 
     // TODO create an endpoint just for updating the photo
-    
+
 }
 
