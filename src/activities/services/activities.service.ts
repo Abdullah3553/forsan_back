@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewActivityRequest } from "../requests/createNewActivity.request";
 import {Activity} from "../entities/activities.entity";
+import { Log } from "src/logs /entities/logs.entitiy";
 
 @Injectable()
 export class ActivitiesService {
@@ -10,7 +11,8 @@ export class ActivitiesService {
     // Creating player's object 
     constructor(
         @InjectRepository(Activity)
-        private readonly activityRepo:  Repository<Activity>
+        private readonly activityRepo:  Repository<Activity>,
+        private readonly logReop: Repository<Log>
     ) {}
 
     getAll(){
@@ -26,7 +28,8 @@ export class ActivitiesService {
         activity.coachPhoneNumber = body.coachPhoneNumber
         activity.price = body.price
         activity.description = body.description
-        return await this.activityRepo.save(activity)
+        const item = await this.activityRepo.save(activity)  
+        return item;
     }
 
     async deleteActivity(activityId : number){
