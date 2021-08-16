@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import {Service} from "../entities/servicess.entity";
+import { LogsService } from "src/logs /service/logs.service";
 
 @Injectable()
 export class ServicessServices {
@@ -10,7 +11,8 @@ export class ServicessServices {
     // Creating player's object 
     constructor(
         @InjectRepository(Service)
-        private readonly serviceRepo:  Repository<Service>
+        private readonly serviceRepo:  Repository<Service>,
+        private readonly logsService: LogsService
     ) {}
 
     // Add New Service Method
@@ -18,7 +20,10 @@ export class ServicessServices {
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
-        return {service: await this.serviceRepo.save(newService), message:"Service Added"}
+        const item = await this.serviceRepo.save(newService)
+        this.logsService.createNewLog(item.id, "new", "service")
+
+        return {item , message:"Service Added"}
     }
 
     //view all services
@@ -33,12 +38,14 @@ export class ServicessServices {
 
     // delete a service
     async deleteService(requestId : number){
+        this.logsService.createNewLog(requestId, "delete", "service")
         await this.serviceRepo.remove( await this.doesServiceExist(requestId))
         return {message:"The service has been deleted."}
     }
 
     //edit a service
     async editService(requestId : number, request:CreateNewServiceRequest){
+        this.logsService.createNewLog(requestId, "edit", "service")
         const searched_service = await this.doesServiceExist(requestId)
         searched_service.name = request.name
         searched_service.price = request.price

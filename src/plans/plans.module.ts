@@ -4,11 +4,13 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {Plan} from "./entities/plans.entity";
 import { PlansService } from './services/plans.service';
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
+import { logsModule } from 'src/logs /logs.module';
 
 @Module({
   imports: [
       TypeOrmModule.forFeature([Plan]),
-      SubscriptionsModule
+      SubscriptionsModule,
+      logsModule
   ],
   controllers: [PlansController],
   providers: [PlansService],

@@ -5,7 +5,7 @@ import {PlayersServices} from "./services/players.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {Player} from "./entities/players.entity";
-import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
+import { logsModule } from "src/logs /logs.module";
 
 
 const storage = diskStorage({
@@ -33,6 +33,7 @@ const storage = diskStorage({
                 callback(null,true);
             }
         }),
+        logsModule,
     ],
     controllers: [PlayersController],
     providers: [PlayersServices],

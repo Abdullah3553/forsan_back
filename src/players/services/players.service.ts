@@ -5,6 +5,7 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
 import * as moment from "moment";
+import { LogsService } from "src/logs /service/logs.service";
 
 @Injectable()
 export class PlayersServices{
@@ -12,7 +13,8 @@ export class PlayersServices{
     // Creating player's object 
     constructor(
         @InjectRepository(Player)
-        private readonly playersRepo:  Repository<Player>
+        private readonly playersRepo:  Repository<Player>,
+        private readonly logsService: LogsService,
     ) {}
 
     async getAll() {
@@ -80,6 +82,7 @@ export class PlayersServices{
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
+            this.logsService.createNewLog(player.id, "new", "players")
             return await this.playersRepo.save(player)
         } else {
             throw new BadRequestException("Phone Number is already in use!")
@@ -97,7 +100,7 @@ export class PlayersServices{
         //         throw new BadRequestException({message:"Photo error ..."})
         //     }
         // })
-
+        this.logsService.createNewLog(id, "delete", "players")
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
@@ -113,12 +116,15 @@ export class PlayersServices{
         newPlayerInfo.height = newInf.height
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
+        this.logsService.createNewLog(requestedId, "edit", "players")
         return await this.playersRepo.save(newPlayerInfo)
     }
 
     async inviteFriend(requestId:number, invites:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
+        
+        this.logsService.createNewLog(requestId, "invitations", "players")
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             // validate for ended subscription
             throw new BadRequestException("This player subscription has ended")
@@ -138,6 +144,9 @@ export class PlayersServices{
     async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
+        
+        this.logsService.createNewLog(requestId, "freeze", "players")
+
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }

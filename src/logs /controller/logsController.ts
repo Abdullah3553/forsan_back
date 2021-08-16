@@ -11,7 +11,7 @@ export class logsController {
         private readonly logService : LogsService
     ){}
 
-    @Get("/log")
+    @Get("/")
     getAll(){
         return this.logService.getAll()
     }

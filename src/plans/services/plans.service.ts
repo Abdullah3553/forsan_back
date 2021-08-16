@@ -4,6 +4,7 @@ import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
+import { LogsService } from 'src/logs /service/logs.service';
 
 @Injectable()
 export class PlansService {
@@ -11,7 +12,8 @@ export class PlansService {
     constructor(
         @InjectRepository(Plan)
         private readonly plansRepo:  Repository<Plan>,
-        private readonly partialSubscriptionService : PartialSubscriptionsService
+        private readonly partialSubscriptionService : PartialSubscriptionsService,
+        private readonly logsService: LogsService
     ) {}
 
     getAll () {
@@ -26,7 +28,7 @@ export class PlansService {
             }})
     }
 
-    newPlan (req: CreateNewPlanRequest) {
+    async newPlan (req: CreateNewPlanRequest) {
         // store plan
         const newPlan = new Plan()
         newPlan.name = req.name
@@ -36,13 +38,16 @@ export class PlansService {
         newPlan.isActivated = req.isActivated
         newPlan.invites = req.invites
         newPlan.freezeDays = req.freezeDays
-        return this.plansRepo.save(newPlan)
+        const item = await this.plansRepo.save(newPlan)
+        this.logsService.createNewLog(item.id, "new", "plan")
+        return item
     }
 
     async updatePlan (newInf: CreateNewPlanRequest, id: number) {
         //To get the current plan's data from the data base 
         //We search by id in the plans data base and then update the data
         const result = await this.doesPlanExist(id)
+        this.logsService.createNewLog(id, "update", "plans")
         result.name = newInf.name
         result.months = newInf.months
         result.price = newInf.price
@@ -57,6 +62,7 @@ export class PlansService {
 
         if(!await this.partialSubscriptionService.doesPlanHasActiveSubscriptions(id) && await this.doesPlanExist(id)){
             //if this condition is true , that means the plan is ok to be deleted
+            this.logsService.createNewLog(id, "delete", "plans")
             await this.plansRepo.delete(id);
             return {message: 'Plan Deleted'};
         }
@@ -71,6 +77,7 @@ export class PlansService {
                 message: "Plan is already activated"
             })
         }
+        this.logsService.createNewLog(id, "activate", "plans")
         plan.isActivated = true
         return this.plansRepo.save(plan);
     }
@@ -82,6 +89,7 @@ export class PlansService {
         const planStatus = await this.doesPlanExist(id)
         if(planStatus.isActivated){
             planStatus.isActivated = false
+            this.logsService.createNewLog(id, "deActivate", "plans")
             await this.plansRepo.save(planStatus)
             return {message: "Plan is de-activated successfully !"}
         }else{

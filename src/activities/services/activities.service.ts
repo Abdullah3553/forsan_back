@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CreateNewActivityRequest } from "../requests/createNewActivity.request";
 import {Activity} from "../entities/activities.entity";
 import { Log } from "src/logs /entities/logs.entitiy";
+import { LogsService } from "src/logs /service/logs.service";
 
 @Injectable()
 export class ActivitiesService {
@@ -12,7 +13,7 @@ export class ActivitiesService {
     constructor(
         @InjectRepository(Activity)
         private readonly activityRepo:  Repository<Activity>,
-        private readonly logReop: Repository<Log>
+        private readonly logsService: LogsService        
     ) {}
 
     getAll(){
@@ -28,13 +29,15 @@ export class ActivitiesService {
         activity.coachPhoneNumber = body.coachPhoneNumber
         activity.price = body.price
         activity.description = body.description
-        const item = await this.activityRepo.save(activity)  
+        const item = await this.activityRepo.save(activity)
+        this.logsService.createNewLog(item.id, "new", "activity")
         return item;
     }
 
     async deleteActivity(activityId : number){
         // Check if the activity Exist First
         await this.doesActivityExists(activityId)
+        this.logsService.createNewLog(activityId, "delete", "activity")
         // if it exists then delete it :D
         await this.activityRepo.delete(activityId)
         return{message:"Activity Deleted :d"}
@@ -47,8 +50,9 @@ export class ActivitiesService {
         search_activity.coachPhoneNumber = request.coachPhoneNumber
         search_activity.price = request.price
         search_activity.description = request.description
-        return await this.activityRepo.save(search_activity)
-        
+        const item = await this.activityRepo.save(search_activity)
+        this.logsService.createNewLog(item.id, "edit", "activity")
+        return item
     }
 
     viewById(requestId){
