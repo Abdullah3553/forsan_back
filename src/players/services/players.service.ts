@@ -42,7 +42,7 @@ export class PlayersServices{
 
     async viewPlayer(id:number){
         const player = await this.playersRepo.findOne({where:{id:id},
-            relations: ['subscriptions' ,'playerWeights']})
+            relations: ['subscriptions' ,'weights']})
         if(!player){
             throw new NotFoundException({message:"Player Not Found"})
         }
@@ -51,7 +51,7 @@ export class PlayersServices{
             name: player.name,
             photo: player.photo,
             height: player.height,
-            weights: player.playerWeights,
+            weights: player.weights,
             phoneNumber: player.phoneNumber,
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
@@ -117,7 +117,16 @@ export class PlayersServices{
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
         this.logsService.createNewLog(requestedId, "edit", "players")
-        return await this.playersRepo.save(newPlayerInfo)
+        if(newInf.photo!== null){
+            newPlayerInfo.photo = newInf.photo
+        }
+        const res = await this.playersRepo.save(newPlayerInfo)
+        const subs = res.subscriptions
+        delete res.subscriptions
+        return {
+            ...res,
+            subscription:subs[subs.length-1]
+        }
     }
 
     async inviteFriend(requestId:number, invites:number){
@@ -193,7 +202,7 @@ export class PlayersServices{
     }
     async doesPlayerExist(id:number){
         const player = await this.playersRepo.findOne({where:{id:id},
-            relations: ['subscriptions' ,'playerWeights']})
+            relations: ['subscriptions' ,'weights']})
         if(!player){
             throw new NotFoundException({message:"Player Not Found"})
         }

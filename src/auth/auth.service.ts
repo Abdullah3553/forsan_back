@@ -42,8 +42,10 @@ export class AuthService {
         return this.jwtService.sign(payload);
     }
 
-    register(body) {
-        return this.adminsService.createAdmin(body)
+    async register(body) {
+        const admin = await this.adminsService.createAdmin(body);
+        delete admin.password
+        return admin
     }
 
     async getAdminInfo(user) {

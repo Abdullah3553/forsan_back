@@ -41,6 +41,6 @@ export class Player {
     subscriptions: Subscription[]
 
     @OneToMany(()=>PlayerWeight, playerWeight => playerWeight.player)
-    playerWeights: PlayerWeight[]
+    weights: PlayerWeight[]
 
 }
