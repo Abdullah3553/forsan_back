@@ -1,9 +1,11 @@
-import {Controller, Get, Post, Body, Delete, Param} from "@nestjs/common";
+import {Controller, Get, Post, Body, Delete, Param, UseGuards} from "@nestjs/common";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import { ServicessServices } from "../services/servicess.service";
+import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
 
 @Controller('service')
+@UseGuards(JwtAuthGuard)
 export class ServicessController {
 
     constructor(

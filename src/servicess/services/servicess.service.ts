@@ -23,7 +23,7 @@ export class ServicessServices {
         const item = await this.serviceRepo.save(newService)
         await this.logsService.createNewLog(item.id, `added new ${request.name} service`, "services")
 
-        return {item , message:"Service Added"}
+        return item
     }
 
     //view all services
