@@ -74,7 +74,7 @@ export class PlayersServices{
         //         message: "Player photo is missing"
         //     })
         // }
-        const player = new Player();
+        let player = new Player();
         if(!await this.doesPhoneNumberExist(newInput.phoneNumber, player.id)){
             player.name = newInput.name
             player.photo = newInput.photo
@@ -82,8 +82,9 @@ export class PlayersServices{
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
+            player =  await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
-            return await this.playersRepo.save(player)
+            return player
         } else {
             throw new BadRequestException("Phone Number is already in use!")
         }
@@ -92,7 +93,6 @@ export class PlayersServices{
     // delete player
     async deletePlayer(id: number) {
         const player = await this.doesPlayerExist(id) // To get the player :d
-        //TODO DELETE PHOTOOOOOOOOOOO
 
         // unlink(player.photo, (err)=>{ // delete photo of that player
         //     if(err){

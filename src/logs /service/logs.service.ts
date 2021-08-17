@@ -27,9 +27,7 @@ export class LogsService{
 
    async  createNewLog(logId: number, logType: string, logSource: string) {
         const user:any = this.request.user
-    
-        console.log(user);
-        
+
         const log = new Log()
         log.adminName = user.username
         log.dayDate = moment().format("YYYY-MM-DD")
@@ -37,10 +35,11 @@ export class LogsService{
         log.logId = logId
         log.logSource = logSource
         log.log = logType
-        try {
+       try {
             await this.logRepo.save(log)
             return true 
         } catch (e) {
+            console.log("Error in creating new log: ", e)
             return false
         }
     }

@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "src/auth/guards/jwtAuthGuard";
-import { LogsService } from "../service/logs.service";
+import {Body, Controller, Get, Post, UseGuards} from "@nestjs/common";
+import {JwtAuthGuard} from "src/auth/guards/jwtAuthGuard";
+import {LogsService} from "../service/logs.service";
 
 
 @Controller('log')
