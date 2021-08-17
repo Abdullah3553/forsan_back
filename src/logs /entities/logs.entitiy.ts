@@ -12,8 +12,11 @@ export class Log {
     @Column()
     adminName: string
 
-    @Column({type: Date})
+    @Column()
     dayDate: string
+
+    @Column()
+    dayTime: string
 
     @Column()
     logId: number

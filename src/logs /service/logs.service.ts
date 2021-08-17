@@ -3,7 +3,7 @@ import { REQUEST } from "@nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Request } from "express";
 import * as moment from 'moment'
-import { Repository } from "typeorm";
+import { getConnection, Repository } from "typeorm";
 import { Log } from "../entities/logs.entitiy";
 
 
@@ -17,20 +17,41 @@ export class LogsService{
          private request : Request,
     ){}
 
-    getAll(){
-        //console.log(this.request.user);
-        return this.logRepo.find()
+    async getAll(){
+        return this.logRepo.find({
+            where:{
+                dayDate: moment().format("yyyy-MM-DD")
+            }
+        })
     }
 
-    createNewLog(logId: number, logType: string, logSource: string) {
-        //console.log(this.request);
+   async  createNewLog(logId: number, logType: string, logSource: string) {
+        const user:any = this.request.user
+    
+        console.log(user);
+        
         const log = new Log()
-        // log.adminName = this.request
+        log.adminName = user.username
         log.dayDate = moment().format("YYYY-MM-DD")
+        log.dayTime = moment().format("hh:mm:ss A")               
         log.logId = logId
         log.logSource = logSource
         log.logType = logType
-        
-        this.logRepo.save(log)
+        try {
+            await this.logRepo.save(log)
+            return true 
+        } catch (e) {
+            return false
+        }
     }
+
+    getAt(body) {
+        const date = new Date(body.date)
+        return this.logRepo.find({
+            where: {
+                dayDate: date
+            }
+        })
+    }
+
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwtAuthGuard";
 import { LogsService } from "../service/logs.service";
 
@@ -11,8 +11,14 @@ export class logsController {
         private readonly logService : LogsService
     ){}
 
-    @Get("/")
-    getAll(){
+    @Get("/today")
+    getToday(){
         return this.logService.getAll()
     }
+
+    @Post("/at")
+    getLogsAt(@Body() body) {
+        return this.logService.getAt(body)
+    }
+
 }

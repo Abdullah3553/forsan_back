@@ -37,7 +37,7 @@ export class ActivitiesService {
     async deleteActivity(activityId : number){
         // Check if the activity Exist First
         await this.doesActivityExists(activityId)
-        this.logsService.createNewLog(activityId, "delete", "activity")
+        await this.logsService.createNewLog(activityId, "delete", "activity")
         // if it exists then delete it :D
         await this.activityRepo.delete(activityId)
         return{message:"Activity Deleted :d"}
