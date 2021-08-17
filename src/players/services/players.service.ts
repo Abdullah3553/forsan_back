@@ -82,7 +82,7 @@ export class PlayersServices{
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
-            this.logsService.createNewLog(player.id, "new", "players")
+            await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
             return await this.playersRepo.save(player)
         } else {
             throw new BadRequestException("Phone Number is already in use!")
@@ -100,7 +100,7 @@ export class PlayersServices{
         //         throw new BadRequestException({message:"Photo error ..."})
         //     }
         // })
-        this.logsService.createNewLog(id, "delete", "players")
+        await this.logsService.createNewLog(id, `deleted ${player.name} player`, "players")
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
@@ -116,7 +116,7 @@ export class PlayersServices{
         newPlayerInfo.height = newInf.height
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
-        this.logsService.createNewLog(requestedId, "edit", "players")
+        await this.logsService.createNewLog(requestedId, `edited ${newInf.name} player`, "players")
         if(newInf.photo!== null){
             newPlayerInfo.photo = newInf.photo
         }
@@ -133,7 +133,7 @@ export class PlayersServices{
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
         
-        this.logsService.createNewLog(requestId, "invitations", "players")
+        await this.logsService.createNewLog(requestId, `added an invitation to ${player.name} player`, "players")
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             // validate for ended subscription
             throw new BadRequestException("This player subscription has ended")
@@ -154,7 +154,7 @@ export class PlayersServices{
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
         
-        this.logsService.createNewLog(requestId, "freeze", "players")
+        await this.logsService.createNewLog(requestId, `freeze ${player.name} player`, "players")
 
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")

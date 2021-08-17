@@ -21,7 +21,7 @@ export class ServicessServices {
         newService.name = request.name
         newService.price = request.price
         const item = await this.serviceRepo.save(newService)
-        this.logsService.createNewLog(item.id, "new", "service")
+        await this.logsService.createNewLog(item.id, `added new ${request.name} service`, "services")
 
         return {item , message:"Service Added"}
     }
@@ -38,15 +38,16 @@ export class ServicessServices {
 
     // delete a service
     async deleteService(requestId : number){
-        this.logsService.createNewLog(requestId, "delete", "service")
+        const item = await this.doesServiceExist(requestId)
+        await this.logsService.createNewLog(requestId, `deleted ${item.name} service`, "service")
         await this.serviceRepo.remove( await this.doesServiceExist(requestId))
         return {message:"The service has been deleted."}
     }
 
     //edit a service
     async editService(requestId : number, request:CreateNewServiceRequest){
-        this.logsService.createNewLog(requestId, "edit", "service")
         const searched_service = await this.doesServiceExist(requestId)
+        await this.logsService.createNewLog(requestId, `edited ${request.name} service`, "service")
         searched_service.name = request.name
         searched_service.price = request.price
         return this.serviceRepo.save(searched_service)
