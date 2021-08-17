@@ -39,7 +39,7 @@ export class PlansService {
         newPlan.invites = req.invites
         newPlan.freezeDays = req.freezeDays
         const item = await this.plansRepo.save(newPlan)
-        this.logsService.createNewLog(item.id, "new", "plan")
+        await this.logsService.createNewLog(item.id, `added ${req.name} Plan`, "Plans")
         return item
     }
 
@@ -47,7 +47,7 @@ export class PlansService {
         //To get the current plan's data from the data base 
         //We search by id in the plans data base and then update the data
         const result = await this.doesPlanExist(id)
-        this.logsService.createNewLog(id, "update", "plans")
+        await this.logsService.createNewLog(id, `Updated ${result.name} Plan`, "Plans")
         result.name = newInf.name
         result.months = newInf.months
         result.price = newInf.price
@@ -62,7 +62,8 @@ export class PlansService {
 
         if(!await this.partialSubscriptionService.doesPlanHasActiveSubscriptions(id) && await this.doesPlanExist(id)){
             //if this condition is true , that means the plan is ok to be deleted
-            this.logsService.createNewLog(id, "delete", "plans")
+            const item = await this.doesPlanExist(id)
+            await this.logsService.createNewLog(id, `Deleted ${item.name} Plan`, "Plans")
             await this.plansRepo.delete(id);
             return {message: 'Plan Deleted'};
         }
@@ -77,7 +78,7 @@ export class PlansService {
                 message: "Plan is already activated"
             })
         }
-        this.logsService.createNewLog(id, "activate", "plans")
+        await this.logsService.createNewLog(id, `Activated ${plan.name} Plan`, "Plans")
         plan.isActivated = true
         return this.plansRepo.save(plan);
     }
@@ -89,7 +90,7 @@ export class PlansService {
         const planStatus = await this.doesPlanExist(id)
         if(planStatus.isActivated){
             planStatus.isActivated = false
-            this.logsService.createNewLog(id, "deActivate", "plans")
+            await this.logsService.createNewLog(id, `De-Activated ${planStatus.name} Plan`, "Plans")
             await this.plansRepo.save(planStatus)
             return {message: "Plan is de-activated successfully !"}
         }else{

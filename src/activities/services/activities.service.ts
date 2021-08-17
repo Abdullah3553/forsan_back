@@ -30,14 +30,14 @@ export class ActivitiesService {
         activity.price = body.price
         activity.description = body.description
         const item = await this.activityRepo.save(activity)
-        this.logsService.createNewLog(item.id, "new", "activity")
+        await this.logsService.createNewLog(item.id, `added ${item.name} activity`, "activity")
         return item;
     }
 
     async deleteActivity(activityId : number){
         // Check if the activity Exist First
-        await this.doesActivityExists(activityId)
-        await this.logsService.createNewLog(activityId, "delete", "activity")
+        const item = await this.doesActivityExists(activityId)
+        await this.logsService.createNewLog(activityId, `deleted ${item.name} activity`, "activity")
         // if it exists then delete it :D
         await this.activityRepo.delete(activityId)
         return{message:"Activity Deleted :d"}
@@ -51,7 +51,7 @@ export class ActivitiesService {
         search_activity.price = request.price
         search_activity.description = request.description
         const item = await this.activityRepo.save(search_activity)
-        this.logsService.createNewLog(item.id, "edit", "activity")
+        await this.logsService.createNewLog(requsetId, `edited ${item.name} activity`, "activity")
         return item
     }
 

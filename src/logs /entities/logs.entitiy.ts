@@ -22,7 +22,7 @@ export class Log {
     logId: number
 
     @Column()
-    logType: string
+    log: string
 
     @Column()
     logSource: string

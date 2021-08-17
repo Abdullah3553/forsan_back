@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "src/auth/guards/jwtAuthGuard";
 import { CreateNewActivityPlayerRequest } from "../requests/createNewActivityPlayer.request";
 import { ActivityPlayersService } from "../services/activityPlayers.service";
 
 
 @Controller('activityPlayer')
+@UseGuards(JwtAuthGuard)
 export class ActivityPlayersController {
     constructor(
         private readonly activityPlayersService: ActivityPlayersService

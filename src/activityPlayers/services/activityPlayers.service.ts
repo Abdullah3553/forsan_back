@@ -32,20 +32,21 @@ export class ActivityPlayersService {
         const newPlayer = new ActivityPlayer()
         newPlayer.name = newInput.name
         const item = await this.actPlayerRepo.save(newPlayer)
-        this.logsService.createNewLog(item.id, "new", "activity player")
+        await this.logsService.createNewLog(item.id, `added ${item.name} Activityplayer`, "activity players")
+        return item;
     }
 
     async editActivityPlayer(newInput: CreateNewActivityPlayerRequest, reqId){
         const newActPlayer = await this.doesActivityPlayerExist(reqId)
         newActPlayer.name = newInput.name
         const item = await this.actPlayerRepo.save(newActPlayer)
-        this.logsService.createNewLog(item.id, "edit", "activity player")
+        await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
     }
 
     async deleteActivityPlayer(id: number){
         const activityPlayer = await this.doesActivityPlayerExist(id)
+        await this.logsService.createNewLog(id, `deleted ${activityPlayer.name} Activityplayer`, "activity players")
         await this.actPlayerRepo.remove(activityPlayer)
-        this.logsService.createNewLog(id, "delete", "activity player")
         return{
             message: "Player Deleted!"
         }

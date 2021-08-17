@@ -36,7 +36,7 @@ export class LogsService{
         log.dayTime = moment().format("hh:mm:ss A")               
         log.logId = logId
         log.logSource = logSource
-        log.logType = logType
+        log.log = logType
         try {
             await this.logRepo.save(log)
             return true 
