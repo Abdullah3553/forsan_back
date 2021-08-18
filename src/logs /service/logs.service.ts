@@ -45,10 +45,9 @@ export class LogsService{
     }
 
     getAt(body) {
-        const date = new Date(body.date)
         return this.logRepo.find({
             where: {
-                dayDate: date
+                dayDate: body.date
             }
         })
     }

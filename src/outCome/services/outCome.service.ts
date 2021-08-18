@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, InternalServerErrorException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { LogsService } from "src/logs /service/logs.service";
@@ -30,7 +30,11 @@ export class OutComeService {
             await this.logsService.createNewLog(item.id, `added ${item.description}`, "outCome")
             return item;
         } catch(err){
-            console.error(err)
+            console.error(err);
+            
+            throw new InternalServerErrorException({
+                message: err.message
+            })
         }
     }
 
@@ -41,7 +45,11 @@ export class OutComeService {
             await this.outComeRepo.delete(outComeId)
             return {message:"outCome deleted"}
         } catch(err){
-            console.error(err)
+            console.error(err);
+            
+            throw new InternalServerErrorException({
+                message: err.message
+            })
         }
     }
 
@@ -53,7 +61,11 @@ export class OutComeService {
             newOutCome.price = body.price
             return await this.outComeRepo.save(newOutCome)
         }catch(err){
-            console.error(err)
+            console.error(err);
+            
+            throw new InternalServerErrorException({
+                message: err.message
+            })
         }
     }
 }
