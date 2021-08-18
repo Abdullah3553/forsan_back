@@ -212,16 +212,17 @@ export class PlayersServices{
 
     async doesPhoneNumberExist(phoneNumber:string, playerId:number){
         const player = await this.playersRepo.findOne({where:{phoneNumber:phoneNumber}})
-        if(!player){
-            // that means that phone number is availbe
-            return false
+        if(player){// we found a player with that phone number
+
+            if(playerId ){ // to make sure that player id is not null
+                if(playerId === player.id){ // it means that this phonne number exists but fot the player him self
+                    return false
+                }
+            }
+            throw new BadRequestException("Phone number Exists")
+
         }
-        // here it means that phoneNumber found
-        if(player.id != playerId){
-            // means that the phone number is for another player
-            throw new BadRequestException("This phone number is already in use")
-        }
-        // means that the phone number is fond but it's for the player him self
+        // phone number doesn't exist
         return false
     }
 
