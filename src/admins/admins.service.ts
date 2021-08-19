@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Admin, AdminRules} from "./entity/admin.entity";
@@ -44,6 +44,44 @@ export class AdminsService {
     async isSuperAdmin(id: number) {
         const user = await this.getAdminById(id);
         return typeof user !== "boolean" ? user?.role === AdminRules.SuperAdmin : false
+    }
+
+    async getAll(){
+        const admins = await this.adminsRepo.find()
+        const _admins=[]
+        for(let i=0; i<admins.length;i++){
+            _admins.push({
+                id:admins[i].id,
+                name:admins[i].name,
+                username: admins[i].username,
+                role: admins[i].role,
+                index: i
+            })
+        }
+        return _admins
+    }
+
+    async editAdmin(newAdmin:Admin){
+        const admin = await this.getAdminById(newAdmin.id)
+        const _admin = admin instanceof Admin ? admin : null;
+        if(!_admin){
+            throw new NotFoundException("Admin not found")
+        }
+        _admin.name = newAdmin.name
+        _admin.username = newAdmin.username
+        _admin.role = newAdmin.role
+        return await this.adminsRepo.update(_admin.id, _admin)
+    }
+
+    async deleteAdmin(adminId){
+        const _admin = await this.getAdminById(adminId)
+        const admin = _admin instanceof Admin ? _admin : null;
+        if(!admin){
+            throw new NotFoundException("Admin Doesn't Exist")
+        }
+        await this.adminsRepo.remove(admin)
+        return {message:"Admin deleted"}
+
     }
 
 }
