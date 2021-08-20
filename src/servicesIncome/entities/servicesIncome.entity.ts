@@ -17,7 +17,7 @@ export class ServiceIncome{
     dayDate: string
 
     @Column()
-    payedMoeny:number
+    payedMoney:number
 
     @Column()
     serviceName:string

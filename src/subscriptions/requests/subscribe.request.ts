@@ -14,4 +14,7 @@ export class SubscribeRequest {
     @IsNotEmpty()
     @IsNumber()
     payedMoney:number
+    @IsNotEmpty()
+    @IsDateString()
+    creationDate:string
 }

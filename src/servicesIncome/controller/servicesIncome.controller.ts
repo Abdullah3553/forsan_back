@@ -1,4 +1,4 @@
-import {Controller, Get, Param} from "@nestjs/common";
+import {Body, Controller, Get, Param, Post} from "@nestjs/common";
 import {ServicesIncomeService} from "../service/servicesIncome.service";
 
 
@@ -9,14 +9,14 @@ export class ServicesIncomeController {
     ) {}
 
     // get all services income for today date
-    @Get('/')
-    getToday(){
-        return this.serviceIncomeService.getTodayServiceIncome()
+    @Post('/today')
+    getToday(@Body('todayDate')todayDate: string){
+        return this.serviceIncomeService.getTodayServiceIncome(todayDate)
     }
 
     //add item to a service
-    @Get("/add/:id")
-    buyService(@Param() parameters){
-        return this.serviceIncomeService.buyService(parameters.id)
+    @Post("/add")
+    buyService(@Body()body){
+        return this.serviceIncomeService.buyService(body.id, body.todayDate)
     }
 }
