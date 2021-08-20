@@ -12,6 +12,9 @@ export class ActivityPlayer{
     @Column()
     name: string
 
+    @Column()
+    phoneNumber: number
+    
     @OneToMany( () => ActivityPlayerSubscription, sub => sub.activityPlayer)
     activitySubscriptions: ActivityPlayerSubscription[]
 }

@@ -1,8 +1,11 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 
 export class CreateNewActivityPlayerRequest {
     @IsNotEmpty()
     name: string
 
+    @IsNotEmpty()
+    @IsString()
+    phoneNumber: number
 }
