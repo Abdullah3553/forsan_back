@@ -20,10 +20,10 @@ export class SubscriptionsService {
     getAll(){
         return this.subscriptionsRepo.find()
     }
-    getAllToday(){
+    getAllToday(todayDate:string){
         return this.subscriptionsRepo.find({
             where:{
-                creationDate:moment().format("yyyy-MM-DD")
+                creationDate:todayDate
             }
         })
     }
@@ -52,7 +52,7 @@ export class SubscriptionsService {
         subscription.beginDate = request.beginDate
         subscription.endDate = request.endDate
         subscription.payedMoney = request.payedMoney
-        subscription.creationDate = moment().format('yyyy-MM-DD')
+        subscription.creationDate = request.creationDate
         return await this.subscriptionsRepo.save(subscription);
     }
 

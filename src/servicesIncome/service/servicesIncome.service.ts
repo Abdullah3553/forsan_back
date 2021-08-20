@@ -15,42 +15,41 @@ export class ServicesIncomeService {
         private readonly servicessService : ServicessServices
     ) {}
 
-    getTodayServiceIncome(){
-        const todayDate = moment().format("yyyy-MM-DD")
+    getTodayServiceIncome(todayDate:string){
         return this.serviceIncomeRepo.find({where:{dayDate:todayDate}})
     }
 
-    async buyService(requestId:number){
+    async buyService(requestId:number, todayDate:string){
         // search for service_id = requestId
-        const serviceIncome = await this.doesServiceIncomeExist(requestId)
+        const serviceIncome = await this.doesServiceIncomeExist(requestId, todayDate)
         serviceIncome.soldItems+=1
         return this.serviceIncomeRepo.save(serviceIncome)
 
     }
         
-    async doesServiceIncomeExist(id:number){
+    async doesServiceIncomeExist(id:number, todayDate:string){
         const service = await this.servicessService.doesServiceExist(id)
         let serviceIncome = await this.serviceIncomeRepo.findOne(
             {
                 where:{
                     service:service,
-                    dayDate : moment().format("yyyy-MM-DD")
+                    dayDate : todayDate
                 }
             })
         if(!serviceIncome){
             // service does not exist
             // then add the servicesIncome to table
-            serviceIncome = await this.addServiceIncome(service)
+            serviceIncome = await this.addServiceIncome(service, todayDate)
         }
         // Service is ready
         return serviceIncome
     }
 
-     addServiceIncome(service:Service){
+     addServiceIncome(service:Service, todayDate:string){
         // service never sold today
         const serviceIncome = new ServiceIncome()
-        serviceIncome.dayDate = moment().format("yyyy-MM-DD")
-         serviceIncome.payedMoeny = service.price
+        serviceIncome.dayDate = todayDate
+         serviceIncome.payedMoney = service.price
         serviceIncome.service = service
          serviceIncome.serviceName = service.name
 

@@ -55,4 +55,14 @@ export class AuthService {
         return _admin
     }
 
+    async getAllAdmins(){
+        return await this.adminsService.getAll()
+    }
+
+    async editAdmin(admin : Admin){
+        return this.adminsService.editAdmin(admin)
+    }
+    async deleteAdmin(requestId:number){
+        return this.adminsService.deleteAdmin(requestId)
+    }
 }

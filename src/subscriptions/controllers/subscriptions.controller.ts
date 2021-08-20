@@ -13,9 +13,9 @@ export class SubscriptionsController {
         return this.subscriptionsService.getAll()
     }
 
-    @Get('/today')
-    getAllToday(){
-        return this.subscriptionsService.getAllToday()
+    @Post('/today')
+    getAllToday(@Body('todayDate')todayDate:string){
+        return this.subscriptionsService.getAllToday(todayDate)
     }
 
     @Get('/:id')
