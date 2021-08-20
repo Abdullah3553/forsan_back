@@ -4,7 +4,7 @@ import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
-import { LogsService } from 'src/logs /service/logs.service';
+import { LogsService } from 'src/logsModule/service/logs.service';
 
 @Injectable()
 export class PlansService {
@@ -44,7 +44,7 @@ export class PlansService {
     }
 
     async updatePlan (newInf: CreateNewPlanRequest, id: number) {
-        //To get the current plan's data from the data base 
+        //To get the current plan's data from the data base
         //We search by id in the plans data base and then update the data
         const result = await this.doesPlanExist(id)
         await this.logsService.createNewLog(id, `Updated ${result.name} Plan`, "Plans")
@@ -82,10 +82,10 @@ export class PlansService {
         plan.isActivated = true
         return this.plansRepo.save(plan);
     }
-    
+
     //we create an object to get the current plan status
     //if the plan is already De-Activated we throw an exception
-    //if not we De-Activate it! 
+    //if not we De-Activate it!
     async deActivatePlan (id: number) {
         const planStatus = await this.doesPlanExist(id)
         if(planStatus.isActivated){

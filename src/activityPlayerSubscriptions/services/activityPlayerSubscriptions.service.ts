@@ -1,6 +1,6 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import {MoreThan, Repository} from "typeorm";
 import {ActivityPlayerSubscription} from "../entities/activityPlayerSubscriptions.entity";
 import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
@@ -38,8 +38,8 @@ export class ActivityPlayerSubscriptionsService {
             items: data[0],
             count: data[1]
         }
-        
-        
+
+
         return await this.activityPlayerSubscriptionRepo.find()
        // return allSubscriptions.map(item=>{
       //      return{
@@ -50,6 +50,12 @@ export class ActivityPlayerSubscriptionsService {
     }
 
     async newSubscription(request:CreateNewActivityPlayerSubscriptionRequest){
+        const check = await this.activityPlayerSubscriptionRepo.query(`SELECT *  FROM \`activityPlayerSubscriptions\` WHERE \`endDate\` >= '${request.endDate}' AND \`activityId\` = ${request.activity_id}`)
+        if (check && check.length) {
+            throw new BadRequestException({
+                message: "User already have a valid subscription In this duration"
+            })
+        }
         const newSub = new ActivityPlayerSubscription()
         newSub.activity = await this.activityService.doesActivityExists(request.activity_id)
         newSub.activityPlayer = await this.activityPlayerService.doesActivityPlayerExist(request.player_id)
@@ -57,7 +63,8 @@ export class ActivityPlayerSubscriptionsService {
         newSub.endDate = request.endDate
         newSub.price = request.price
         newSub.creationDate = moment().format("yyyy-MM-DD")
-        return this.activityPlayerSubscriptionRepo.save(newSub)
+        await this.activityPlayerSubscriptionRepo.save(newSub)
+        return await this.activityPlayerService.getAll();
     }
 
     async todaySubscriptions(){

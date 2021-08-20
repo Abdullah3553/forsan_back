@@ -1,7 +1,7 @@
 import {Injectable, InternalServerErrorException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { LogsService } from "src/logs /service/logs.service";
+import { LogsService } from "src/logsModule/service/logs.service";
 import { OutCome } from "../entities/outCome.entity";
 import { CreateNewOutComeRequest } from "../requests/createNewOutcome.request";
 
@@ -9,11 +9,11 @@ import { CreateNewOutComeRequest } from "../requests/createNewOutcome.request";
 @Injectable()
 export class OutComeService {
 
-    // Creating player's object 
+    // Creating player's object
     constructor(
         @InjectRepository(OutCome)
         private readonly outComeRepo:  Repository<OutCome>,
-        private readonly logsService: LogsService        
+        private readonly logsService: LogsService
     ) {}
 
     getAll(){
@@ -31,7 +31,7 @@ export class OutComeService {
             return item;
         } catch(err){
             console.error(err);
-            
+
             throw new InternalServerErrorException({
                 message: err.message
             })
@@ -46,7 +46,7 @@ export class OutComeService {
             return {message:"outCome deleted"}
         } catch(err){
             console.error(err);
-            
+
             throw new InternalServerErrorException({
                 message: err.message
             })
@@ -55,14 +55,14 @@ export class OutComeService {
 
     async editOutCome(outComeId: number, body: CreateNewOutComeRequest){
         try{
-            await this.logsService.createNewLog(outComeId, `edited ${body.description}`, "outCome") 
+            await this.logsService.createNewLog(outComeId, `edited ${body.description}`, "outCome")
             const newOutCome = await this.outComeRepo.findOne({where: {id: outComeId}})
             newOutCome.description =body.description
             newOutCome.price = body.price
             return await this.outComeRepo.save(newOutCome)
         }catch(err){
             console.error(err);
-            
+
             throw new InternalServerErrorException({
                 message: err.message
             })

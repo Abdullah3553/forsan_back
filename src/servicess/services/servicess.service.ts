@@ -3,12 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import {Service} from "../entities/servicess.entity";
-import { LogsService } from "src/logs /service/logs.service";
+import { LogsService } from "src/logsModule/service/logs.service";
 
 @Injectable()
 export class ServicessServices {
 
-    // Creating player's object 
+    // Creating player's object
     constructor(
         @InjectRepository(Service)
         private readonly serviceRepo:  Repository<Service>,

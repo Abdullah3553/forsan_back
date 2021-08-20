@@ -5,6 +5,7 @@ import {ServiceIncome} from "../entities/servicesIncome.entity";
 import * as moment from 'moment'
 import {ServicessServices} from "../../servicess/services/servicess.service";
 import {Service} from "../../servicess/entities/servicess.entity";
+import {LogsService} from "../../logsModule/service/logs.service";
 
 @Injectable()
 export class ServicesIncomeService {
@@ -12,7 +13,8 @@ export class ServicesIncomeService {
     constructor(
         @InjectRepository(ServiceIncome)
         private readonly serviceIncomeRepo: Repository<ServiceIncome>,
-        private readonly servicessService : ServicessServices
+        private readonly servicessService : ServicessServices,
+        private readonly logsService: LogsService
     ) {}
 
     getTodayServiceIncome(todayDate:string){
@@ -20,13 +22,14 @@ export class ServicesIncomeService {
     }
 
     async buyService(requestId:number, todayDate:string){
+        const service = await this.servicessService.doesServiceExist(requestId)
         // search for service_id = requestId
         const serviceIncome = await this.doesServiceIncomeExist(requestId, todayDate)
         serviceIncome.soldItems+=1
-        return this.serviceIncomeRepo.save(serviceIncome)
-
+        const item = await this.serviceIncomeRepo.save(serviceIncome)
+        await this.logsService.createNewLog(item.id, `purchased new service ${service.name}`, "services")
     }
-        
+
     async doesServiceIncomeExist(id:number, todayDate:string){
         const service = await this.servicessService.doesServiceExist(id)
         let serviceIncome = await this.serviceIncomeRepo.findOne(

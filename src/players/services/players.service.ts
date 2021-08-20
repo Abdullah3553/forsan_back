@@ -5,12 +5,12 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import { unlink } from 'fs';
 import * as moment from "moment";
-import { LogsService } from "src/logs /service/logs.service";
+import { LogsService } from "src/logsModule/service/logs.service";
 
 @Injectable()
 export class PlayersServices{
 
-    // Creating player's object 
+    // Creating player's object
     constructor(
         @InjectRepository(Player)
         private readonly playersRepo:  Repository<Player>,
@@ -18,7 +18,7 @@ export class PlayersServices{
     ) {}
 
     async getAll() {
-        // Get all players from the table 
+        // Get all players from the table
         const data = await this.playersRepo.find({
             relations: ['subscriptions']
         });
@@ -132,7 +132,7 @@ export class PlayersServices{
     async inviteFriend(requestId:number, invites:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
-        
+
         await this.logsService.createNewLog(requestId, `added an invitation to ${player.name} player`, "players")
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             // validate for ended subscription
@@ -153,7 +153,7 @@ export class PlayersServices{
     async freezePlayer(requestId:number, freezeDays:number){
         const player = await this.doesPlayerExist(requestId)
         const subscriptions = await this.getPlayerSubscriptions(requestId)
-        
+
         await this.logsService.createNewLog(requestId, `freeze ${player.name} player`, "players")
 
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
@@ -197,7 +197,7 @@ export class PlayersServices{
 
     // Validation methods
     isEndedSubscription(subscription){
-        
+
             return moment(subscription.endDate).isBefore(moment())
     }
     async doesPlayerExist(id:number){

@@ -14,7 +14,7 @@ import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 import {AdminsModule} from "../admins/admins.module";
 import {AuthModule} from "../auth/auth.module";
-import { logsModule } from 'src/logs /logs.module';
+import { logsModule } from 'src/logsModule/logs.module';
 import { outComeModule } from 'src/outCome/outCome.module';
 
 @Module({

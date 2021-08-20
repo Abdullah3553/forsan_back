@@ -3,17 +3,17 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewActivityRequest } from "../requests/createNewActivity.request";
 import {Activity} from "../entities/activities.entity";
-import { Log } from "src/logs /entities/logs.entitiy";
-import { LogsService } from "src/logs /service/logs.service";
+import { Log } from "src/logsModule/entities/logs.entitiy";
+import { LogsService } from "src/logsModule/service/logs.service";
 
 @Injectable()
 export class ActivitiesService {
 
-    // Creating player's object 
+    // Creating player's object
     constructor(
         @InjectRepository(Activity)
         private readonly activityRepo:  Repository<Activity>,
-        private readonly logsService: LogsService        
+        private readonly logsService: LogsService
     ) {}
 
     getAll(){

@@ -1,8 +1,10 @@
-import {Body, Controller, Get, Param, Post} from "@nestjs/common";
+import {Body, Controller, Get, Param, Post, UseGuards} from "@nestjs/common";
 import {ServicesIncomeService} from "../service/servicesIncome.service";
+import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
 
 @Controller("serviceIncome")
+@UseGuards(JwtAuthGuard)
 export class ServicesIncomeController {
     constructor(
         private readonly serviceIncomeService : ServicesIncomeService

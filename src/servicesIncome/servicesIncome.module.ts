@@ -4,12 +4,14 @@ import {ServiceIncome} from "./entities/servicesIncome.entity";
 import {ServicesIncomeController} from "./controller/servicesIncome.controller";
 import {ServicesIncomeService} from "./service/servicesIncome.service";
 import {ServicessModule} from "../servicess/servicess.module";
+import {logsModule} from "../logsModule/logs.module";
 
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ServiceIncome]),
-        ServicessModule
+        ServicessModule,
+        logsModule
     ],
     controllers: [ServicesIncomeController],
     providers: [ServicesIncomeService],
