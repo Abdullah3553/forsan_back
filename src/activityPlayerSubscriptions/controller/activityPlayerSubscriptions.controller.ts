@@ -11,12 +11,6 @@ export class ActivityPlayerSubscriptionsController {
 
 
 
-    @Get('/')
-    getAll(@Query() { limit, page}){
-        
-        return this.activityPlayerSubService.getAll(limit,page)
-    }
-
 
     @Post('/new')
     newSubscription(@Body() body:CreateNewActivityPlayerSubscriptionRequest){
@@ -36,8 +30,8 @@ export class ActivityPlayerSubscriptionsController {
     }
 
     @Get('/:id')
-    getSingleActivityPlayer(@Param() param){
-        return this.activityPlayerSubService.getSinglePlayer(param.id)
+    getAll(@Query() { limit, page}, @Param() params){
+        return this.activityPlayerSubService.getSinglePlayer(limit,page,params.id)
     }
 
 

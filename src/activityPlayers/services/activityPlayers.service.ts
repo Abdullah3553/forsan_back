@@ -4,6 +4,7 @@ import {LogsService} from "src/logsModule/service/logs.service";
 import {Repository} from "typeorm";
 import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
+import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 
 
 @Injectable()
@@ -12,9 +13,10 @@ export class ActivityPlayersService {
     constructor(
         @InjectRepository(ActivityPlayer)
         private readonly actPlayerRepo: Repository<ActivityPlayer>,
+        @InjectRepository(ActivityPlayerSubscription)
+        private readonly actPlayerSubsRepo: Repository<ActivityPlayerSubscription>,
         private readonly logsService: LogsService
-    ) {
-    }
+    ) {}
 
     async getAll() {
         try {
@@ -48,13 +50,18 @@ export class ActivityPlayersService {
             throw new BadRequestException("PhoneNumber is already exict!");
     }
 
-    async editActivityPlayer(newInput: CreateNewActivityPlayerRequest, reqId) {
+    async editActivityPlayer(newInput, reqId) {
         const newActPlayer = await this.doesActivityPlayerExist(reqId)
         newActPlayer.name = newInput.name
         newActPlayer.phoneNumber = newInput.phoneNumber
         const item = await this.actPlayerRepo.save(newActPlayer)
+        const sub = await this.actPlayerSubsRepo.findOne(newInput.sub_id)
+        sub.beginDate = newInput.beginDate;
+        sub.endDate = newInput.endDate
+        sub.activity = newInput.activity
+        await this.actPlayerSubsRepo.save(sub);
         await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
-        return item
+        return await this.getAll();
     }
 
     async deleteActivityPlayer(id: number) {
