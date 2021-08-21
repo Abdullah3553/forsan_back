@@ -13,11 +13,11 @@ export class ActivityPlayerSubscription {
     @Column('double')
     price: number
 
-    @Column({type: 'date'})
-    beginDate: string
+    @Column({type: 'timestamp'})
+    beginDate: Date | string
 
-    @Column({type: 'date'})
-    endDate: string
+    @Column({type: 'timestamp'})
+    endDate: Date | string
 
     @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {
         onDelete: "CASCADE",

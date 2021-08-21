@@ -8,6 +8,7 @@ import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewA
 import * as moment from "moment/moment";
 import {ActivityPlayer} from "../../activityPlayers/entities/activityPlayers.entity";
 import {LogsService} from "../../logsModule/service/logs.service";
+import {of} from "rxjs";
 
 
 @Injectable()
@@ -22,8 +23,25 @@ export class ActivityPlayerSubscriptionsService {
     ) {
     }
 
-    async getSinglePlayer(limit, page,playerId: number) {
+    /*
+
+   findAndCount({
+            where: {
+                activityPlayer: {
+                    id: playerId
+                }
+            },
+            take: limit,
+            skip: offset,
+        })
+        query(`
+            SELECT * FROM \`activityPlayerSubscriptions\` WHERE \`activityPlayerId\` = ${playerId} LIMIT ${limit} OFFSET ${offset}
+        `)
+     */
+
+    async getSinglePlayer(limit, page ,playerId: number) {
         limit = limit || 10
+        page = page || 1
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit)
         const data: any = await this.activityPlayerSubscriptionRepo.findAndCount({
@@ -35,6 +53,7 @@ export class ActivityPlayerSubscriptionsService {
             take: limit,
             skip: offset,
         })
+        console.log(data)
         return {
             items: data[0],
             count: data[1]
@@ -95,8 +114,8 @@ export class ActivityPlayerSubscriptionsService {
         const subscription = await this.doesSubscriptionExist(id)
         subscription.activity = body.activity
         subscription.activityPlayer = body.activityPlayer
-        subscription.beginDate = body.beginDate
-        subscription.endDate = body.endDate
+        subscription.beginDate = body.beginDate.toString()
+        subscription.endDate = body.endDate.toString()
         subscription.price = body.price
         await this.activityPlayerSubscriptionRepo.save(subscription)
         await this.logsService.createNewLog(subscription.id, `edited subscription for ${subscription.activityPlayer.name} activity player`, 'activityPlayers')
