@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwtAuthGuard";
 import { CreateNewActivityPlayerRequest } from "../requests/createNewActivityPlayer.request";
 import { ActivityPlayersService } from "../services/activityPlayers.service";
@@ -12,8 +12,8 @@ export class ActivityPlayersController {
     ){}
 
     @Get('/')
-    getAll(){
-        return this.activityPlayersService.getAll()
+    getAll(@Query() { limit, page}){
+        return this.activityPlayersService.getAll(limit,page)
     }
 
     @Delete("/delete/:id")

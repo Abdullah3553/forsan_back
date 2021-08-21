@@ -5,6 +5,7 @@ import {Repository} from "typeorm";
 import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
+import moment from "moment";
 
 
 @Injectable()
@@ -18,22 +19,27 @@ export class ActivityPlayersService {
         private readonly logsService: LogsService
     ) {}
 
-    async getAll() {
-        try {
-            const data = await this.actPlayerRepo.find({
-                relations: ['activitySubscriptions']
-            })
-            return data.map(item => {
-                return {
-                    id: item.id,
-                    name: item.name,
-                    phoneNumber: item.phoneNumber,
-                    subscription: item.activitySubscriptions[item.activitySubscriptions.length - 1]
-                }
-            })
-        } catch (err) {
-            console.log(err)
-            throw new BadRequestException("error")
+
+    async getAll( limit?, page?) {
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        const data: any = await this.actPlayerRepo.findAndCount({
+            take: limit,
+            skip: offset,
+            relations:["activitySubscriptions"]
+        })
+        data[0] = data[0].map((player:ActivityPlayer)=>{
+            return{
+                id: player.id,
+                name: player.name,
+                phoneNumber: player.phoneNumber,
+                subscription: player.activitySubscriptions[player.activitySubscriptions.length - 1]
+            }
+        })
+        return {
+            items: data[0],
+            count: data[1]
         }
     }
 
@@ -61,7 +67,7 @@ export class ActivityPlayersService {
         sub.activity = newInput.activity
         await this.actPlayerSubsRepo.save(sub);
         await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
-        return await this.getAll();
+        return await this.getAll(10, 1);
     }
 
     async deleteActivityPlayer(id: number) {
