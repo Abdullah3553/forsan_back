@@ -15,12 +15,23 @@ export class PlayersWeightsServices {
         private readonly playersService: PlayersServices
     ) {}
 
-    async getAll(playerId:number){
-        const playerWeights = await this.playersWeightsRepo.find({where:{player:{id:playerId}}})
-        if(playerWeights.length == 0){
-            throw new NotFoundException("This player has no weights added")
+    async getPlayerWeights(playerId:number, limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        const weights = await this.playersWeightsRepo.findAndCount({
+            where:{
+                player:{
+                    id:playerId
+                }
+            },
+            take:limit,
+            skip:offset
+        })
+        return{
+            items: weights[0],
+            count: weights[1]
         }
-        return playerWeights
     }
 
     async createNewWeight(request:CreateNewPlayersWeightsRequest){

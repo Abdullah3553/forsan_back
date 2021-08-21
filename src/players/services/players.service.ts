@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
-import { unlink } from 'fs';
 import * as moment from "moment";
 import { LogsService } from "src/logsModule/service/logs.service";
 
@@ -49,7 +48,7 @@ export class PlayersServices{
 
     async viewPlayer(id:number){
         const player = await this.playersRepo.findOne({where:{id:id},
-            relations: ['subscriptions' ,'weights']})
+            relations: ['subscriptions']})
         if(!player){
             throw new NotFoundException({message:"Player Not Found"})
         }
@@ -58,10 +57,6 @@ export class PlayersServices{
             name: player.name,
             photo: player.photo,
             height: player.height,
-            weight: {
-                items:player.weights,
-                count:player.weights.length
-            },
             phoneNumber: player.phoneNumber,
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
