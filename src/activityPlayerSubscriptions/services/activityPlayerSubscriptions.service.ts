@@ -45,7 +45,8 @@ export class ActivityPlayerSubscriptionsService {
         const check = await this.activityPlayerSubscriptionRepo.query(`SELECT *
                                                                        FROM \`activityPlayerSubscriptions\`
                                                                        WHERE \`endDate\` >= '${request.endDate}'
-                                                                         AND \`activityId\` = ${request.activity_id}`)
+                                                                         AND \`activityId\` = ${request.activity_id}
+                                                                         AND \`activityPlayerId\` = ${request.player_id} ` )
         if (check && check.length) {
             throw new BadRequestException({
                 message: "User already have a valid subscription In this duration"

@@ -53,7 +53,7 @@ export class ActivityPlayersService {
             await this.logsService.createNewLog(item.id, `added ${item.name} Activityplayer`, "activity players")
             return item;
         } else
-            throw new BadRequestException("PhoneNumber is already exict!");
+            throw new BadRequestException("PhoneNumber is already exist!");
     }
 
     async editActivityPlayer(newInput, reqId) {

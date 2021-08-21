@@ -4,9 +4,11 @@ export class CreateNewActivityPlayerSubscriptionRequest {
     @IsNotEmpty()
     player_id: number
 
+    @IsNotEmpty()
     @IsDateString()
     beginDate: string
 
+    @IsNotEmpty()
     @IsDateString()
     endDate: string
 
