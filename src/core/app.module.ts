@@ -16,6 +16,7 @@ import {AdminsModule} from "../admins/admins.module";
 import {AuthModule} from "../auth/auth.module";
 import { logsModule } from 'src/logsModule/logs.module';
 import { outComeModule } from 'src/outCome/outCome.module';
+import {CsvModule} from "../csv/csv.module";
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { outComeModule } from 'src/outCome/outCome.module';
       ActivityPlayerSubscriptionsModule,
       AdminsModule,
       logsModule,
-      outComeModule
+      outComeModule,
+      CsvModule
   ],
   controllers: [AppController],
   providers: [AppService],
