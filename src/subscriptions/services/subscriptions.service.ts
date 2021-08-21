@@ -27,18 +27,26 @@ export class SubscriptionsService {
             }
         })
     }
-    async getAllForPlayer(playerId:number){
-        const subscriptions = await this.subscriptionsRepo.find({
+    async getAllForPlayer(playerId:number, limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        const subscriptions = await this.subscriptionsRepo.findAndCount({
             where:{
                 player:{
                     id:playerId
                 }
-            }
+            },
+            take:limit,
+            skip:offset
         })
-        if(subscriptions.length === 0){
+        if(subscriptions[0].length === 0){
             throw new BadRequestException("This player has no subscriptions")
         }
-        return subscriptions
+        return {
+            items: subscriptions[0],
+            count: subscriptions[1]
+        }
     }
 
     // create subscriptions or renew subscriptions

@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
 import {SubscriptionsService} from "../services/subscriptions.service";
 import {SubscribeRequest} from "../requests/subscribe.request";
 
@@ -19,8 +19,8 @@ export class SubscriptionsController {
     }
 
     @Get('/:id')
-    getAllForPlayer(@Param() param){
-        return this.subscriptionsService.getAllForPlayer(param.id)
+    getAllForPlayer(@Param() param, @Query() {limit, page}){
+        return this.subscriptionsService.getAllForPlayer(param.id, limit, page)
     }
 
     @Post("/new")

@@ -17,13 +17,16 @@ export class PlayersServices{
         private readonly logsService: LogsService,
     ) {}
 
-    async getAll() {
-        // Get all players from the table
-        const data = await this.playersRepo.find({
-            relations: ['subscriptions']
+    async getAll(limit, page) {
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        const data = await this.playersRepo.findAndCount({
+            relations: ['subscriptions'],
+            take:limit,
+            skip:offset
         });
-        return data.map((player: Player) => {
-
+        const items =  data[0].map((player: Player) => {
             return {
                 id:player.id,
                 name: player.name,
@@ -38,6 +41,10 @@ export class PlayersServices{
                 }
             }
         })
+        return{
+            items:items,
+            count: data[1]
+        }
     }
 
     async viewPlayer(id:number){
@@ -51,7 +58,10 @@ export class PlayersServices{
             name: player.name,
             photo: player.photo,
             height: player.height,
-            weights: player.weights,
+            weight: {
+                items:player.weights,
+                count:player.weights.length
+            },
             phoneNumber: player.phoneNumber,
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
