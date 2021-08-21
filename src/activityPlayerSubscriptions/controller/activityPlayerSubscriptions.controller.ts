@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import {Body, Controller, Get, Param, Post, Query, UseGuards} from "@nestjs/common";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request"
 import {ActivityPlayerSubscriptionsService} from "../services/activityPlayerSubscriptions.service";
+import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('activityPlayerSubscription')
 export class ActivityPlayerSubscriptionsController {
     constructor(
@@ -21,6 +22,11 @@ export class ActivityPlayerSubscriptionsController {
     @Post('/updateDate/:id')
     updateDate(@Body() body, @Param() parametars){
         return this.activityPlayerSubService.updateSubDate(body, parametars.id)
+    }
+
+    @Post('/edit/:id')
+    editActivityPlayerSubscription(@Body() body, @Param() parametars){
+        return this.activityPlayerSubService.editSubscription(body, parametars.id)
     }
 
     @Get('/today')

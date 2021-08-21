@@ -5,12 +5,13 @@ import {ActivityPlayerSubscriptionsController} from "./controller/activityPlayer
 import {ActivityPlayerSubscriptionsService} from "./services/activityPlayerSubscriptions.service";
 import {ActivitiesModule} from "../activities/activities.module";
 import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
+import {logsModule} from "../logsModule/logs.module";
 
 @Module({
 
     imports: [
         TypeOrmModule.forFeature([ActivityPlayerSubscription]),
-        ActivitiesModule, ActivityPlayersModule
+        ActivitiesModule, ActivityPlayersModule, logsModule
     ],
     controllers: [ActivityPlayerSubscriptionsController],
     providers: [ActivityPlayerSubscriptionsService],

@@ -6,6 +6,8 @@ import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
 import * as moment from "moment/moment";
+import {ActivityPlayer} from "../../activityPlayers/entities/activityPlayers.entity";
+import {LogsService} from "../../logsModule/service/logs.service";
 
 
 @Injectable()
@@ -16,6 +18,7 @@ export class ActivityPlayerSubscriptionsService {
         private readonly activityPlayerSubscriptionRepo: Repository<ActivityPlayerSubscription>,
         private readonly activityService: ActivitiesService,
         private readonly activityPlayerService: ActivityPlayersService,
+        private readonly logsService: LogsService,
     ) {
     }
 
@@ -38,8 +41,9 @@ export class ActivityPlayerSubscriptionsService {
         }
     }
 
-    async getAll() {
-    }
+    // async getAll() {
+    // }
+
 
     async newSubscription(request: CreateNewActivityPlayerSubscriptionRequest) {
         const check = await this.activityPlayerSubscriptionRepo.query(`SELECT *
@@ -87,4 +91,15 @@ export class ActivityPlayerSubscriptionsService {
     }
 
 
+    async editSubscription(body, id:number) {
+        const subscription = await this.doesSubscriptionExist(id)
+        subscription.activity = body.activity
+        subscription.activityPlayer = body.activityPlayer
+        subscription.beginDate = body.beginDate
+        subscription.endDate = body.endDate
+        subscription.price = body.price
+        await this.activityPlayerSubscriptionRepo.save(subscription)
+        await this.logsService.createNewLog(subscription.id, `edited subscription for ${subscription.activityPlayer.name} activity player`, 'activityPlayers')
+        return this.getSinglePlayer(10, 1, body.activityPlayer.id)
+    }
 }

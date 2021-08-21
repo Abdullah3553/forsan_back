@@ -60,13 +60,13 @@ export class ActivityPlayersService {
         const newActPlayer = await this.doesActivityPlayerExist(reqId)
         newActPlayer.name = newInput.name
         newActPlayer.phoneNumber = newInput.phoneNumber
-        const item = await this.actPlayerRepo.save(newActPlayer)
-        const sub = await this.actPlayerSubsRepo.findOne(newInput.sub_id)
-        sub.beginDate = newInput.beginDate;
-        sub.endDate = newInput.endDate
-        sub.activity = newInput.activity
-        await this.actPlayerSubsRepo.save(sub);
-        await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
+        await this.actPlayerRepo.save(newActPlayer)
+        // const sub = await this.actPlayerSubsRepo.findOne(newInput.sub_id)
+        // sub.beginDate = newInput.beginDate;
+        // sub.endDate = newInput.endDate
+        // sub.activity = newInput.activity
+        // await this.actPlayerSubsRepo.save(sub);
+        // await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
         return await this.getAll(10, 1);
     }
 
