@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Param, Delete} from "@nestjs/common";
+import {Controller, Get, Post, Body, Param, Delete, Query} from "@nestjs/common";
 import { CreateNewPlayersWeightsRequest } from "../requests/createNewPlayersWeightsRequest";
 import { PlayersWeightsServices } from "../services/playersWeights.service";
 
@@ -9,9 +9,9 @@ export class PlayersWeightsController {
         private readonly playersWeightsService : PlayersWeightsServices
     ){}
 
-    @Get("/:id")
-    getAll(@Param() parameters){
-        return this.playersWeightsService.getAll(parameters.id)
+    @Get("/allWeights/:id")
+    getAll(@Param() parameters, @Query() {limit, page}){
+        return this.playersWeightsService.getPlayerWeights(parameters.id, limit, page)
     }
 
     @Post('/new')

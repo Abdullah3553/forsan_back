@@ -10,7 +10,7 @@ import {PartialSubscriptionsService} from "./services/partialSubscriptions.servi
 @Module({
     imports: [
         TypeOrmModule.forFeature([Subscription]),
-        PlayersModule,
+        PlayersModule ,
         forwardRef(()=>PlansModule)
     ],
     providers: [SubscriptionsService, PartialSubscriptionsService],
