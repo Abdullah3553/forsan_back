@@ -2,7 +2,6 @@ import { Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import {ServiceIncome} from "../entities/servicesIncome.entity";
-import * as moment from 'moment'
 import {ServicessServices} from "../../servicess/services/servicess.service";
 import {Service} from "../../servicess/entities/servicess.entity";
 import {LogsService} from "../../logsModule/service/logs.service";

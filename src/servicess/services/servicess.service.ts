@@ -28,19 +28,14 @@ export class ServicessServices {
 
     //view all services
     async getAll(){
-        const allServices = await this.serviceRepo.find()
-        if(allServices.length==0){
-            // there are no services ...
-            return {message:"There are no services."}
-        }
-        return allServices
+        return await this.serviceRepo.find()
     }
 
     // delete a service
     async deleteService(requestId : number){
         const item = await this.doesServiceExist(requestId)
         await this.logsService.createNewLog(requestId, `deleted ${item.name} service`, "service")
-        await this.serviceRepo.remove( await this.doesServiceExist(requestId))
+        await this.serviceRepo.remove(item)
         return {message:"The service has been deleted."}
     }
 
