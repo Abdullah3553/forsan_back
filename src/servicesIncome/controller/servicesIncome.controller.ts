@@ -19,6 +19,6 @@ export class ServicesIncomeController {
     //add item to a service
     @Post("/add")
     buyService(@Body()body){
-        return this.serviceIncomeService.buyService(body.id, body.todayDate)
+        return this.serviceIncomeService.buyService(body.id, body.todayDate, body.quantity)
     }
 }
