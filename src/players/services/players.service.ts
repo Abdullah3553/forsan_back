@@ -220,11 +220,11 @@ export class PlayersServices{
         if(player){// we found a player with that phone number
 
             if(playerId ){ // to make sure that player id is not null
-                if(playerId === player.id){ // it means that this phonne number exists but fot the player him self
+                if(playerId == player.id){ // it means that this phone number exists but fot the player him self
                     return false
                 }
+                throw new BadRequestException("Phone number Exists")
             }
-            throw new BadRequestException("Phone number Exists")
 
         }
         // phone number doesn't exist
@@ -232,5 +232,4 @@ export class PlayersServices{
     }
 
 
-    // TODO: create the service method to update the player photo
 }
