@@ -4,15 +4,15 @@ import {Player} from "../players/entities/players.entity";
 import {Repository} from "typeorm";
 
 import { Parser } from "json2csv";
+import { ActivityPlayer } from 'src/activityPlayers/entities/activityPlayers.entity';
 
 @Injectable()
 export class CSVService {
 
     constructor(
         @InjectRepository(Player)
-        private readonly playersRepo: Repository<Player>
-    ) {
-    }
+        private readonly playersRepo: Repository<Player>,
+    ) {}
 
     // this method will be called from the controller
     // simply this will return a text that will be return to the user in the response
@@ -22,6 +22,7 @@ export class CSVService {
     // we have a solution is when the user click the button to download a csv we open this link in a normal chrome browser
     // and this will be great
     // don't worry I will do this in the elctron code
+    
     async forPlayers() {
         // back to the csv generation process
         // first we make an empty array that will hold the data that we want to export
