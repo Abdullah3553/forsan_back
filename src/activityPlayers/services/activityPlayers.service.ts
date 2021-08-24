@@ -1,11 +1,11 @@
-import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {LogsService} from "src/logsModule/service/logs.service";
 import {Repository} from "typeorm";
 import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
-import moment from "moment";
+import * as moment from "moment";
 
 
 @Injectable()
@@ -91,5 +91,89 @@ export class ActivityPlayersService {
             throw new NotFoundException("Player is Not Found")
         }
         return activityPlayer
+    }
+
+    async searchById(requestedId: number){
+        try{
+            const holder = await this.actPlayerRepo.find(
+                {where:{id: requestedId}}
+            )
+            return holder
+        } catch(err){
+            console.log(err);
+            throw new InternalServerErrorException(
+                "There is an error while searching about the activity player by id"
+            )
+        }
+    }
+
+    async searchByActivity(requestedId: number, limit, page){
+        try{
+            limit = limit || 10
+            limit = Math.abs(Number(limit));
+            const offset = Math.abs((page - 1) * limit)
+
+            const sql = `select p.id,p.name, p.phoneNumber,sub.beginDate,sub.endDate,sub.activityId,ac.name as "activityName" FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${requestedId}" and DATE(sub.endDate) >= "${moment().format("yyyy-MM-DD")}"`;
+            let count = await this.actPlayerRepo.query(sql+";");
+            count = count.length
+            const res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
+
+            return res2
+
+            const holder = await this.actPlayerRepo.find({
+                relations:["activitySubscriptions"]
+            }), res=[]
+            for(let i=0;i<holder.length;i++){
+                const tmpSubs=[]
+                for(let j=0;j<holder[i].activitySubscriptions.length;j++){
+                    if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
+                        console.log(holder[i].activitySubscriptions[j].activity.id);
+                        console.log(requestedId);
+                        
+                        tmpSubs.push(holder[i].activitySubscriptions[j])
+                        console.log(tmpSubs);
+                        
+                    }
+                }
+                if(tmpSubs.length!==0){
+                    res.push({...holder[i],
+                        activitySubscriptions:tmpSubs})
+                }
+            }
+            return res
+
+        }catch(err){
+            console.log(err);
+            throw new InternalServerErrorException(
+                "There is an error while searching about the activity player by activity id"
+            )
+        }
+    }
+    async showEndedSubscriptions(){
+        try{
+            const players = await this.actPlayerRepo.find(
+                {relations:["activitySubscriptions"]}
+            )
+            
+            let res=[]
+            
+            for(let i = 0; i < players.length; i++){
+                let isEnded=true
+                for(let j = 0; j < players[i].activitySubscriptions.length; j++){
+                    if(!moment(players[i].activitySubscriptions[j].endDate).isBefore(moment()) /*&& players[i].activitySubscriptions[j].activity.id === activityId*/){
+                        isEnded = false
+                    }
+                }
+                if(isEnded){
+                    res.push(players[i])
+                }
+            }
+            return res
+        }catch(err){
+            console.log(err);
+            throw new InternalServerErrorException(
+                "There is an error while searching about the ended subscriptions"
+            )
+        }
     }
 }
