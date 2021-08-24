@@ -31,4 +31,19 @@ export class ActivityPlayersController {
         return this.activityPlayersService.editActivityPlayer(body, params.id)
     }
 
+    @Get('/search/id/:id')
+    searchActivityPlayer(@Param() param){
+        return this.activityPlayersService.searchById(param.id)
+    }
+
+    @Get("/search/activity/:id")
+    searchByActivity(@Param() param, @Query() { limit, page}){
+        return this.activityPlayersService.searchByActivity(param.id, limit, page)
+    }
+
+    @Get("/search/endedSubscriptions/")
+    showEndedSubscriptions(){
+        return this.activityPlayersService.showEndedSubscriptions()
+    }
+
 }
