@@ -253,6 +253,9 @@ export class PlayersServices{
                 let count = await this.playersRepo.query(sql+";");
                 count = count.length
                 const res = await this.playersRepo.query(sql+` limit ${limit} offset ${offset};`)
+                if(res.length===0){
+                    throw new NotFoundException("Search Element not found")
+                }
                 for(let i=0;i<res.length;i++){
                     res[i] ={
                         id:res[i].id,

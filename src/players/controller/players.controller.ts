@@ -32,16 +32,6 @@ export class PlayersController {
         return this.playersService.newPlayer(body);
     }
 
-    @Post("/edit/:id")
-    editPlayer(@Body() body: CreateNewPlayerRequest, @Param() params){
-        return this.playersService.editPlayer(body, params.id);
-    }
-
-    @Delete("/delete/:id")
-    deletePlayer(@Param() params){
-        return this.playersService.deletePlayer(params.id)
-    }
-
     @Post("/inviteFriend/:id")
     inviteFriend(@Param() parameters, @Body() body){
         return this.playersService.inviteFriend(parameters.id, body.invites)
@@ -57,7 +47,21 @@ export class PlayersController {
             return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page)
     }
 
-    // TODO create an endpoint just for updating the photo
+    @Post("/search")
+    async search(@Body() body, @Query() {limit, page}){
+        return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page)
+    }
+
+    @Post("/edit/:id")
+    editPlayer(@Body() body: CreateNewPlayerRequest, @Param() params){
+        return this.playersService.editPlayer(body, params.id);
+    }
+
+    @Delete("/delete/:id")
+    deletePlayer(@Param() params){
+        return this.playersService.deletePlayer(params.id)
+    }
+
 
 }
 
