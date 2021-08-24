@@ -5,7 +5,7 @@ import {SubscribeRequest} from "../requests/subscribe.request";
 @Controller('subscription')
 export class SubscriptionsController {
     constructor(
-        private readonly subscriptionsService: SubscriptionsService
+        private readonly subscriptionsService: SubscriptionsService,
     ) {}
 
     @Get('/')

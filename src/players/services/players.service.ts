@@ -5,6 +5,7 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
 import { LogsService } from "src/logsModule/service/logs.service";
+import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
 
 @Injectable()
 export class PlayersServices{
@@ -14,6 +15,7 @@ export class PlayersServices{
         @InjectRepository(Player)
         private readonly playersRepo:  Repository<Player>,
         private readonly logsService: LogsService,
+        private readonly subscriptionsService: PartialSubscriptionsService,
     ) {}
 
     async getAll(limit, page) {
@@ -25,21 +27,7 @@ export class PlayersServices{
             take:limit,
             skip:offset
         });
-        const items =  data[0].map((player: Player) => {
-            return {
-                id:player.id,
-                name: player.name,
-                phoneNumber: player.phoneNumber,
-                subscription:{
-                    beginDate:player.subscriptions[player.subscriptions.length-1].beginDate,
-                    endDate:player.subscriptions[player.subscriptions.length-1].endDate,
-                    plan:{
-                        id:player.subscriptions[player.subscriptions.length-1].plan.id,
-                        name:player.subscriptions[player.subscriptions.length-1].plan.name
-                    }
-                }
-            }
-        })
+        const items =  this.dataFormat(data[0])
         return{
             items:items,
             count: data[1]
@@ -229,6 +217,88 @@ export class PlayersServices{
         }
         // phone number doesn't exist
         return false
+    }
+    async searchByOption(searchElement:any, searchOption:string, limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        switch (searchOption) {
+            case "id": {
+                const data = await this.playersRepo.findAndCount({
+                    where: {
+                        id: Number(searchElement)
+                    },
+                    relations:["subscriptions"],
+                    take:limit,
+                    skip:offset
+                })
+                return {items:this.dataFormat(data[0]),
+                        count:data[1]}
+            }
+            case 'phone': {
+                const data= await this.playersRepo.findAndCount({
+                    where: {
+                        phoneNumber: searchElement
+                    },
+                    relations:["subscriptions"],
+                    take:limit,
+                    skip:offset
+                })
+                return {items:this.dataFormat(data[0]),
+                    count:data[1]}
+            }
+            case'beginDate':
+            case 'endDate':{
+                const sql = `select p.id,p.name, p.phoneNumber,sub.beginDate,sub.endDate,sub.planId,pl.name as "planName" FROM players as p INNER JOIN subscriptions as sub on p.id = sub.playerId inner join plans as pl on sub.planId = pl.id where DATE(sub.${searchOption}) = "${searchElement}"`;
+                let count = await this.playersRepo.query(sql+";");
+                count = count.length
+                const res = await this.playersRepo.query(sql+` limit ${limit} offset ${offset};`)
+                for(let i=0;i<res.length;i++){
+                    res[i] ={
+                        id:res[i].id,
+                        name:res[i].name,
+                        phoneNumber:res[i].phoneNumber,
+                        subscription:{
+                            beginDate:res[i].beginDate,
+                            endDate:res[i].endDate,
+                            plan:{
+                                id:res[i].planId,
+                                name:res[i].planName
+                            }
+                        }
+                    }
+                }
+                return {
+                    items: res,
+                    count: count
+                }
+            }
+            default:
+                return await this.getAll(limit, page)
+        }
+    }
+
+
+    dataFormat(data){
+
+        if(data.length===0){
+            throw new NotFoundException("Search Element not found")
+        }
+        return data.map((player: Player) => {
+            return {
+                id:player.id,
+                name: player.name,
+                phoneNumber: player.phoneNumber,
+                subscription:{
+                    beginDate:player.subscriptions[player.subscriptions.length-1].beginDate,
+                    endDate:player.subscriptions[player.subscriptions.length-1].endDate,
+                    plan:{
+                        id:player.subscriptions[player.subscriptions.length-1].plan.id,
+                        name:player.subscriptions[player.subscriptions.length-1].plan.name
+                    }
+                }
+            }
+        })
     }
 
 

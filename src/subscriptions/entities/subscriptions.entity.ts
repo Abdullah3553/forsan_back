@@ -11,12 +11,12 @@ export class Subscription {
     id: number
 
     @Column({
-        type: 'date'
+        type: 'timestamp'
     })
-    beginDate: string
+    beginDate: string | Date
 
     @Column({
-        type: 'date'
+        type: 'timestamp'
     })
     endDate: string | Date
 
