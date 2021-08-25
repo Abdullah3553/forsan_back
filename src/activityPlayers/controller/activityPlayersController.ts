@@ -41,9 +41,9 @@ export class ActivityPlayersController {
         return this.activityPlayersService.searchByActivity(param.id, limit, page)
     }
 
-    @Get("/search/endedSubscriptions/")
-    showEndedSubscriptions(){
-        return this.activityPlayersService.showEndedSubscriptions()
+    @Get("/search/endedSubscriptions/:activityId")
+    showEndedSubscriptions(@Param() params){
+        return this.activityPlayersService.showEndedSubscriptions(params.activityId)
     }
 
 }

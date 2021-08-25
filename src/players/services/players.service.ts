@@ -249,7 +249,7 @@ export class PlayersServices{
             }
             case'beginDate':
             case 'endDate':{
-                const sql = `select p.id,p.name, p.phoneNumber,sub.beginDate,sub.endDate,sub.planId,pl.name as "planName" FROM players as p INNER JOIN subscriptions as sub on p.id = sub.playerId inner join plans as pl on sub.planId = pl.id where DATE(sub.${searchOption}) = "${searchElement}"`;
+                const sql = `select p.id,p.name, p.phoneNumber, sub.beginDate,sub.endDate,sub.planId,pl.name as "planName" FROM players as p INNER JOIN subscriptions as sub on p.id = sub.playerId inner join plans as pl on sub.planId = pl.id where DATE(sub.${searchOption}) = "${searchElement}"`;
                 let count = await this.playersRepo.query(sql+";");
                 count = count.length
                 const res = await this.playersRepo.query(sql+` limit ${limit} offset ${offset};`)

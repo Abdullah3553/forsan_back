@@ -113,34 +113,60 @@ export class ActivityPlayersService {
             limit = Math.abs(Number(limit));
             const offset = Math.abs((page - 1) * limit)
 
-            const sql = `select p.id,p.name, p.phoneNumber,sub.beginDate,sub.endDate,sub.activityId,ac.name as "activityName" FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${requestedId}" and DATE(sub.endDate) >= "${moment().format("yyyy-MM-DD")}"`;
+            const sql = `select p.id,p.name, p.phoneNumber, sub.id as "subId", sub.price, sub.creationDate, sub.beginDate,sub.endDate, sub.activityId, ac.name as "activityName", ac.id as "activityId", ac.coachName, ac.coachPhoneNumber, ac.price as "activityPrice", ac.description FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${requestedId}" and DATE(sub.endDate) >= "${moment().format("yyyy-MM-DD")}"`;
             let count = await this.actPlayerRepo.query(sql+";");
             count = count.length
-            const res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
-
-            return res2
-
-            const holder = await this.actPlayerRepo.find({
-                relations:["activitySubscriptions"]
-            }), res=[]
-            for(let i=0;i<holder.length;i++){
-                const tmpSubs=[]
-                for(let j=0;j<holder[i].activitySubscriptions.length;j++){
-                    if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
-                        console.log(holder[i].activitySubscriptions[j].activity.id);
-                        console.log(requestedId);
-                        
-                        tmpSubs.push(holder[i].activitySubscriptions[j])
-                        console.log(tmpSubs);
-                        
+            let res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
+            res2 =  res2.map(activityPlayer=>{
+                return{
+                    id:activityPlayer.id,
+                    name:activityPlayer.name,
+                    phoneNumber:activityPlayer.phoneNumber,
+                    subscription:{
+                        id:activityPlayer.subId,
+                        price:activityPlayer.price,
+                        beginDate:activityPlayer.beginDate,
+                        endDate:activityPlayer.endDate,
+                        creationDate:activityPlayer.creationDate,
+                        activity:{
+                            id:activityPlayer.activityId,
+                            name:activityPlayer.activityName,
+                            coachName:activityPlayer.coachName,
+                            coachPhoneNumber:activityPlayer.coachPhoneNumber,
+                            price:activityPlayer.activityPrice,
+                            description:activityPlayer.description
+                        }
                     }
+
                 }
-                if(tmpSubs.length!==0){
-                    res.push({...holder[i],
-                        activitySubscriptions:tmpSubs})
-                }
+            })
+
+            return {
+                items:res2,
+                count:count
             }
-            return res
+
+            // const holder = await this.actPlayerRepo.find({
+            //     relations:["activitySubscriptions"]
+            // }), res=[]
+            // for(let i=0;i<holder.length;i++){
+            //     const tmpSubs=[]
+            //     for(let j=0;j<holder[i].activitySubscriptions.length;j++){
+            //         if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
+            //             console.log(holder[i].activitySubscriptions[j].activity.id);
+            //             console.log(requestedId);
+            //
+            //             tmpSubs.push(holder[i].activitySubscriptions[j])
+            //             console.log(tmpSubs);
+            //
+            //         }
+            //     }
+            //     if(tmpSubs.length!==0){
+            //         res.push({...holder[i],
+            //             activitySubscriptions:tmpSubs})
+            //     }
+            // }
+            // return res
 
         }catch(err){
             console.log(err);
@@ -149,13 +175,13 @@ export class ActivityPlayersService {
             )
         }
     }
-    async showEndedSubscriptions(){
+    async showEndedSubscriptions(activityId:number){
         try{
             const players = await this.actPlayerRepo.find(
                 {relations:["activitySubscriptions"]}
             )
             
-            let res=[]
+            const res=[]
             
             for(let i = 0; i < players.length; i++){
                 let isEnded=true
