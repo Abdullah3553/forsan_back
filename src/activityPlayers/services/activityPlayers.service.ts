@@ -6,6 +6,7 @@ import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 import * as moment from "moment";
+import { retry } from "rxjs";
 
 
 @Injectable()
@@ -95,9 +96,10 @@ export class ActivityPlayersService {
 
     async searchById(requestedId: number){
         try{
-            const holder = await this.actPlayerRepo.find(
-                {where:{id: requestedId}}
+            let holder = await this.actPlayerRepo.find(
+                {relations:["activitySubscriptions"], where:{id: requestedId}}
             )
+            
             return holder
         } catch(err){
             console.log(err);
@@ -178,6 +180,7 @@ export class ActivityPlayersService {
             )
         }
     }
+    
     async showEndedSubscriptions(activityId:number, limit, page){
         try{
             // limit = limit || 10
@@ -226,14 +229,16 @@ export class ActivityPlayersService {
                 {relations:["activitySubscriptions"]}
             )
 
-            const res=[], res2=[]
+            let res=[], res2=[]
 
             for(let i = 0; i < players.length; i++){
                 let isEnded=-1
                 // isEnded = -1 -> initial value
                 // isEnded = 0 -> false -> notEnded
                 // isEnded = 1 -> true -> Ended
+                const deleteActivitySubs = []
                 for(let j = 0; j < players[i].activitySubscriptions.length; j++){
+
                     if(players[i].activitySubscriptions[j].activity.id === activityId){
                         if(!this.isEndedSubscription(players[i].activitySubscriptions[j].endDate)){
                             isEnded = 0
@@ -241,8 +246,15 @@ export class ActivityPlayersService {
                         }else{
                             isEnded = 1
                         }
+                    }else {
+                        deleteActivitySubs.push(j)
                     }
                 }
+                for(let j = deleteActivitySubs.length-1; j >= 0 ; j--){
+                    players[i].activitySubscriptions.splice(deleteActivitySubs[j],1)
+                }
+
+                
                 if(isEnded===1){
                     res.push(players[i])
                 }
@@ -252,6 +264,14 @@ export class ActivityPlayersService {
                 res2.push(res[i])
             }
 
+            res2 = res2.map(activityPlayer => {
+                return{
+                    id:activityPlayer.id,
+                    name: activityPlayer.name,
+                    phoneNumber: activityPlayer.phoneNumber,
+                    subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
+                }
+            })
             return {
                 items:res2,
                 count:res.length

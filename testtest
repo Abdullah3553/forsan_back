@@ -1,0 +1,22 @@
+res2 =  res2.map(activityPlayer=>{
+                return{
+                    id:activityPlayer.id,
+                    name:activityPlayer.name,
+                    phoneNumber:activityPlayer.phoneNumber,
+                    subscription:{
+                        id:activityPlayer.subId,
+                        price:activityPlayer.price,
+                        beginDate:activityPlayer.beginDate,
+                        endDate:activityPlayer.endDate,
+                        creationDate:activityPlayer.creationDate,
+                        activity:{
+                            id:activityPlayer.activityId,
+                            name:activityPlayer.activityName,
+                            coachName:activityPlayer.coachName,
+                            coachPhoneNumber:activityPlayer.coachPhoneNumber,
+                            price:activityPlayer.activityPrice,
+                            description:activityPlayer.description
+                        }
+                    }
+
+                }
