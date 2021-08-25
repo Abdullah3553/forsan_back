@@ -6,7 +6,6 @@ import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 import * as moment from "moment";
-import { retry } from "rxjs";
 
 
 @Injectable()
@@ -96,11 +95,10 @@ export class ActivityPlayersService {
 
     async searchById(requestedId: number){
         try{
-            let holder = await this.actPlayerRepo.find(
+            return await this.actPlayerRepo.find(
                 {relations:["activitySubscriptions"], where:{id: requestedId}}
             )
             
-            return holder
         } catch(err){
             console.log(err);
             throw new InternalServerErrorException(
@@ -115,63 +113,85 @@ export class ActivityPlayersService {
             limit = Math.abs(Number(limit));
             const offset = Math.abs((page - 1) * limit)
 
-            console.log("limit  :", limit)
-            console.log("offset  :", offset)
+            const holder = await this.actPlayerRepo.find({
+                relations:["activitySubscriptions"]
+            }), res=[]
+            let res2=[]
+            for(let i=0;i<holder.length;i++){
+                const tmpSubs=[]
+                for(let j=0;j<holder[i].activitySubscriptions.length;j++){
+                    if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
+                        tmpSubs.push(holder[i].activitySubscriptions[j])
+                    }
+                }
+                if(tmpSubs.length!==0){
+                    res.push({...holder[i],
+                        activitySubscriptions:tmpSubs})
+                }
+            }
 
-            const sql = `select p.id,p.name, p.phoneNumber, sub.id as "subId", sub.price, sub.creationDate, sub.beginDate,sub.endDate, sub.activityId, ac.name as "activityName", ac.id as "activityId", ac.coachName, ac.coachPhoneNumber, ac.price as "activityPrice", ac.description FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${requestedId}" and DATE(sub.endDate) >= "${moment().format("yyyy-MM-DD")}"`;
-            let count = await this.actPlayerRepo.query(sql+";");
-            count = count.length
-            let res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
-            res2 =  res2.map(activityPlayer=>{
+            for(let i=offset, cont=0;i<res.length;i++,cont++){
+                if(cont === limit) break;
+                res2.push(res[i])
+            }
+
+            res2 = res2.map(activityPlayer => {
                 return{
                     id:activityPlayer.id,
-                    name:activityPlayer.name,
-                    phoneNumber:activityPlayer.phoneNumber,
-                    subscription:{
-                        id:activityPlayer.subId,
-                        price:activityPlayer.price,
-                        beginDate:activityPlayer.beginDate,
-                        endDate:activityPlayer.endDate,
-                        creationDate:activityPlayer.creationDate,
-                        activity:{
-                            id:activityPlayer.activityId,
-                            name:activityPlayer.activityName,
-                            coachName:activityPlayer.coachName,
-                            coachPhoneNumber:activityPlayer.coachPhoneNumber,
-                            price:activityPlayer.activityPrice,
-                            description:activityPlayer.description
-                        }
-                    }
-
+                    name: activityPlayer.name,
+                    phoneNumber: activityPlayer.phoneNumber,
+                    subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
                 }
             })
 
             return {
-                items:res2,
-                count:count
+                items: res2,
+                count : res.length
             }
 
-            // const holder = await this.actPlayerRepo.find({
-            //     relations:["activitySubscriptions"]
-            // }), res=[]
-            // for(let i=0;i<holder.length;i++){
-            //     const tmpSubs=[]
-            //     for(let j=0;j<holder[i].activitySubscriptions.length;j++){
-            //         if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
-            //             console.log(holder[i].activitySubscriptions[j].activity.id);
-            //             console.log(requestedId);
-            //
-            //             tmpSubs.push(holder[i].activitySubscriptions[j])
-            //             console.log(tmpSubs);
-            //
-            //         }
-            //     }
-            //     if(tmpSubs.length!==0){
-            //         res.push({...holder[i],
-            //             activitySubscriptions:tmpSubs})
+            // const sql = `select p.id,p.name, p.phoneNumber, sub.id as "subId", sub.price, sub.creationDate, sub.beginDate,sub.endDate, sub.activityId, ac.name as "activityName", ac.id as "activityId", ac.coachName, ac.coachPhoneNumber, ac.price as "activityPrice", ac.description FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${requestedId}" ` // and DATE(sub.endDate) >= "${moment().format("yyyy-MM-DD")}"
+            // let count = await this.actPlayerRepo.query(sql+";");
+            // count = count.length
+            // const res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
+            // let res3=[]
+            // const vstdPlayers = []
+            // for(let i =0;i<res2.length;i++){
+            //     if(!vstdPlayers[res2[i]]){
+            //         vstdPlayers[res2[i]] = true
+            //         res3.push(res2[i])
+            //     }else{
+            //         count--
             //     }
             // }
-            // return res
+            // res3 =  res3.map(activityPlayer=>{
+            //     return{
+            //         id:activityPlayer.id,
+            //         name:activityPlayer.name,
+            //         phoneNumber:activityPlayer.phoneNumber,
+            //         subscription:{
+            //             id:activityPlayer.subId,
+            //             price:activityPlayer.price,
+            //             beginDate:activityPlayer.beginDate,
+            //             endDate:activityPlayer.endDate,
+            //             creationDate:activityPlayer.creationDate,
+            //             activity:{
+            //                 id:activityPlayer.activityId,
+            //                 name:activityPlayer.activityName,
+            //                 coachName:activityPlayer.coachName,
+            //                 coachPhoneNumber:activityPlayer.coachPhoneNumber,
+            //                 price:activityPlayer.activityPrice,
+            //                 description:activityPlayer.description
+            //             }
+            //         }
+            //
+            //     }
+            // })
+            //
+            // return {
+            //     items:res2,
+            //     count:count
+            // }
+
 
         }catch(err){
             console.log(err);
@@ -229,7 +249,8 @@ export class ActivityPlayersService {
                 {relations:["activitySubscriptions"]}
             )
 
-            let res=[], res2=[]
+            const res=[]
+            let res2=[]
 
             for(let i = 0; i < players.length; i++){
                 let isEnded=-1
