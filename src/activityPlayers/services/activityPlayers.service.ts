@@ -180,67 +180,91 @@ export class ActivityPlayersService {
     }
     async showEndedSubscriptions(activityId:number, limit, page){
         try{
+            // limit = limit || 10
+            // limit = Math.abs(Number(limit));
+            // const offset = Math.abs((page - 1) * limit)
+            //
+            // const sql = `select p.id,p.name, p.phoneNumber, sub.id as "subId", sub.price, sub.creationDate, sub.beginDate,sub.endDate, sub.activityId, ac.name as "activityName", ac.id as "activityId", ac.coachName, ac.coachPhoneNumber, ac.price as "activityPrice", ac.description FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${activityId}" and DATE(sub.endDate) < "${moment().format("yyyy-MM-DD")}"`;
+            // let count = await this.actPlayerRepo.query(sql+";");
+            // count = count.length
+            // let res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
+            // res2 =  res2.map(activityPlayer=>{
+            //     return{
+            //         id:activityPlayer.id,
+            //         name:activityPlayer.name,
+            //         phoneNumber:activityPlayer.phoneNumber,
+            //         subscription:{
+            //             id:activityPlayer.subId,
+            //             price:activityPlayer.price,
+            //             beginDate:activityPlayer.beginDate,
+            //             endDate:activityPlayer.endDate,
+            //             creationDate:activityPlayer.creationDate,
+            //             activity:{
+            //                 id:activityPlayer.activityId,
+            //                 name:activityPlayer.activityName,
+            //                 coachName:activityPlayer.coachName,
+            //                 coachPhoneNumber:activityPlayer.coachPhoneNumber,
+            //                 price:activityPlayer.activityPrice,
+            //                 description:activityPlayer.description
+            //             }
+            //         }
+            //
+            //     }
+            // })
+            //
+            // return {
+            //     items:res2,
+            //     count:count
+            // }
+
             limit = limit || 10
             limit = Math.abs(Number(limit));
             const offset = Math.abs((page - 1) * limit)
+            activityId = Number(activityId)
 
-            const sql = `select p.id,p.name, p.phoneNumber, sub.id as "subId", sub.price, sub.creationDate, sub.beginDate,sub.endDate, sub.activityId, ac.name as "activityName", ac.id as "activityId", ac.coachName, ac.coachPhoneNumber, ac.price as "activityPrice", ac.description FROM activityPlayers as p INNER JOIN activityPlayerSubscriptions as sub on p.id = sub.activityPlayerId inner join activities as ac on sub.activityId = ac.id WHERE sub.activityId = "${activityId}" and DATE(sub.endDate) < "${moment().format("yyyy-MM-DD")}"`;
-            let count = await this.actPlayerRepo.query(sql+";");
-            count = count.length
-            let res2 = await this.actPlayerRepo.query(sql+` limit ${limit} offset ${offset};`)
-            res2 =  res2.map(activityPlayer=>{
-                return{
-                    id:activityPlayer.id,
-                    name:activityPlayer.name,
-                    phoneNumber:activityPlayer.phoneNumber,
-                    subscription:{
-                        id:activityPlayer.subId,
-                        price:activityPlayer.price,
-                        beginDate:activityPlayer.beginDate,
-                        endDate:activityPlayer.endDate,
-                        creationDate:activityPlayer.creationDate,
-                        activity:{
-                            id:activityPlayer.activityId,
-                            name:activityPlayer.activityName,
-                            coachName:activityPlayer.coachName,
-                            coachPhoneNumber:activityPlayer.coachPhoneNumber,
-                            price:activityPlayer.activityPrice,
-                            description:activityPlayer.description
+            const players = await this.actPlayerRepo.find(
+                {relations:["activitySubscriptions"]}
+            )
+
+            const res=[], res2=[]
+
+            for(let i = 0; i < players.length; i++){
+                let isEnded=-1
+                // isEnded = -1 -> initial value
+                // isEnded = 0 -> false -> notEnded
+                // isEnded = 1 -> true -> Ended
+                for(let j = 0; j < players[i].activitySubscriptions.length; j++){
+                    if(players[i].activitySubscriptions[j].activity.id === activityId){
+                        if(!this.isEndedSubscription(players[i].activitySubscriptions[j].endDate)){
+                            isEnded = 0
+                            break;
+                        }else{
+                            isEnded = 1
                         }
                     }
-
                 }
-            })
+                if(isEnded===1){
+                    res.push(players[i])
+                }
+            }
+            for(let i=offset, cont=0;i<res.length;i++,cont++){
+                if(cont === limit) break;
+                res2.push(res[i])
+            }
 
             return {
                 items:res2,
-                count:count
+                count:res.length
             }
-
-
-            // const players = await this.actPlayerRepo.find(
-            //     {relations:["activitySubscriptions"]}
-            // )
-            //
-            // const res=[]
-            //
-            // for(let i = 0; i < players.length; i++){
-            //     let isEnded=true
-            //     for(let j = 0; j < players[i].activitySubscriptions.length; j++){
-            //         if(!moment(players[i].activitySubscriptions[j].endDate).isBefore(moment()) /*&& players[i].activitySubscriptions[j].activity.id === activityId*/){
-            //             isEnded = false
-            //         }
-            //     }
-            //     if(isEnded){
-            //         res.push(players[i])
-            //     }
-            // }
-            // return res
         }catch(err){
             console.log(err);
             throw new InternalServerErrorException(
                 "There is an error while searching about the ended subscriptions"
             )
         }
+    }
+
+    private isEndedSubscription(endDate) {
+        return moment(endDate).isBefore(moment());
     }
 }
