@@ -258,27 +258,28 @@ export class PlayersServices{
                 const sql = `select p.id,p.name, p.phoneNumber, sub.beginDate,sub.endDate,sub.planId,pl.name as "planName" FROM players as p INNER JOIN subscriptions as sub on p.id = sub.playerId inner join plans as pl on sub.planId = pl.id where DATE(sub.${searchOption}) = "${searchElement}"`;
                 let count = await this.playersRepo.query(sql+";");
                 count = count.length
-                const res = await this.playersRepo.query(sql+` limit ${limit} offset ${offset};`)
-                if(res.length===0){
-                    throw new NotFoundException("Search Element not found")
-                }
+                const res = await this.playersRepo.query(sql+` limit ${limit} offset ${offset};`), vstdPlayers=[], res2=[]
                 for(let i=0;i<res.length;i++){
-                    res[i] ={
-                        id:res[i].id,
-                        name:res[i].name,
-                        phoneNumber:res[i].phoneNumber,
-                        subscription:{
-                            beginDate:res[i].beginDate,
-                            endDate:res[i].endDate,
-                            plan:{
-                                id:res[i].planId,
-                                name:res[i].planName
+
+                    if(!vstdPlayers[res[i].id]){
+                        vstdPlayers[res[i].id] = true
+                        res2.push({
+                            id: res[i].id,
+                            name: res[i].name,
+                            phoneNumber: res[i].phoneNumber,
+                            subscription: {
+                                beginDate: moment(res[i].beginDate).format("yyyy-MM-DD"),
+                                endDate: moment(res[i].endDate).format("yyyy-MM-DD"),
+                                plan: {
+                                    id: res[i].planId,
+                                    name: res[i].planName
+                                }
                             }
-                        }
+                        })
                     }
                 }
                 return {
-                    items: res,
+                    items: res2,
                     count: count
                 }
             }
