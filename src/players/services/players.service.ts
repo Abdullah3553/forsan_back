@@ -5,7 +5,6 @@ import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
 import { LogsService } from "src/logsModule/service/logs.service";
-import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
 
 @Injectable()
 export class PlayersServices{
@@ -15,7 +14,6 @@ export class PlayersServices{
         @InjectRepository(Player)
         private readonly playersRepo:  Repository<Player>,
         private readonly logsService: LogsService,
-        private readonly subscriptionsService: PartialSubscriptionsService,
     ) {}
 
     async getAll(limit, page) {
@@ -48,7 +46,11 @@ export class PlayersServices{
             phoneNumber: player.phoneNumber,
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
-            subscription:player.subscriptions[player.subscriptions.length-1],
+            subscription:{
+                ...player.subscriptions[player.subscriptions.length-1],
+                beginDate:moment(player.subscriptions[player.subscriptions.length-1].beginDate).format('yyyy-MM-DD'),
+                endDate:moment(player.subscriptions[player.subscriptions.length-1].endDate).format('yyyy-MM-DD'),
+            },
             freeze:player.freeze,
             invited:player.invited
         }
@@ -118,7 +120,11 @@ export class PlayersServices{
         delete res.subscriptions
         return {
             ...res,
-            subscription:subs[subs.length-1]
+            subscription:{
+                ...subs[subs.length-1],
+                beginDate:moment(subs[subs.length-1].beginDate).format('yyyy-MM-DD'),
+                endDate: moment(subs[subs.length-1].endDate).format('yyyy-MM-DD')
+            }
         }
     }
 
@@ -276,6 +282,66 @@ export class PlayersServices{
                     count: count
                 }
             }
+            case "plan":{
+                if(searchElement){
+                    const players = await this.playersRepo.find({
+                        relations: ["subscriptions"]
+                    })
+                    let res = []
+                    for (let i = 0; i < players.length; i++) {
+                        let isInPlan = false
+                        const notInPlanSubscriptionsId = []
+                        for (let j = players[i].subscriptions.length - 1; j > -1; j--) {
+                            if (players[i].subscriptions[j].plan.id === Number(searchElement)) {
+                                isInPlan = true
+                            } else {
+
+                                notInPlanSubscriptionsId.push(j)
+                            }
+                        }
+                        if (isInPlan) {
+                            for (let j = notInPlanSubscriptionsId.length - 1; j > -1; j--) {
+                                players[i].subscriptions.splice(notInPlanSubscriptionsId[j], 1)
+                            }
+                            res.push(players[i])
+                        }
+                    }
+                    res = this.dataFormat(res)
+                    const res2 = []
+                    for (let i = offset, cont = 0; i < res.length; i++, cont++) {
+                        if (cont === limit) break;
+                        res2.push(res[i])
+                    }
+                    return {
+                        items: res2,
+                        count: res.length
+                    }
+                }else{
+                    return await this.getAll(limit, page)
+                }
+            }
+            case "ended":{
+                const players = await this.playersRepo.find({
+                    relations:["subscriptions"]
+                })
+                let res = this.dataFormat(players), res2=[]
+                for(let i=0;i<res.length;i++){
+                    if(moment(res[i].subscription.endDate).isBefore(moment())){
+                        // this is ended subscriber player
+                        res2.push(res[i])
+                    }
+                }
+                res = res2
+                res2=[]
+                for(let i=offset, cont=0;i<res.length;i++,cont++){
+                    if(cont === limit) break;
+                    res2.push(res[i])
+                }
+                return {
+                    items:res2,
+                    count:res.length
+                }
+            }
             default:
                 return await this.getAll(limit, page)
         }
@@ -285,7 +351,7 @@ export class PlayersServices{
     dataFormat(data){
 
         if(data.length===0){
-            throw new NotFoundException("Search Element not found")
+            return []
         }
         return data.map((player: Player) => {
             return {
@@ -293,8 +359,8 @@ export class PlayersServices{
                 name: player.name,
                 phoneNumber: player.phoneNumber,
                 subscription:{
-                    beginDate:player.subscriptions[player.subscriptions.length-1].beginDate,
-                    endDate:player.subscriptions[player.subscriptions.length-1].endDate,
+                    beginDate:moment(player.subscriptions[player.subscriptions.length-1].beginDate).format('yyyy-MM-DD'),
+                    endDate:moment(player.subscriptions[player.subscriptions.length-1].endDate).format('yyyy-MM-DD'),
                     plan:{
                         id:player.subscriptions[player.subscriptions.length-1].plan.id,
                         name:player.subscriptions[player.subscriptions.length-1].plan.name

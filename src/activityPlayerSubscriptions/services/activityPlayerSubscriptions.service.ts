@@ -53,7 +53,6 @@ export class ActivityPlayerSubscriptionsService {
             take: limit,
             skip: offset,
         })
-        console.log(data)
         return {
             items: data[0],
             count: data[1]

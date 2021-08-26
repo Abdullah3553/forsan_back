@@ -40,9 +40,17 @@ export class SubscriptionsService {
             take:limit,
             skip:offset
         })
+
         if(subscriptions[0].length === 0){
             throw new BadRequestException("This player has no subscriptions")
         }
+        subscriptions[0] = subscriptions[0].map(sub=>{
+            return{
+                ...sub,
+                beginDate: moment(sub.beginDate).format('yyyy-MM-DD'),
+                endDate: moment(sub.endDate).format('yyyy-MM-DD'),
+            }
+        })
         return {
             items: subscriptions[0],
             count: subscriptions[1]
