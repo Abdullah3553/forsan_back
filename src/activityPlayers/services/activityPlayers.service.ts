@@ -134,6 +134,7 @@ export class ActivityPlayersService {
                 const tmpSubs=[]
                 for(let j=0;j<holder[i].activitySubscriptions.length;j++){
                     if(holder[i].activitySubscriptions[j].activity.id === Number(requestedId)){
+                        if(moment(holder[i].activitySubscriptions[j].endDate).isAfter(moment()))
                         tmpSubs.push(holder[i].activitySubscriptions[j])
                     }
                 }

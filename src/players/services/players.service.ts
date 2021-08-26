@@ -293,14 +293,14 @@ export class PlayersServices{
                         const notInPlanSubscriptionsId = []
                         for (let j = players[i].subscriptions.length - 1; j > -1; j--) {
                             if (players[i].subscriptions[j].plan.id === Number(searchElement)) {
-                                isInPlan = true
+                                if(moment(players[i].subscriptions[j].endDate).isAfter(moment()))
+                                    isInPlan = true
                             } else {
-
                                 notInPlanSubscriptionsId.push(j)
                             }
                         }
                         if (isInPlan) {
-                            for (let j = notInPlanSubscriptionsId.length - 1; j > -1; j--) {
+                            for (let j = 0; j < notInPlanSubscriptionsId.length; j++) {
                                 players[i].subscriptions.splice(notInPlanSubscriptionsId[j], 1)
                             }
                             res.push(players[i])
