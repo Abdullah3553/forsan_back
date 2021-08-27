@@ -13,7 +13,7 @@ export class ActivityPlayer{
     name: string
 
     @Column()
-    phoneNumber: number
+    phoneNumber: string
     
     @OneToMany( () => ActivityPlayerSubscription, sub => sub.activityPlayer)
     activitySubscriptions: ActivityPlayerSubscription[]

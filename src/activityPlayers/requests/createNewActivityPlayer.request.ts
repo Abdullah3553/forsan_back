@@ -7,5 +7,5 @@ export class CreateNewActivityPlayerRequest {
 
     @IsNotEmpty()
     @IsString()
-    phoneNumber: number
+    phoneNumber: string
 }
