@@ -10,7 +10,6 @@ export class CreateNewActivityRequest {
     @IsNotEmpty()
     coachPhoneNumber: string
 
-    @IsNotEmpty()
     price: number
 
     @IsNotEmpty()

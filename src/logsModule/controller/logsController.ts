@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Query, UseGuards} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Post, Query, UseGuards} from "@nestjs/common";
 import {JwtAuthGuard} from "src/auth/guards/jwtAuthGuard";
 import {LogsService} from "../service/logs.service";
 
@@ -21,4 +21,13 @@ export class logsController {
         return this.logService.getAt(body,limit,page)
     }
 
+    @Delete("/deleteAll")
+    deleteAllLogs(){
+        return this.logService.deleteAll()
+    }
+
+    @Delete("/deleteSelectedTime")
+    deleteSelectedTime(@Body() body){
+        return this.logService.deleteSelectedTime(body.beginDate, body.endDate)
+    }
 }

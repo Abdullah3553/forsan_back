@@ -3,7 +3,8 @@ import {REQUEST} from "@nestjs/core";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Request} from "express";
 import * as moment from 'moment'
-import {getConnection, Repository} from "typeorm";
+import { throwIfEmpty } from "rxjs";
+import {Between, getConnection, In, LessThanOrEqual, MoreThanOrEqual, Repository} from "typeorm";
 import {Log} from "../entities/logs.entitiy";
 
 
@@ -71,4 +72,21 @@ export class LogsService {
         }
     }
 
+    async deleteAll(){
+        return await this.logRepo.clear()
+    }
+
+    async deleteSelectedTime(beginDate, endDate){
+        const holder = await this.logRepo.find({where: {dayDate: Between(beginDate, endDate)}, select: ["id"]})
+        const Ids = []
+
+        for(let i = 0; i < holder.length; i++){
+            Ids.push(holder[i].id)
+        }
+        
+        await this.logRepo.delete({id: In(Ids)})
+        return{
+            message:"Selected logs deleted !"
+        }
+    }
 }
