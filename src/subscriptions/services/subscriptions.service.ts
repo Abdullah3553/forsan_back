@@ -20,12 +20,34 @@ export class SubscriptionsService {
     getAll(){
         return this.subscriptionsRepo.find()
     }
-    getAllToday(todayDate:string){
-        return this.subscriptionsRepo.find({
+    async getAllToday(todayDate:string){
+        const subscriptions = await this.subscriptionsRepo.find({
             where:{
                 creationDate:todayDate
             }
         })
+        const plans = await this.plansService.getAll()
+        const indexedPlans = [], res=[]
+        for(let i=0;i<plans.length;i++){
+            if(plans[i].isActivated){
+                indexedPlans[plans[i].id] = {
+                    numberOfSubscriptions:0,
+                    payedMoney:0,
+                    plan:plans[i]
+                }
+            }
+        }
+
+        for(let i=0;i<subscriptions.length;i++){
+            indexedPlans[subscriptions[i].plan.id].numberOfSubscriptions++;
+            indexedPlans[subscriptions[i].plan.id].payedMoney+=subscriptions[i].payedMoney;
+        }
+        for(let i=0;i<plans.length;i++){
+            if(plans[i].isActivated)
+                res.push(indexedPlans[plans[i].id])
+        }
+        return res
+
     }
     async getAllForPlayer(playerId:number, limit, page){
         limit = limit || 10
