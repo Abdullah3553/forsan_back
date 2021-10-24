@@ -14,4 +14,9 @@ export class OutCome {
     @Column()
     description: string
 
+    @Column({
+        type: 'timestamp'
+    })
+    creationDate:Date|string
+
 }

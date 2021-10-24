@@ -70,6 +70,10 @@ export class AdminsService {
         _admin.name = newAdmin.name
         _admin.username = newAdmin.username
         _admin.role = newAdmin.role
+        if(newAdmin.password){
+            const salt = genSaltSync(5);
+            _admin.password = hashSync(newAdmin.password, salt)
+        }
         return await this.adminsRepo.update(_admin.id, _admin)
     }
 

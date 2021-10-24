@@ -22,6 +22,12 @@ export class outComeController {
         return this.outComeService.newOutCome(body)
     }
 
+
+    @Post("/today")
+    getToday(@Body()body){
+        return this.outComeService.getToday(body.todayDate);
+    }
+
     @Delete('/delete/:id')
     deleteOutCome(@Param() param){
         return this.outComeService.deleteOutCome(param.id)

@@ -1,9 +1,10 @@
 import {Injectable, InternalServerErrorException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import {MoreThanOrEqual, Repository} from "typeorm";
 import { LogsService } from "src/logsModule/service/logs.service";
 import { OutCome } from "../entities/outCome.entity";
 import { CreateNewOutComeRequest } from "../requests/createNewOutcome.request";
+import * as moment from "moment";
 
 
 @Injectable()
@@ -20,11 +21,21 @@ export class OutComeService {
         return this.outComeRepo.find()
     }
 
+    async getToday(todayDate){
+        const tmp = await this.outComeRepo.find({
+            where:{
+                creationDate : MoreThanOrEqual(todayDate)
+            }
+        })
+        return tmp
+    }
+
     async newOutCome(body: CreateNewOutComeRequest){
         try{
             const newOutCome = new OutCome()
             newOutCome.price = body.price
             newOutCome.description = body.description
+            newOutCome.creationDate = body.dayDate
 
             const item = await this.outComeRepo.save(newOutCome)
             await this.logsService.createNewLog(item.id, `added ${item.description}`, "outCome")

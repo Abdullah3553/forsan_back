@@ -36,7 +36,7 @@ export class PlansController {
         return this.plansService.deletePlan(params.id);
     }
 
-    @Post("/update-plan/:id")
+    @Post("/edit/:id")
     updatePlan(@Body() body: CreateNewPlanRequest, @Param() params){
         return this.plansService.updatePlan(body, params.id)
     }

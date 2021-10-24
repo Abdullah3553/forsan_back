@@ -7,4 +7,7 @@ export class CreateNewOutComeRequest {
 
     @IsNotEmpty()
     description:string
+
+    @IsNotEmpty()
+    dayDate:Date|string
 }
