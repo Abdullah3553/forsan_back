@@ -1,4 +1,4 @@
-import { IsDecimal, IsNotEmpty, IsString} from "class-validator"
+import { IsDecimal, IsNotEmpty, IsNumber, IsString} from "class-validator"
 
 export class CreateNewPlayerRequest {
     
@@ -21,6 +21,9 @@ export class CreateNewPlayerRequest {
     @IsNotEmpty()
     @IsString()
     dietPlan: string
+
+    @IsString()
+    barCode: string
 
     //@IsString()
     photo:string

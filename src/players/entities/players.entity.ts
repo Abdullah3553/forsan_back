@@ -36,6 +36,11 @@ export class Player {
     @Column({type:'smallint', default:0})
     invited:number
 
+    @Column({
+        nullable:true
+    })
+    barCode: string
+    
     // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
     subscriptions: Subscription[]

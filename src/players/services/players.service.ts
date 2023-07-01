@@ -7,6 +7,7 @@ import * as moment from "moment";
 import { LogsService } from "src/logsModule/service/logs.service";
 
 @Injectable()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class PlayersServices{
 
     // Creating player's object
@@ -46,6 +47,7 @@ export class PlayersServices{
             phoneNumber: player.phoneNumber,
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
+            barCode: player.barCode,
             subscription:{
                 ...player.subscriptions[player.subscriptions.length-1],
                 beginDate:moment(player.subscriptions[player.subscriptions.length-1].beginDate).format('yyyy-MM-DD'),
@@ -77,6 +79,7 @@ export class PlayersServices{
             player.height = newInput.height
             player.dietPlan = newInput.dietPlan
             player.trainingPlan = newInput.trainingPlan
+            player.barCode = newInput.barCode
             player =  await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
             return player
@@ -111,6 +114,7 @@ export class PlayersServices{
         newPlayerInfo.height = newInf.height
         newPlayerInfo.dietPlan = newInf.dietPlan
         newPlayerInfo.trainingPlan = newInf.trainingPlan
+        newPlayerInfo.barCode = newInf.barCode
         await this.logsService.createNewLog(requestedId, `edited ${newInf.name} player`, "players")
         if(newInf.photo!== null){
             newPlayerInfo.photo = newInf.photo
@@ -138,15 +142,15 @@ export class PlayersServices{
             throw new BadRequestException("This player subscription has ended")
         }
 
-        if(player.freeze === 0){
+        //if(player.freeze === 0){
             // he didn't freeze before
             if(player.invited + invites <= subscriptions[subscriptions.length-1].plan.invites ){
                 player.invited += invites
                 return this.playersRepo.save(player)
             }
             throw new BadRequestException("You have exeeded the limit of invites ")
-        }
-        throw new BadRequestException("You can't invite a friend because You Froze before")
+        //}
+        //throw new BadRequestException("You can't invite a friend because You Froze before")
     }
 
     async freezePlayer(requestId:number, freezeDays:number){
@@ -158,7 +162,7 @@ export class PlayersServices{
         if(this.isEndedSubscription(subscriptions[subscriptions.length-1])){
             throw new BadRequestException("This player subscription has ended")
         }
-        if(player.invited === 0){
+        //if(player.invited === 0){
             // He didn't invite any Players
             if(player.freeze + freezeDays <= subscriptions[subscriptions.length-1].plan.freezeDays){
                 // he didn't freeze before
@@ -166,8 +170,8 @@ export class PlayersServices{
                 return this.playersRepo.save(player)
             }
             throw new BadRequestException("You have exeeded the limit of freeze days ")
-        }
-        throw new BadRequestException("You have invited a player before so You CANNOT freeze")
+        //}
+        //throw new BadRequestException("You have invited a player before so You CANNOT freeze")
 
     }
     async getPlayerSubscriptions(id:number){
@@ -233,6 +237,18 @@ export class PlayersServices{
                 const data = await this.playersRepo.findAndCount({
                     where: {
                         id: Number(searchElement)
+                    },
+                    relations:["subscriptions"],
+                    take:limit,
+                    skip:offset
+                })
+                return {items:this.dataFormat(data[0]),
+                        count:data[1]}
+            }
+            case "barCode":{
+                const data = await this.playersRepo.findAndCount({
+                    where: {
+                        barCode: Number(searchElement)
                     },
                     relations:["subscriptions"],
                     take:limit,
