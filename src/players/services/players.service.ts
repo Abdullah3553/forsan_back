@@ -60,8 +60,18 @@ export class PlayersServices{
     }
 
     async getPlayersNumber(){
-        const players = await this.playersRepo.find()
-        return players.length
+        //const players = await this.playersRepo.find()
+        //return players.length
+        const players = await this.playersRepo.find({
+            relations:["subscriptions"]
+        })
+        let res = this.dataFormat(players), res2=[]
+        for(let i=0;i<res.length;i++){
+            if(! (moment(res[i].subscription.endDate).isBefore(moment())) ){
+                res2.push(res[i])
+            }
+        }
+        return res2.length;
     }
 
     async newPlayer(newInput: CreateNewPlayerRequest) : Promise<Player> {
