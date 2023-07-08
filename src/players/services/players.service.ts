@@ -264,6 +264,11 @@ export class PlayersServices{
                     take:limit,
                     skip:offset
                 })
+                if(data){
+                    const player = await this.playersRepo.findOne({where:{barCode:searchElement},
+                                    relations: ['subscriptions']})
+                    await this.logsService.createNewLog(player.id, `signed`, "players")
+                }
                 return {items:this.dataFormat(data[0]),
                         count:data[1]}
             }
