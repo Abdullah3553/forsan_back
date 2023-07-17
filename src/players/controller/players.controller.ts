@@ -17,6 +17,11 @@ export class PlayersController {
         return this.playersService.getAll(limit, page);
     }
 
+    @Get("/SignedInPlayers")
+    getSignedInData(@Query() {limit, page}){
+        return this.playersService.getSignedinPlayersData(limit, page);
+    }
+
     @Get('/number')
     getPlayersNumber(){
         return this.playersService.getPlayersNumber()
@@ -61,6 +66,7 @@ export class PlayersController {
     deletePlayer(@Param() params){
         return this.playersService.deletePlayer(params.id)
     }
+
 
 
 }

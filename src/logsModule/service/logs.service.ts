@@ -36,6 +36,23 @@ export class LogsService {
         }
     }
 
+    async getSignedIn(limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        const data: any = await this.logRepo.findAndCount({
+            where: {
+                dayDate: moment().format("yyyy-MM-DD"),
+                log: "signed"
+            },
+            take: limit,
+            skip: offset,
+        })
+        return {
+            items: data[0],
+            count: data[1]
+        }
+    }
 
     async createNewLog(logId: number, logType: string, logSource: string) {
         const user: any = this.request.user

@@ -33,6 +33,30 @@ export class PlayersServices{
         }
     }
 
+    async getSignedinPlayersData(limit, page){
+        const SignedInData = this.logsService.getSignedIn(limit, page);
+        let PlayersList = [], curIndex = 0;
+        for(let i = 0; i < (await SignedInData).count; i++){
+            const PlayerData = this.playersRepo.findOne({where:{id:(await SignedInData).items[0].logId},
+            relations: ['subscriptions']});
+            const LastPlayerSubscription = (await PlayerData).subscriptions.length-1;
+            if(PlayerData){
+                PlayersList[curIndex] = {
+                    id: (await PlayerData).id,
+                    name: (await PlayerData).name,
+                    ended: this.isEndedSubscription(((await PlayerData).subscriptions[LastPlayerSubscription])),
+                    phoneNumber: (await PlayerData).phoneNumber
+                };
+                curIndex++;
+            }
+        }
+        let resultedObject = {
+            "items": PlayersList,
+            "count": PlayersList.length+1
+        }
+        return resultedObject;
+    }
+
     async viewPlayer(id:number){
         const player = await this.playersRepo.findOne({where:{id:id},
             relations: ['subscriptions']})

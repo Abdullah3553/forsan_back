@@ -16,6 +16,11 @@ export class logsController {
         return this.logService.getAll(limit,page)
     }
 
+    @Get("/signedin")
+    getTodaySignedinPlayers(@Query() { limit, page}){
+        return this.logService.getSignedIn(limit, page);
+    }
+
     @Post("/at")
     getLogsAt(@Body() body,@Query() { limit, page}) {
         return this.logService.getAt(body,limit,page)
