@@ -34,10 +34,10 @@ export class PlayersServices{
     }
 
     async getSignedinPlayersData(limit, page){
-        const SignedInData = this.logsService.getSignedIn(limit, page);
+        const SignedInData = this.logsService.getSignedIn();
         let PlayersList = [], curIndex = 0;
         for(let i = 0; i < (await SignedInData).count; i++){
-            const PlayerData = this.playersRepo.findOne({where:{id:(await SignedInData).items[0].logId},
+            const PlayerData = this.playersRepo.findOne({where:{id:(await SignedInData).items[i].logId},
             relations: ['subscriptions']});
             const LastPlayerSubscription = (await PlayerData).subscriptions.length-1;
             if(PlayerData){
@@ -50,9 +50,9 @@ export class PlayersServices{
                 curIndex++;
             }
         }
-        let resultedObject = {
+        const resultedObject = {
             "items": PlayersList,
-            "count": PlayersList.length+1
+            "count": PlayersList.length
         }
         return resultedObject;
     }
