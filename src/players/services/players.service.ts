@@ -33,10 +33,22 @@ export class PlayersServices{
         }
     }
 
+    async getSignedPlayersPaging(limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
+        return;
+    }
+
     async getSignedinPlayersData(limit, page){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit)
         const SignedInData = this.logsService.getSignedIn();
-        let PlayersList = [], curIndex = 0;
-        for(let i = 0; i < (await SignedInData).count; i++){
+        let PlayersList = [], curIndex = 0, playersCount = 0;
+
+        for(let i = offset; i < (await SignedInData).count; i++){
+            if(playersCount === limit) break;
             const PlayerData = this.playersRepo.findOne({where:{id:(await SignedInData).items[i].logId},
             relations: ['subscriptions']});
             const LastPlayerSubscription = (await PlayerData).subscriptions.length-1;
@@ -48,11 +60,12 @@ export class PlayersServices{
                     phoneNumber: (await PlayerData).phoneNumber
                 };
                 curIndex++;
+                playersCount++;
             }
         }
         const resultedObject = {
             "items": PlayersList,
-            "count": PlayersList.length
+            "count": (await SignedInData).count
         }
         return resultedObject;
     }
