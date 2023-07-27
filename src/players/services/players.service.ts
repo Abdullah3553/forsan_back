@@ -154,6 +154,7 @@ export class PlayersServices{
 
     //Edit player
     async editPlayer(newInf: CreateNewPlayerRequest, requestedId:number){
+        //console.log(newInf)
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
         await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
@@ -302,7 +303,7 @@ export class PlayersServices{
                     skip:offset
                 })
                 if(data){
-                    const player = await this.playersRepo.findOne({where:{barCode:searchElement},
+                    const player = await this.playersRepo.findOne({where:{barCode:Number(searchElement)},
                                     relations: ['subscriptions']})
                     await this.logsService.createNewLog(player.id, `signed`, "players")
                 }

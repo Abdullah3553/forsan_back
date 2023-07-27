@@ -22,7 +22,7 @@ export class CreateNewPlayerRequest {
     @IsString()
     dietPlan: string
 
-    @IsString()
+    //@IsString() // Abdullah commented this to fix the image update problem
     barCode: string
 
     //@IsString()

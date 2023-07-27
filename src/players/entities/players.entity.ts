@@ -37,7 +37,9 @@ export class Player {
     invited:number
 
     @Column({
-        nullable:true
+        nullable:true,
+        type:"varchar", // to fix the type error
+        length:255
     })
     barCode: string
     
