@@ -22,7 +22,7 @@ export class CreateNewPlayerRequest {
     @IsString()
     dietPlan: string
 
-    @IsString()
+    //@IsString()
     barCode: string
 
     //@IsString()
