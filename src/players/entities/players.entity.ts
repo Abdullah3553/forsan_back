@@ -38,11 +38,11 @@ export class Player {
 
     @Column({
         nullable:true,
-        type:"varchar", // to fix the type error
+        type: "varchar", // to fix the type error
         length:255
     })
     barCode: string
-    
+
     // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
     subscriptions: Subscription[]

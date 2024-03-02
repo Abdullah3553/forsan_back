@@ -34,7 +34,7 @@ export class AdminsService {
     }
 
     async getAdminById(id: number) : Promise<Admin | boolean> {
-        const admin = await this.adminsRepo.findOne(id)
+        const admin = await this.adminsRepo.findOneById(id)
         if (!admin) {
             return  false
         }
