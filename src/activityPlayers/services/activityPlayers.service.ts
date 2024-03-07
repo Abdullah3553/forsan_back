@@ -23,7 +23,7 @@ export class ActivityPlayersService {
     async getAll( limit?, page?) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
-        const offset = Math.abs((page - 1) * limit)
+        const offset = Math.abs((page - 1) * limit) || 0
         const data: any = await this.actPlayerRepo.findAndCount({
             take: limit,
             skip: offset,

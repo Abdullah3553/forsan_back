@@ -98,6 +98,7 @@ export class SubscriptionsService {
         const sub = await this.doesSubscriptionExist(requestId)
         sub.beginDate = request.beginDate
         sub.endDate = request.endDate
+        sub.payedMoney = request.payedMoney
         return this.subscriptionsRepo.save(sub)
     }
 
