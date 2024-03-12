@@ -128,9 +128,9 @@ export class PlayersServices {
             player.name = newInput.name
             player.photo = newInput.photo
             player.phoneNumber = newInput.phoneNumber
-            player.height = newInput.height
-            player.dietPlan = newInput.dietPlan
-            player.trainingPlan = newInput.trainingPlan
+            //player.height = newInput.height
+            //player.dietPlan = newInput.dietPlan
+            //player.trainingPlan = newInput.trainingPlan
             player.barCode = newInput.barCode
             player = await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
@@ -159,14 +159,13 @@ export class PlayersServices {
 
     //Edit player
     async editPlayer(newInf: CreateNewPlayerRequest, requestedId: number) {
-        //console.log(newInf)
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
         await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
-        newPlayerInfo.height = newInf.height
-        newPlayerInfo.dietPlan = newInf.dietPlan
-        newPlayerInfo.trainingPlan = newInf.trainingPlan
+        //newPlayerInfo.height = newInf.height
+        //newPlayerInfo.dietPlan = newInf.dietPlan
+        //newPlayerInfo.trainingPlan = newInf.trainingPlan
         newPlayerInfo.barCode = newInf.barCode
         await this.logsService.createNewLog(requestedId, `edited ${newInf.name} player`, "players")
         if (newInf.photo !== null) {
@@ -261,7 +260,7 @@ export class PlayersServices {
     async doesPlayerExist(id: number) {
         const player = await this.playersRepo.findOne({
             where: {id: id},
-            relations: ['subscriptions', 'weights']
+            relations: ['subscriptions']
         })
         if (!player) {
             throw new NotFoundException({message: "Player Not Found"})

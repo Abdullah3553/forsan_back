@@ -45,6 +45,12 @@ export class PlansController {
     De_ActivePlan(@Param() params){
         return this.plansService.deActivatePlan(params.id)
     }
+
+    @Get('/:id')
+    getPlansById(@Param() params) {
+        return this.plansService.getById(params.id);
+    }
+    
     @Post("test")
     test(@Body() body){
         return this.plansService.test(body)

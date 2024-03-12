@@ -95,22 +95,22 @@ export class ActivityPlayersService {
 
     async searchById(requestedId: number){
         try{
-            let holder = await this.actPlayerRepo.find(
-                {relations:["activitySubscriptions"], where:{id: requestedId}}
-            ), res=[]
-
-            res = holder.map(activityPlayer=> {
-                return{
-                    id: activityPlayer.id,
-                    name: activityPlayer.name,
-                    phoneNumber: activityPlayer.phoneNumber,
-                    subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
-                }
+            // let holder = await this.actPlayerRepo.find(
+            //     {relations:["activitySubscriptions"], where:{id: requestedId}}
+            // )
+            const activityPlayer = await this.actPlayerRepo.findOne({
+                where: {id: requestedId},
+                relations: ['activitySubscriptions'],
             })
-            return {
-                items: res,
-                count: 1
-            }
+            // res = holder.map(activityPlayer=> {
+            //     return{
+            //         id: activityPlayer.id,
+            //         name: activityPlayer.name,
+            //         phoneNumber: activityPlayer.phoneNumber,
+            //         subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
+            //     }
+            // })
+            return activityPlayer;
 
         } catch(err){
             console.log(err);

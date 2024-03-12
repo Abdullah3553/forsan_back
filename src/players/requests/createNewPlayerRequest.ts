@@ -1,4 +1,5 @@
 import { IsDecimal, IsNotEmpty, IsNumber, IsString} from "class-validator"
+import { IsNull } from "typeorm"
 
 export class CreateNewPlayerRequest {
     
@@ -10,17 +11,14 @@ export class CreateNewPlayerRequest {
     @IsString()
     phoneNumber: string
 
-    @IsNotEmpty()
-    @IsDecimal()
-    height: string
+    // @IsDecimal()
+    // height: string
 
-    @IsNotEmpty()
-    @IsString()
-    trainingPlan: string
+    // @IsString()
+    // trainingPlan: string
 
-    @IsNotEmpty()
-    @IsString()
-    dietPlan: string
+    // @IsString()
+    // dietPlan: string
 
     //@IsString()
     barCode: string

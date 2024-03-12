@@ -10,7 +10,7 @@ import {ActivitiesModule} from "../activities/activities.module";
 import { ServicessModule} from "../servicess/servicess.module";
 import {ActivityPlayersModule} from "../activityPlayers/activityPlayers.module";
 import {ServicesIncomeModule} from "../servicesIncome/servicesIncome.module";
-import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
+// import {PlayersWeightsModule} from "../playersWeights/playersWeights.module";
 import {ActivityPlayerSubscriptionsModule} from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 import {AdminsModule} from "../admins/admins.module";
 import {AuthModule} from "../auth/auth.module";
@@ -29,7 +29,7 @@ import {CsvModule} from "../csv/csv.module";
       ServicessModule,
       ActivityPlayersModule,
       ServicesIncomeModule,
-      PlayersWeightsModule,
+      // PlayersWeightsModule,
       ActivityPlayerSubscriptionsModule,
       AdminsModule,
       logsModule,

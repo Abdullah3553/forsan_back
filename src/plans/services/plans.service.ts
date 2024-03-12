@@ -22,6 +22,12 @@ export class PlansService {
         return this.plansRepo.find();
     }
 
+    getById(id: number){
+        return this.plansRepo.findOne({
+            where: {id: id}
+        });
+    }
+
     getActivePlans(){
         return this.plansRepo.find({where:{
             isActivated : true
