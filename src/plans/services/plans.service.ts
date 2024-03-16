@@ -28,10 +28,23 @@ export class PlansService {
         });
     }
 
-    getActivePlans(){
-        return this.plansRepo.find({where:{
-            isActivated : true
-            }})
+    async getActivePlans(limit, page){
+        limit = limit || 5
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+        const data = await this.plansRepo.findAndCount(
+        {
+            where:{
+                isActivated : true
+            },
+            take: limit,
+            skip: offset,
+        })
+
+        return {
+            items: data[0],
+            count: data[1]
+        }
     }
 
     async newPlan (req: CreateNewPlanRequest) {

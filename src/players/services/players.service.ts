@@ -25,8 +25,12 @@ export class PlayersServices {
         const data = await this.playersRepo.findAndCount({
             relations: ['subscriptions'],
             take: limit,
-            skip: offset
+            skip: offset,
+            order: {
+                id: "DESC",
+            }
         });
+        
         const items = this.dataFormat(data[0])
         return {
             items: items,
