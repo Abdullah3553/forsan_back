@@ -49,15 +49,18 @@ export class SubscriptionsService {
         return res
 
     }
-    async getAllForPlayer(playerId:number, limit: number, page: number = 1){
-        limit = limit || 10
-        limit = Math.abs(limit);
-        const offset = Math.abs((page - 1) * limit)
+    async getAllForPlayer(playerId:number, limit: number, page: number){
+        limit = limit || 3
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
         const subscriptions = await this.subscriptionsRepo.findAndCount({
             where:{
                 player:{
                     id:playerId
                 }
+            },
+            order: {
+                id: "DESC",
             },
             take:limit,
             skip:offset

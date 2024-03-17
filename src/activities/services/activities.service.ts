@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewActivityRequest } from "../requests/createNewActivity.request";
@@ -16,22 +16,38 @@ export class ActivitiesService {
         private readonly logsService: LogsService
     ) {}
 
-    getAll(){
-        // Get all Activities from the table
-        return this.activityRepo.find();
+    async getAll(limit, page){
+        limit = limit || 5
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+        const data =  await this.activityRepo.findAndCount({
+            take: limit,
+            skip: offset
+        });
+        return {
+            items: data[0],
+            count: data[1]
+        }
     }
 
     async newActivity(body : CreateNewActivityRequest){
         // here we will make the new object and add it to the database
-        const activity = new Activity()
-        activity.name = body.name
-        activity.coachName = body.coachName
-        activity.coachPhoneNumber = body.coachPhoneNumber
-        activity.price = body.price
-        activity.description = body.description
-        const item = await this.activityRepo.save(activity)
-        await this.logsService.createNewLog(item.id, `added ${item.name} activity`, "activity")
-        return item;
+        const data = await this.activityRepo.findOne({
+            where:{coachPhoneNumber: body.coachPhoneNumber }
+        })
+        if(!data){
+            const activity = new Activity()
+            activity.name = body.name
+            activity.coachName = body.coachName
+            activity.coachPhoneNumber = body.coachPhoneNumber
+            activity.price = body.price
+            activity.description = body.description
+            const item = await this.activityRepo.save(activity)
+            await this.logsService.createNewLog(item.id, `added ${item.name} activity`, "activity")
+            return item;
+        }else{
+            throw new BadRequestException("Activity is already in use!")
+        }
     }
 
     async deleteActivity(activityId : number){

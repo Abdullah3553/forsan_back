@@ -13,10 +13,10 @@ export class ActivityPlayerSubscription {
     @Column('double')
     price: number
 
-    @Column({type: 'timestamp'})
+    @Column({type: 'date'})
     beginDate: Date | string
 
-    @Column({type: 'timestamp'})
+    @Column({type: 'date'})
     endDate: Date | string
 
     @ManyToOne(() => ActivityPlayer, activityPlayer=>activityPlayer.id, {

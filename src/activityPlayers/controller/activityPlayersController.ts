@@ -5,7 +5,7 @@ import { ActivityPlayersService } from "../services/activityPlayers.service";
 
 
 @Controller('activityPlayer')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class ActivityPlayersController {
     constructor(
         private readonly activityPlayersService: ActivityPlayersService

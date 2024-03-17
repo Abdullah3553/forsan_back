@@ -5,7 +5,7 @@ import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
 
 @Controller('player')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class PlayersController {
 
     constructor(

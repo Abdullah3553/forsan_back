@@ -46,23 +46,34 @@ export class AdminsService {
         return typeof user !== "boolean" ? user?.role === AdminRules.SuperAdmin : false
     }
 
-    async getAll(){
-        const admins = await this.adminsRepo.find()
-        const _admins=[]
-        for(let i=0; i<admins.length;i++){
-            _admins.push({
-                id:admins[i].id,
-                name:admins[i].name,
-                username: admins[i].username,
-                role: admins[i].role,
-                index: i
-            })
+    async getAll(limit, page){
+        limit = limit || 5
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+
+        const admins = await this.adminsRepo.findAndCount({
+            take: limit,
+            skip: offset,
+        })
+        //const _admins=[]
+        // for(let i=0; i<admins.length;i++){
+        //     _admins.push({
+        //         id:admins[0].id,
+        //         name:admins[i].name,
+        //         username: admins[i].username,
+        //         role: admins[i].role,
+        //         index: i
+        //     })
+        // }
+        return {
+            items: admins[0],
+            count: admins[1]
         }
-        return _admins
     }
 
-    async editAdmin(newAdmin:Admin){
-        const admin = await this.getAdminById(newAdmin.id)
+    async editAdmin(newAdmin:Admin, adminId:number){    
+
+        const admin = await this.getAdminById(adminId)
         const _admin = admin instanceof Admin ? admin : null;
         if(!_admin){
             throw new NotFoundException("Admin not found")

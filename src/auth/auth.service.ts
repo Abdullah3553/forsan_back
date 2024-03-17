@@ -55,12 +55,16 @@ export class AuthService {
         return _admin
     }
 
-    async getAllAdmins(){
-        return await this.adminsService.getAll()
+    async getAllAdmins(limit, page){
+        return await this.adminsService.getAll(limit, page)
     }
 
-    async editAdmin(admin : Admin){
-        return this.adminsService.editAdmin(admin)
+    async getAdminById(adminId: number){
+        return await this.adminsService.getAdminById(adminId);
+    }
+
+    async editAdmin(admin : Admin, adminId: number){
+        return this.adminsService.editAdmin(admin, adminId)
     }
     async deleteAdmin(requestId:number){
         return this.adminsService.deleteAdmin(requestId)

@@ -4,7 +4,7 @@ import {LogsService} from "../service/logs.service";
 
 
 @Controller('log')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class logsController {
 
     constructor(

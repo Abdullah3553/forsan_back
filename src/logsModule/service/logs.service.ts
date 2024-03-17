@@ -22,10 +22,10 @@ export class LogsService {
     async getAll(limit,page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
-        const offset = Math.abs((page - 1) * limit)
-        const data: any = await this.logRepo.findAndCount({
+        const offset = Math.abs((page - 1) * limit) || 0
+        const data = await this.logRepo.findAndCount({
             where: {
-                dayDate: moment().format("yyyy-MM-DD")
+                dayDate: moment().format("YYYY-MM-DD")
             },
             take: limit,
             skip: offset,
