@@ -5,7 +5,7 @@ import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 
 
 @Controller('activity')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class ActivitiesController {
 
     constructor(

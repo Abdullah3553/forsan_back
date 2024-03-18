@@ -4,7 +4,7 @@ import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 import { JwtAuthGuard } from 'src/auth/guards/jwtAuthGuard';
 
 @Controller('plan')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class PlansController {
 
     constructor(

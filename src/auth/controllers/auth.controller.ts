@@ -6,7 +6,7 @@ import {LoginRequest} from "../requests/login.request";
 import {Admin} from "../../admins/entity/admin.entity";
 
 @Controller('auth')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 
 export class AuthController {
     constructor(
