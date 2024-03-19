@@ -1,6 +1,6 @@
 import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {LessThanOrEqual, Repository} from "typeorm";
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
@@ -17,7 +17,7 @@ export class PlayersServices {
         private readonly logsService: LogsService,
     ) {
     }
-    
+
     async getAll(limit, page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
@@ -30,7 +30,7 @@ export class PlayersServices {
                 id: "DESC",
             }
         });
-        
+
         const items = this.dataFormat(data[0])
         return {
             items: items,
@@ -473,4 +473,27 @@ export class PlayersServices {
     }
 
 
+    getAllActive(limit, page) {
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+        const data = this.playersRepo.findAndCount({
+            relations: ['subscriptions'],
+            take: limit,
+            skip: offset,
+            order: {
+                id: "DESC",
+            },
+            where: {
+                subscriptions: {
+                    endDate: MoreThanOrEqual(moment().format('yyyy-MM-DD'))
+                }
+            }
+        });
+        const items = this.dataFormat(data[0])
+        return {
+            items: items,
+            count: data[1]
+        }
+    }
 }
