@@ -1,6 +1,6 @@
 import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import {LessThanOrEqual, Repository} from "typeorm";
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
@@ -17,7 +17,7 @@ export class PlayersServices {
         private readonly logsService: LogsService,
     ) {
     }
-
+    
     async getAll(limit, page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
@@ -292,7 +292,7 @@ export class PlayersServices {
     async searchByOption(searchElement: any, searchOption: string, limit, page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
-        const offset = Math.abs((page - 1) * limit)
+        const offset = Math.abs((page - 1) * limit) || 0
         switch (searchOption) {
             case "id": {
                 const data = await this.playersRepo.findAndCount({
@@ -322,7 +322,7 @@ export class PlayersServices {
                         where: {barCode: searchElement},
                         relations: ['subscriptions']
                     })
-                    await this.logsService.createNewLog(player.id, `signed`, "players")
+                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
                 }
                 return {
                     items: this.dataFormat(data[0]),

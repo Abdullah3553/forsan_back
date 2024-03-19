@@ -67,7 +67,10 @@ export class PlayersController {
         return this.playersService.deletePlayer(params.id)
     }
 
-
+    // @Get("/active/id")
+    // getActiveUsers(@Param() params, @Query() {limit, page}){
+    //     return this.playersService.getAllActive(limit, page, params.id);
+    // }
 
 }
 
