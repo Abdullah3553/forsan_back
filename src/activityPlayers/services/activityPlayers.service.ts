@@ -34,7 +34,7 @@ export class ActivityPlayersService {
                 id: player.id,
                 name: player.name,
                 phoneNumber: player.phoneNumber,
-                subscription: player.activitySubscriptions[player.activitySubscriptions.length - 1]
+                activitySubscriptions: player.activitySubscriptions[player.activitySubscriptions.length - 1]
             }
         })
         return {
@@ -110,7 +110,18 @@ export class ActivityPlayersService {
             //         subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
             //     }
             // })
-            return activityPlayer;
+            const actSubsLength = activityPlayer.activitySubscriptions.length;
+            return {
+                items: [
+                    {
+                        activitySubscriptions: activityPlayer.activitySubscriptions[actSubsLength-1],
+                        id: activityPlayer.id,
+                        name: activityPlayer.name,
+                        phoneNumber: activityPlayer.phoneNumber
+                    }
+                ],
+                count: 1
+            };
 
         } catch(err){
             console.log(err);
@@ -124,12 +135,14 @@ export class ActivityPlayersService {
         try{
             limit = limit || 10
             limit = Math.abs(Number(limit));
-            const offset = Math.abs((page - 1) * limit)
+            const offset = Math.abs((page - 1) * limit) || 0
 
             const holder = await this.actPlayerRepo.find({
                 relations:["activitySubscriptions"]
             }), res=[]
             let res2=[]
+            console.log("holder : ", holder[0].activitySubscriptions[0].activity)    ;
+            
             for(let i=0;i<holder.length;i++){
                 const tmpSubs=[]
                 for(let j=0;j<holder[i].activitySubscriptions.length;j++){
@@ -143,21 +156,19 @@ export class ActivityPlayersService {
                         activitySubscriptions:tmpSubs})
                 }
             }
-
             for(let i=offset, cont=0;i<res.length;i++,cont++){
                 if(cont === limit) break;
                 res2.push(res[i])
             }
-
             res2 = res2.map(activityPlayer => {
                 return{
                     id:activityPlayer.id,
                     name: activityPlayer.name,
                     phoneNumber: activityPlayer.phoneNumber,
-                    subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
+                    activitySubscriptions:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
                 }
             })
-
+            
             return {
                 items: res2,
                 count : res.length
@@ -256,7 +267,7 @@ export class ActivityPlayersService {
 
             limit = limit || 10
             limit = Math.abs(Number(limit));
-            const offset = Math.abs((page - 1) * limit)
+            const offset = Math.abs((page - 1) * limit) || 0
             activityId = Number(activityId)
 
             const players = await this.actPlayerRepo.find(
@@ -294,6 +305,8 @@ export class ActivityPlayersService {
                     res.push(players[i])
                 }
             }
+            console.log("res : ", res);
+            
             for(let i=offset, cont=0;i<res.length;i++,cont++){
                 if(cont === limit) break;
                 res2.push(res[i])
@@ -304,7 +317,7 @@ export class ActivityPlayersService {
                     id:activityPlayer.id,
                     name: activityPlayer.name,
                     phoneNumber: activityPlayer.phoneNumber,
-                    subscription:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
+                    activitySubscriptions:activityPlayer.activitySubscriptions[activityPlayer.activitySubscriptions.length-1]
                 }
             })
             return {
