@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Plan } from '../entities/plans.entity';
 import { Repository } from 'typeorm';
@@ -17,12 +17,10 @@ export class PlanService {
   async getAll() {
     const allPlans = await this.ptPlansRepo.find();
     return {
-      "message": "Plans fetched successfully.",
-      "data":[
-        ...allPlans
-      ],
-      "count":allPlans.length
-    } 
+      message: 'Plans fetched successfully.',
+      data: allPlans,
+      count: allPlans.length,
+    };
   }
 
   async create(requestBody){
@@ -31,48 +29,36 @@ export class PlanService {
     const registeredPlan = await this.ptPlansRepo.save(newPlan);
     await this.logsService.createNewLog(registeredPlan.id, `added ${registeredPlan.name} Plan`, "PT Plans");
     return {
-      "message": "Plan created successfully.",
-      "data":{
-        ...registeredPlan
-      }
-    } 
+      message: 'Plan created successfully.',
+      data: registeredPlan,
+    };
   }
 
   async update(requestBody, id){    
     const plan = await this.findById(id);
-    if(plan.data){
-      await this.ptPlansRepo.update(id, requestBody);
-      const updatedPlan = (await this.findById(id)).data;
-      await this.logsService.createNewLog(updatedPlan.id, `updated ${updatedPlan.name} Plan`, "PT Plans");
-      return {
-        "message":"Plan updated successfully",
-        "data":{
-          ...updatedPlan
-        }
-      }
-    }else{
-      return {
-        "message":"Plan not found",
-        "data":null
-      }
+    if (!plan.data) {
+      throw new NotFoundException('Plan not found');
     }
+    await this.ptPlansRepo.update(id, requestBody);
+    const updatedPlan = (await this.findById(id)).data;
+    await this.logsService.createNewLog(updatedPlan.id, `updated ${updatedPlan.name} Plan`, "PT Plans");
+    return {
+      message: 'Plan updated successfully',
+      data: updatedPlan,
+    };
   }
 
   async delete(id){
     const plan = (await this.findById(id)).data;
-    if(plan){
-      this.ptPlansRepo.delete(id)
-      await this.logsService.createNewLog(plan.id, `deleted ${plan.name} Plan`, "PT Plans");
-      return{
-        "message":"Plan deleted successfully.",
-        "data":{}
-      }
-    }else{
-      return {
-        "message":"Plan not found",
-        "data":null
-      }
+    if (!plan) {
+      throw new NotFoundException('Plan not found');
     }
+    this.ptPlansRepo.delete(id)
+    await this.logsService.createNewLog(plan.id, `deleted ${plan.name} Plan`, "PT Plans");
+    return {
+      message: 'Plan deleted successfully.',
+      data: null,
+    };
   }
 
   async findById(id){
@@ -81,18 +67,12 @@ export class PlanService {
         id: id
       }
     })    
-    if(plan){
-      return {
-        "message":"Plan fetched successfully",
-        "data":{
-          ...plan
-        }
-      }
-    }else{
-      return {
-        "message":"Plan not found",
-        "data": null
-      }
+    if (!plan) {
+      throw new NotFoundException('Plan not found');
+    }
+    return {
+      message:"Plan fetched successfully",
+      data: plan
     }
   }
 }
