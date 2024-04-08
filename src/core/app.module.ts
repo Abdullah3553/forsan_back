@@ -17,7 +17,6 @@ import { AuthModule } from '../auth/auth.module';
 import { logsModule } from 'src/logsModule/logs.module';
 import { outComeModule } from 'src/outCome/outCome.module';
 import { CsvModule } from '../csv/csv.module';
-import { PTPlanModule } from '../pt/plan/plan.module';
 import { PTModule } from '../pt/pt.module';
 
 @Module({
