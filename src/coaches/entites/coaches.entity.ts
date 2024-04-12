@@ -1,7 +1,8 @@
+import { Optional } from '@nestjs/common';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("pt_plan")
-export class Plan {
+@Entity()
+export class Coach {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -9,12 +10,9 @@ export class Plan {
   name: string;
 
   @Column()
-  sessions: number;
+  phoneNumber: string;
 
   @Column()
-  price: number;
-
-  @Column()
-  duration: number;
-
+  @Optional()
+  ptIncome?: number;
 }

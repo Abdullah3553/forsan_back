@@ -1,9 +1,7 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 
-@Entity({
-    name: "activities",
-})
+@Entity()
 
 export class Activity {
     @PrimaryGeneratedColumn()

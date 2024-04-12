@@ -2,9 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typ
 import {Service} from "../../servicess/entities/servicess.entity";
 
 
-@Entity({
-   name : "servicesIncome" 
-})
+@Entity()
 
 export class ServiceIncome{
     @PrimaryGeneratedColumn()

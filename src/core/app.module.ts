@@ -18,7 +18,7 @@ import { logsModule } from 'src/logsModule/logs.module';
 import { outComeModule } from 'src/outCome/outCome.module';
 import { CsvModule } from '../csv/csv.module';
 import { PTModule } from '../pt/pt.module';
-
+import { CoachesModule } from 'src/coaches/coaches.module';
 @Module({
   imports: [
     AuthModule,
@@ -36,7 +36,8 @@ import { PTModule } from '../pt/pt.module';
     logsModule,
     outComeModule,
     CsvModule,
-    PTModule
+    PTModule,
+    CoachesModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,7 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ServiceIncome} from "../../servicesIncome/entities/servicesIncome.entity";
 
-@Entity({
-    name: "services",
-})
+@Entity()
 
 export class Service {
     @PrimaryGeneratedColumn()

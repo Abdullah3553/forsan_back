@@ -6,7 +6,7 @@ export enum AdminRules {
 }
 
 @Entity({
-    name: "admins"
+    name: "admin"
 })
 export class Admin {
     @PrimaryGeneratedColumn()

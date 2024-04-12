@@ -1,8 +1,6 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-@Entity({
-    name: "outcome",
-})
+@Entity("outcome")
 
 export class OutCome {
     @PrimaryGeneratedColumn()

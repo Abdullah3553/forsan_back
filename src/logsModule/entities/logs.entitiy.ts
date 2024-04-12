@@ -1,8 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({
-    name: "logs",
-})
+@Entity()
 
 export class Log {
 

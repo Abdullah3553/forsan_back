@@ -2,9 +2,7 @@ import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 // import {PlayerWeight} from "../../playersWeights/entities/playersWeights.entity";
 import {Subscription} from "../../subscriptions/entities/subscriptions.entity";
 
-@Entity({
-    name: "players",
-})
+@Entity()
 
 export class Player {
     @PrimaryGeneratedColumn()

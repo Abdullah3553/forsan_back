@@ -2,9 +2,7 @@ import { ActivityPlayerSubscription } from "src/activityPlayerSubscriptions/enti
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity({
-    name: "activitiesIncome"
-})
+@Entity()
 export class ActivityIncome{
     @PrimaryGeneratedColumn()
     id: number

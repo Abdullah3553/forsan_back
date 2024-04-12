@@ -3,9 +3,7 @@ import {Subscription} from "../../subscriptions/entities/subscriptions.entity";
 
 
 
-@Entity({
-    name: 'plans',
-})
+@Entity()
 export class Plan {
     @PrimaryGeneratedColumn()
     id: number
