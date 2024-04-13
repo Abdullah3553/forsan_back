@@ -1,6 +1,5 @@
-import { Optional } from '@nestjs/common';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Pt_Subscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
+import { Column, Entity, IsNull, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { PtSubscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
 
 @Entity()
 export class Coach {
@@ -13,10 +12,12 @@ export class Coach {
   @Column()
   phoneNumber: string;
 
-  @Column()
-  @Optional()
+  @Column({
+    nullable: true
+  })
   ptIncome: number;
 
-  @OneToMany(() => Pt_Subscription, sub => sub.player)
-    subscriptions: Pt_Subscription[]
+  @OneToMany(() => PtSubscription, sub => sub.player)
+  subscriptions: PtSubscription[]
+
 }

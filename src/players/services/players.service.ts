@@ -496,4 +496,19 @@ export class PlayersServices {
             count: data[1]
         }
     }
+
+    async findById(id){
+        const player = await this.playersRepo.findOne({
+            where:{
+                id: id
+            }
+        })
+        if (!player) {
+            throw new NotFoundException('Player Not found');
+        }
+        return {
+            message:"Player fetched successfully",
+            data: player
+        }
+    }
 }

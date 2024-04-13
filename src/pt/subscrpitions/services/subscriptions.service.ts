@@ -2,16 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LogsService } from 'src/logsModule/service/logs.service';
-import { Pt_Subscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
+import { PtSubscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
+import { CreateSubscriptionRequest } from '../requests/createSubscriptionRequest';
+import { PlanService } from '../../plan/services/plan.service';
+import { PlayersServices } from '../../../players/services/players.service';
+import { CoachesService } from '../../../coaches/service/coaches.service';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
-    @InjectRepository(Pt_Subscription)
-    protected readonly ptSubscriptionsRepo: Repository<Pt_Subscription>,
-    private readonly logsService: LogsService
+    @InjectRepository(PtSubscription)
+    protected readonly ptSubscriptionsRepo: Repository<PtSubscription>,
+    private readonly logsService: LogsService,
+    private readonly plansService: PlanService,
+    private readonly playersService: PlayersServices,
+    private readonly coachesService: CoachesService
   ) {}
-  
+
   async getAll(){
     const subscriptions = await this.ptSubscriptionsRepo.find();
     return {
@@ -21,18 +28,20 @@ export class SubscriptionsService {
     }
   }
 
-  async create(requestBody){
-    let newSubscription = new Pt_Subscription();
-    newSubscription = requestBody;
-    const registeredSubscription = await this.ptSubscriptionsRepo.save(newSubscription);
-    // await this.logsService.createNewLog(registeredSubscription.id, `added ${registeredSubscription.name} subscription`, "Coaches");
+  async create(requestBody: CreateSubscriptionRequest){
+    const subscription = this.ptSubscriptionsRepo.create({
+      ...requestBody,
+      plan: (await this.plansService.findById(requestBody.planId)).data,
+      coach: (await this.coachesService.findById(requestBody.coachId)).data,
+      player: (await this.playersService.findById(requestBody.playerId)).data
+    });
     return {
-      message: 'Subscription created successfully.',
-      data: registeredSubscription,
+      message: 'Subscription created successfully',
+      data: (await this.ptSubscriptionsRepo.save(subscription)),
     };
   }
 
-  async update(requestBody, id){    
+  async update(requestBody, id){
     const subscription = await this.findById(id);
     if (!subscription.data) {
       throw new NotFoundException('Subscription not found');
@@ -64,7 +73,7 @@ export class SubscriptionsService {
       where:{
         id: id
       }
-    })    
+    })
     if (!subscription) {
       throw new NotFoundException('Subscription not found');
     }

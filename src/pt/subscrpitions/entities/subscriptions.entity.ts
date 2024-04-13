@@ -1,31 +1,25 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import {Plan} from "../../plan/entities/plans.entity";
 import {Player} from "../../../players/entities/players.entity";
 import {Coach} from "../../../coaches/entities/coaches.entities";
 
-@Entity("pt_subscription")
-
-export class Pt_Subscription {
+@Entity()
+export class PtSubscription {
     @PrimaryGeneratedColumn()
     id: number
 
     @Column({
-        type: 'timestamp'
+        type: 'date'
     })
     beginDate: string | Date
 
     @Column({
-        type: 'timestamp'
+        type: 'date'
     })
     endDate: string | Date
 
     @Column('double')
     payedMoney:number
-
-    @Column('date')
-    creationDate:string
-
-    //Relations :-
 
     @ManyToOne( () => Player, player => player.id,{
         onDelete: "SET NULL",
@@ -43,11 +37,26 @@ export class Pt_Subscription {
     @JoinColumn()
     coach: Coach
 
+
     @ManyToOne( () => Plan, plan => plan.id ,{
         onDelete: "SET NULL",
         eager: true
     })
     @JoinColumn()
     plan: Plan
-}
 
+
+    // timestamps
+    @Column({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP'
+    })
+    createdAt: Date
+
+    @Column({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP'
+    })
+    updatedAt: Date
+}

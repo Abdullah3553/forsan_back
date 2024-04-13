@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Pt_Subscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
-@Entity("pt_plan")
+import { PtSubscription } from 'src/pt/subscrpitions/entities/subscriptions.entity';
+
+@Entity('pt_plan')
 export class Plan {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,6 +18,6 @@ export class Plan {
   @Column()
   duration: number;
 
-  @OneToMany(() => Pt_Subscription, subscription => subscription.plan )
-    subscriptions: Pt_Subscription[]
+  @OneToMany(() => PtSubscription, subscription => subscription.plan)
+  subscriptions: PtSubscription[];
 }
