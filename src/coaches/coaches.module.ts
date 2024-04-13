@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CoachesController } from './controller/coaches.controller';
 import { CoachesService } from './service/coaches.service';
 import { logsModule } from 'src/logsModule/logs.module';
-import { Coach } from './entites/coaches.entity';
+import { Coach } from './entities/coaches.entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

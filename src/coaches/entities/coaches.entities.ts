@@ -1,7 +1,9 @@
+import { Optional } from '@nestjs/common';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Pt_Subscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
-@Entity("pt_plan")
-export class Plan {
+
+@Entity()
+export class Coach {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -9,14 +11,12 @@ export class Plan {
   name: string;
 
   @Column()
-  sessions: number;
+  phoneNumber: string;
 
   @Column()
-  price: number;
+  @Optional()
+  ptIncome: number;
 
-  @Column()
-  duration: number;
-
-  @OneToMany(() => Pt_Subscription, subscription => subscription.plan )
+  @OneToMany(() => Pt_Subscription, sub => sub.player)
     subscriptions: Pt_Subscription[]
 }
