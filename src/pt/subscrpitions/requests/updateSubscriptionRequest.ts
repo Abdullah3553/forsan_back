@@ -1,8 +1,6 @@
 
 export class UpdateSubscriptionRequest {
 
-    player_id: number
-
     plan_id: number
 
     coach_id: number 
@@ -12,6 +10,4 @@ export class UpdateSubscriptionRequest {
     endDate: string
 
     payedMoney:number
-
-    creationDate:string
 }

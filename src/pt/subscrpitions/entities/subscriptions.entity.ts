@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import {Plan} from "../../plan/entities/plans.entity";
 import {Player} from "../../../players/entities/players.entity";
 import {Coach} from "../../../coaches/entities/coaches.entities";
@@ -24,7 +24,7 @@ export class PtSubscription {
     @ManyToOne( () => Player, player => player.id,{
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
-        eager:false
+        eager:true
     })
     @JoinColumn()
     player: Player
@@ -32,7 +32,7 @@ export class PtSubscription {
     @ManyToOne( () => Coach, coach => coach.id,{
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
-        eager:false
+        eager:true
     })
     @JoinColumn()
     coach: Coach

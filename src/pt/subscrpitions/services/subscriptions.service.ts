@@ -35,6 +35,8 @@ export class SubscriptionsService {
       coach: (await this.coachesService.findById(requestBody.coachId)).data,
       player: (await this.playersService.findById(requestBody.playerId)).data
     });
+    await this.coachesService.update({"ptIncome":requestBody.payedMoney}, requestBody.coachId);
+    await this.logsService.createNewLog(subscription.id, `updated ${subscription.id} pt subscription`, "Subscriptions");
     return {
       message: 'Subscription created successfully',
       data: (await this.ptSubscriptionsRepo.save(subscription)),
@@ -46,7 +48,19 @@ export class SubscriptionsService {
     if (!subscription.data) {
       throw new NotFoundException('Subscription not found');
     }
-    await this.ptSubscriptionsRepo.update(id, requestBody);
+
+    if (requestBody.planId) {
+      const planData = (await this.plansService.findById(requestBody.planId)).data;
+      await this.ptSubscriptionsRepo.update(id, { plan: planData });
+    }
+
+    else if (requestBody.coachId) {
+      const coachData = (await this.coachesService.findById(requestBody.coachId)).data;
+      await this.ptSubscriptionsRepo.update(id, { coach: coachData });
+    }
+    else{
+      await this.ptSubscriptionsRepo.update(id, requestBody);
+    }
     const updatedSubscription = (await this.findById(id)).data;
     // await this.logsService.createNewLog(updatedSubscription.id, `updated ${updatedSubscription.name} Coach`, "Coaches");
     return {
