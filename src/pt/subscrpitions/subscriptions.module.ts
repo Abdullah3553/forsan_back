@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PtSubscription } from './entities/subscriptions.entity';
 import { logsModule } from '../../logsModule/logs.module';
@@ -13,8 +13,8 @@ import { PlayersModule } from '../../players/players.module';
     TypeOrmModule.forFeature([PtSubscription]),
     logsModule,
     PTPlanModule,
-    CoachesModule,
-    PlayersModule
+    PlayersModule,
+    forwardRef(() => CoachesModule)
   ],
   providers: [
     SubscriptionsService

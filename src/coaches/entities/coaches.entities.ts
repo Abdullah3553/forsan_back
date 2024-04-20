@@ -1,4 +1,4 @@
-import { Column, Entity, IsNull, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PtSubscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
 
 @Entity()

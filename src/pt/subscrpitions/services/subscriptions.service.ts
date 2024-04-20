@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LogsService } from 'src/logsModule/service/logs.service';
@@ -16,11 +16,12 @@ export class SubscriptionsService {
     private readonly logsService: LogsService,
     private readonly plansService: PlanService,
     private readonly playersService: PlayersServices,
-    private readonly coachesService: CoachesService
+    @Inject(forwardRef(() => CoachesService))
+    private coachesService: CoachesService
   ) {}
 
   async getAll(){
-    const subscriptions = await this.ptSubscriptionsRepo.find();
+    const subscriptions = await this.ptSubscriptionsRepo.find();    
     return {
         message: "Subscriptions fetched successfully.",
         data: subscriptions,
@@ -29,17 +30,22 @@ export class SubscriptionsService {
   }
 
   async create(requestBody: CreateSubscriptionRequest){
+    const plan = (await this.plansService.findById(requestBody.planId)).data;
+    const endDate = new Date(requestBody.beginDate);
+    endDate.setDate(endDate.getDate() + plan.duration+1);
     const subscription = this.ptSubscriptionsRepo.create({
       ...requestBody,
-      plan: (await this.plansService.findById(requestBody.planId)).data,
+      plan: plan,
+      endDate: endDate.toISOString().split('T')[0],
       coach: (await this.coachesService.findById(requestBody.coachId)).data,
       player: (await this.playersService.findById(requestBody.playerId)).data
     });
-    await this.coachesService.update({"ptIncome":requestBody.payedMoney}, requestBody.coachId);
+    const newSub = await this.ptSubscriptionsRepo.save(subscription);
+    await this.coachesService.updateIncome(requestBody.coachId);
     await this.logsService.createNewLog(subscription.id, `updated ${subscription.id} pt subscription`, "Subscriptions");
     return {
       message: 'Subscription created successfully',
-      data: (await this.ptSubscriptionsRepo.save(subscription)),
+      data: newSub
     };
   }
 
@@ -62,6 +68,7 @@ export class SubscriptionsService {
       await this.ptSubscriptionsRepo.update(id, requestBody);
     }
     const updatedSubscription = (await this.findById(id)).data;
+    await this.coachesService.updateIncome(subscription.data.coach.id);
     // await this.logsService.createNewLog(updatedSubscription.id, `updated ${updatedSubscription.name} Coach`, "Coaches");
     return {
       message: 'Subscription updated successfully',
@@ -74,8 +81,9 @@ export class SubscriptionsService {
     if (!subscription) {
       throw new NotFoundException('Subscription not found');
     }
-    this.ptSubscriptionsRepo.delete(id)
-    // await this.logsService.createNewLog(coach.id, `deleted ${coach.name} Plan`, "PT Plans");
+    await this.ptSubscriptionsRepo.delete(id);
+    await this.coachesService.updateIncome(subscription.coach.id);
+    //await this.logsService.createNewLog(coach.id, `deleted ${coach.name} Plan`, "PT Plans");
     return {
       message: 'Subscription deleted successfully.',
       data: null,
@@ -95,5 +103,28 @@ export class SubscriptionsService {
       message:"Subscription fetched successfully",
       data: subscription
     }
+  }
+
+  async findByCoachId(id){
+    const subscriptions = await this.ptSubscriptionsRepo.find({
+      where:{
+        coach: { id: id }
+      }
+    })
+    if (!subscriptions) {
+      throw new NotFoundException('Subscriptions not found');
+    }
+    return {
+      message:"Subscriptions fetched successfully",
+      data: subscriptions,
+      count: subscriptions.length
+    }
+  }
+
+  async updatePayedState(coachId){
+    return await this.ptSubscriptionsRepo.update(
+        {coach:{id: coachId}},
+        {payed: 1}
+      )
   }
 }

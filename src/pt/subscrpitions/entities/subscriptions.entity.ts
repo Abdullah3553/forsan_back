@@ -8,6 +8,9 @@ export class PtSubscription {
     @PrimaryGeneratedColumn()
     id: number
 
+    @Column({default: 0})
+    payed: number 
+
     @Column({
         type: 'date'
     })

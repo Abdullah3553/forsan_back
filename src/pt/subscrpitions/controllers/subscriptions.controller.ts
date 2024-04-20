@@ -17,9 +17,10 @@ export class SubscriptionsController {
       return this.service.getAll();
   }
 
-  @Get('/:id')
-  getById(@Param() param) {
-      return this.service.findById(param.id);
+
+  @Get('/coach/:id')
+  getByCoachId(@Param() param) {
+      return this.service.findByCoachId(param.id);
   }
 
   @Post("/")
@@ -30,6 +31,11 @@ export class SubscriptionsController {
   @Patch("/:id")
   update(@Body() body: UpdateSubscriptionRequest, @Param() params){
       return this.service.update(body, params.id);
+  }
+
+  @Get('/:id')
+  getById(@Param() param) {
+      return this.service.findById(param.id);
   }
 
   @Delete("/:id")

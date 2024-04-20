@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Coach } from 'src/coaches/entities/coaches.entities'
-import { LogsService } from 'src/logsModule/service/logs.service';
+import { LogsService } from "src/logsModule/service/logs.service";
+import { SubscriptionsService } from 'src/pt/subscrpitions/services/subscriptions.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -10,6 +11,8 @@ export class CoachesService {
     constructor(
         @InjectRepository(Coach)
         protected readonly CoachRepo: Repository<Coach>,
+        @Inject(forwardRef(() => SubscriptionsService))
+        private subsService: SubscriptionsService,
         private readonly logsService: LogsService
       ) {}
     
@@ -53,7 +56,7 @@ export class CoachesService {
           throw new NotFoundException('Coach not found');
         }
         this.CoachRepo.delete(id)
-        await this.logsService.createNewLog(coach.id, `deleted ${coach.name} Plan`, "PT Plans");
+        await this.logsService.createNewLog(coach.id, `deleted ${coach.name} Coach`, "Coachs");
         return {
           message: 'Coach deleted successfully.',
           data: null,
@@ -72,6 +75,29 @@ export class CoachesService {
         return {
           message:"Coach fetched successfully",
           data: coach
+        }
+      }
+
+      async updateIncome(id){
+        const subscriptions = await this.subsService.findByCoachId(id);
+        const curDate = new Date();
+        const modifiedCurDate =  curDate.toISOString().slice(0, 10);
+        let totalIncome = 0;        
+        for (const sub of subscriptions.data){
+          if(sub.endDate > modifiedCurDate){
+            totalIncome += sub.payedMoney;
+          }
+        }
+        
+        await this.update({ptIncome: totalIncome}, id);
+      }
+
+      async resetIncome(id){
+        await this.update({ptIncome: 0}, id);
+        await this.subsService.updatePayedState(id);
+        return {
+          message: "Payed reset successfully.",
+          data: null
         }
       }
 }

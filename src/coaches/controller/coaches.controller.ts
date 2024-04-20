@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwtAuthGuard';
 import {CoachesService} from 'src/coaches/service/coaches.service'
 import { CreateCoachRequest } from '../requests/createCoachRequest';
@@ -30,6 +30,11 @@ export class CoachesController {
     @Patch("/:id")
     update(@Body() body: UpdateCoachRequest, @Param() params){
         return this.CoachService.update(body, params.id);
+    }
+
+    @Put("/updatePayed/:id")
+    updatePayed(@Param() params){
+        return this.CoachService.resetIncome(params.id);
     }
 
     @Delete("/:id")

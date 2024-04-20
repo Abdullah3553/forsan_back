@@ -15,10 +15,6 @@ export class CreateSubscriptionRequest {
   beginDate: string;
 
   @IsNotEmpty()
-  @IsDateString()
-  endDate: string;
-
-  @IsNotEmpty()
   @IsNumber()
   payedMoney: number;
 
