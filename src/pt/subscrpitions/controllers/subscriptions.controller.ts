@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../auth/guards/jwtAuthGuard';
 import { SubscriptionsService } from '../services/subscriptions.service';
 import { CreateSubscriptionRequest } from '../requests/createSubscriptionRequest';
@@ -13,14 +13,14 @@ export class SubscriptionsController {
   ) {}
 
   @Get("/")
-  getAll(){
-      return this.service.getAll();
+  getAll(@Query() {limit, page}){
+      return this.service.getAll(limit, page);
   }
 
 
   @Get('/coach/:id')
-  getByCoachId(@Param() param) {
-      return this.service.findByCoachId(param.id);
+  getByCoachId(@Param() param, @Query() {limit, page}) {
+      return this.service.findByCoachId(param.id, limit, page);
   }
 
   @Post("/")

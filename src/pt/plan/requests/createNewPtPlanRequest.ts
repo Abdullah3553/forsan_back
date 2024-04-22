@@ -1,18 +1,15 @@
-import {IsNotEmpty, IsNumber} from "class-validator";
+import {IsNotEmpty} from "class-validator";
 
 export class CreateNewPtPlanRequest {
     @IsNotEmpty()
     name: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    sessions: number;
+    sessions: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    price: number;
+    price: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    duration: number;
+    duration: string;
 }

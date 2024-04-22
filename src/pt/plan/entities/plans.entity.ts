@@ -10,13 +10,13 @@ export class Plan {
   name: string;
 
   @Column()
-  sessions: number;
+  sessions: string;
 
   @Column()
-  price: number;
+  price: string;
 
   @Column()
-  duration: number;
+  duration: string;
 
   @OneToMany(() => PtSubscription, subscription => subscription.plan)
   subscriptions: PtSubscription[];

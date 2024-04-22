@@ -20,8 +20,16 @@ export class SubscriptionsService {
     private coachesService: CoachesService
   ) {}
 
-  async getAll(){
-    const subscriptions = await this.ptSubscriptionsRepo.find();    
+  async getAll(limit, page){
+    limit = limit || 5
+    limit = Math.abs(Number(limit));
+    const offset = Math.abs((page - 1) * limit) || 0
+    const subscriptions = await this.ptSubscriptionsRepo.find(
+        {
+          take: limit,
+          skip: offset,
+        }
+    );    
     return {
         message: "Subscriptions fetched successfully.",
         data: subscriptions,
@@ -32,7 +40,7 @@ export class SubscriptionsService {
   async create(requestBody: CreateSubscriptionRequest){
     const plan = (await this.plansService.findById(requestBody.planId)).data;
     const endDate = new Date(requestBody.beginDate);
-    endDate.setDate(endDate.getDate() + plan.duration+1);
+    endDate.setDate(endDate.getDate() + Number(plan.duration)+1);
     const subscription = this.ptSubscriptionsRepo.create({
       ...requestBody,
       plan: plan,
@@ -105,26 +113,31 @@ export class SubscriptionsService {
     }
   }
 
-  async findByCoachId(id){
-    const subscriptions = await this.ptSubscriptionsRepo.find({
+  async findByCoachId(id, limit?, page?){
+    limit = limit || 5
+    limit = Math.abs(Number(limit));
+    const offset = Math.abs((page - 1) * limit) || 0
+    const subscriptions = await this.ptSubscriptionsRepo.findAndCount({
       where:{
         coach: { id: id }
-      }
+      },
+      take: limit,
+      skip: offset,
     })
     if (!subscriptions) {
       throw new NotFoundException('Subscriptions not found');
     }
     return {
       message:"Subscriptions fetched successfully",
-      data: subscriptions,
-      count: subscriptions.length
+      data: subscriptions[0],
+      count: subscriptions[1]
     }
   }
 
   async updatePayedState(coachId){
     return await this.ptSubscriptionsRepo.update(
         {coach:{id: coachId}},
-        {payed: 1}
+        {payed: "Yes"}
       )
   }
 }

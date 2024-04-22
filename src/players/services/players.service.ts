@@ -456,7 +456,6 @@ export class PlayersServices {
             return []
         }
         return data.map((player: Player) => {
-            console.log(player.subscriptions[player.subscriptions.length - 1]);
             
             return {
                 id: player.id,

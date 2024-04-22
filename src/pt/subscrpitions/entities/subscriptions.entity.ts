@@ -8,8 +8,8 @@ export class PtSubscription {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({default: 0})
-    payed: number 
+    @Column({default: "No"})
+    payed: string 
 
     @Column({
         type: 'date'
