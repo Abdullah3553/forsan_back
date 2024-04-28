@@ -138,7 +138,7 @@ export class SubscriptionsService {
   }
 
   async findByPlayerId(id, limit?, page?){
-    limit = limit || 5
+    limit = limit || 3
     limit = Math.abs(Number(limit));
     const offset = Math.abs((page - 1) * limit) || 0
     const subscriptions = await this.ptSubscriptionsRepo.findAndCount({
