@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../auth/guards/jwtAuthGuard';
 import { PlanService } from '../services/plan.service';
 import { CreateNewPtPlanRequest } from '../requests/createNewPtPlanRequest';
@@ -13,8 +13,8 @@ export class PlanController {
   ) {}
 
   @Get('/')
-  getAll() {
-    return this.service.getAll();
+  getAll(@Query() {limit, page}) {
+    return this.service.getAll(limit, page);
   }
 
   @Get('/:id')

@@ -14,8 +14,17 @@ export class PlanService {
   ) {}
 
 
-  async getAll() {
-    const allPlans = await this.ptPlansRepo.find();
+  async getAll(limit, page) {
+    limit = limit || 5
+    limit = Math.abs(Number(limit));
+    const offset = Math.abs((page - 1) * limit) || 0
+
+    const allPlans = await this.ptPlansRepo.find(
+      {
+        take: limit,
+        skip: offset,
+      }
+    );
     return {
       message: 'Plans fetched successfully.',
       data: allPlans,

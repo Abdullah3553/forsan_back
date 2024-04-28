@@ -80,11 +80,11 @@ export class CoachesService {
 
       async updateIncome(id){
         const subscriptions = await this.subsService.findByCoachId(id);
-        const curDate = new Date();
-        const modifiedCurDate =  curDate.toISOString().slice(0, 10);
+       // const curDate = new Date();
+        //const modifiedCurDate =  curDate.toISOString().slice(0, 10);
         let totalIncome = 0;        
         for (const sub of subscriptions.data){
-          if(sub.endDate > modifiedCurDate){
+          if(sub.payed === "No"){
             totalIncome += sub.payedMoney;
           }
         }

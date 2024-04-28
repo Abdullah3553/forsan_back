@@ -123,6 +123,9 @@ export class SubscriptionsService {
       },
       take: limit,
       skip: offset,
+      order:{
+        payed:"ASC"
+      }
     })
     if (!subscriptions) {
       throw new NotFoundException('Subscriptions not found');
@@ -134,6 +137,26 @@ export class SubscriptionsService {
     }
   }
 
+  async findByPlayerId(id, limit?, page?){
+    limit = limit || 5
+    limit = Math.abs(Number(limit));
+    const offset = Math.abs((page - 1) * limit) || 0
+    const subscriptions = await this.ptSubscriptionsRepo.findAndCount({
+      where:{
+        player: { id: id }
+      },
+      take: limit,
+      skip: offset
+    })
+    if (!subscriptions) {
+      throw new NotFoundException('Subscriptions not found');
+    }
+    return {
+      message:"Subscriptions fetched successfully",
+      data: subscriptions[0],
+      count: subscriptions[1]
+    }
+  }
   async updatePayedState(coachId){
     return await this.ptSubscriptionsRepo.update(
         {coach:{id: coachId}},

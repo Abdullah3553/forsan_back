@@ -23,6 +23,11 @@ export class SubscriptionsController {
       return this.service.findByCoachId(param.id, limit, page);
   }
 
+  @Get('/player/:id')
+  getByPlayerId(@Param() param, @Query() {limit, page}) {
+      return this.service.findByPlayerId(param.id, limit, page);
+  }
+
   @Post("/")
   create(@Body() body: CreateSubscriptionRequest){
       return this.service.create(body);
