@@ -18,6 +18,16 @@ export class SubscriptionsController {
         return this.subscriptionsService.getAllToday(body.todayDate)
     }
 
+    @Get("active")
+    getAllActive(){
+        return this.subscriptionsService.getAllActiveCount();
+    }
+
+    @Get("TotalIncome")
+    getTodayIncome(){
+        return this.subscriptionsService.getTodayIncome();
+    }
+
     @Get('/:id')
     getAllForPlayer(@Param() param, @Query() {limit, page}){
         return this.subscriptionsService.getAllForPlayer(param.id, limit, page)
@@ -39,4 +49,5 @@ export class SubscriptionsController {
         , parametars.id)
     }
 
+    
 }

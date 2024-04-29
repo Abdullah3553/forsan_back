@@ -1,7 +1,7 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Subscription} from "../entities/subscriptions.entity";
-import {Repository} from "typeorm";
+import {MoreThanOrEqual, Repository} from "typeorm";
 import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
@@ -27,7 +27,8 @@ export class SubscriptionsService {
             }
         })
         const plans = await this.plansService.getAll()
-        const indexedPlans = [], res=[]
+        const indexedPlans = [];
+        let res = [];
         for(let i=0;i<plans.length;i++){
             if(plans[i].isActivated){
                 indexedPlans[plans[i].id] = {
@@ -43,12 +44,24 @@ export class SubscriptionsService {
             indexedPlans[subscriptions[i].plan.id].payedMoney+=subscriptions[i].payedMoney;
         }
         for(let i=0;i<plans.length;i++){
-            if(plans[i].isActivated)
+            if(plans[i].isActivated && indexedPlans[plans[i].id].numberOfSubscriptions > 0)
                 res.push(indexedPlans[plans[i].id])
         }
         return res
 
     }
+
+    async getAllActiveCount(){
+        const subscriptions = await this.subscriptionsRepo.count({
+            where:{
+                endDate: MoreThanOrEqual(moment().format('yyyy-MM-DD'))
+            }
+        });
+        return {
+            count: subscriptions
+        }
+    }
+
     async getAllForPlayer(playerId:number, limit: number, page: number){
         limit = limit || 3
         limit = Math.abs(Number(limit));
@@ -82,8 +95,6 @@ export class SubscriptionsService {
         }
     }
 
-    // create subscriptions or renew subscriptions
-    // both will add new row in the table
     async subscribe(request: SubscribeRequest) {
         const player = await this.playersService.resetFreezeAndInvites(request.player_id)
         const plan = await this.plansService.doesPlanExist(request.plan_id);
@@ -113,4 +124,18 @@ export class SubscriptionsService {
         return sub
     }
 
+    async getTodayIncome(){
+        const subs = await this.subscriptionsRepo.find({
+            where:{
+                beginDate: moment().format('yyyy-MM-DD')
+            }
+        })
+        let totalIncome = 0;
+        subs.forEach(sub => {
+            totalIncome += sub.payedMoney;
+        });
+        return {
+            totalIncome: totalIncome
+        }
+    }
 }

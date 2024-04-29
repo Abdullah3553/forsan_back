@@ -474,7 +474,7 @@ export class PlayersServices {
     }
 
 
-    getAllActive(limit, page) {
+    getAllActive(limit?, page?) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
@@ -483,7 +483,7 @@ export class PlayersServices {
             take: limit,
             skip: offset,
             order: {
-                id: "DESC",
+                subscriptions: {beginDate: "ASC"}
             },
             where: {
                 subscriptions: {
@@ -491,6 +491,7 @@ export class PlayersServices {
                 }
             }
         });
+        console.log(data);
         const items = this.dataFormat(data[0])
         return {
             items: items,

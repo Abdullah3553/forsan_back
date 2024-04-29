@@ -7,6 +7,7 @@ import { CreateSubscriptionRequest } from '../requests/createSubscriptionRequest
 import { PlanService } from '../../plan/services/plan.service';
 import { PlayersServices } from '../../../players/services/players.service';
 import { CoachesService } from '../../../coaches/service/coaches.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class SubscriptionsService {
@@ -163,4 +164,19 @@ export class SubscriptionsService {
         {payed: "Yes"}
       )
   }
+
+  async getTodayIncome(){
+    const subs = await this.ptSubscriptionsRepo.find({
+        where:{
+            beginDate: moment().format("yyyy-MM-DD")
+        }
+    })
+    let totalIncome = 0;
+    subs.forEach(sub => {
+        totalIncome += sub.payedMoney;
+    });
+    return {
+        totalIncome: totalIncome
+    }
+}
 }

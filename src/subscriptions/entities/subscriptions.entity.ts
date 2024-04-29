@@ -29,7 +29,7 @@ export class Subscription {
     @ManyToOne( () => Player, player => player.id,{
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
-        eager:false
+        eager:true
     })
     @JoinColumn()
     player: Player

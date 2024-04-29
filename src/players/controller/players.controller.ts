@@ -27,6 +27,12 @@ export class PlayersController {
         return this.playersService.getPlayersNumber()
     }
 
+    @Get("/active")
+    getActiveUsers(@Query() {limit, page}){
+        return this.playersService.getAllActive(limit, page);
+    }
+
+
     @Get("/:id")
     viewPlayer(@Param() params){
         return this.playersService.viewPlayer(params.id);
@@ -67,10 +73,6 @@ export class PlayersController {
         return this.playersService.deletePlayer(params.id)
     }
 
-    @Get("/active")
-    getActiveUsers(@Query() {limit, page}){
-        return this.playersService.getAllActive(limit, page);
-    }
-
+    
 }
 
