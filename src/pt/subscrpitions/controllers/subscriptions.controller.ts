@@ -22,6 +22,11 @@ export class SubscriptionsController {
       return this.service.getTodayIncome();
   }
 
+  @Get("detailedIncome")
+  getDetailedIncome(){
+    return this.service.getDetailedIncome();
+  }
+
   @Get('/coach/:id')
   getByCoachId(@Param() param, @Query() {limit, page}) {
       return this.service.findByCoachId(param.id, limit, page);

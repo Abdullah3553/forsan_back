@@ -96,16 +96,25 @@ export class SubscriptionsService {
     }
 
     async subscribe(request: SubscribeRequest) {
-        const player = await this.playersService.resetFreezeAndInvites(request.player_id)
-        const plan = await this.plansService.doesPlanExist(request.plan_id);
-        const subscription = new Subscription();
-        subscription.player = player;
-        subscription.plan = plan
-        subscription.beginDate = request.beginDate
-        subscription.endDate = request.endDate
-        subscription.payedMoney = request.payedMoney
-        subscription.creationDate = request.creationDate
-        return await this.subscriptionsRepo.save(subscription);
+        const sub = await this.subscriptionsRepo.findOne({
+            where:{
+                endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD")),
+                player: {id: request.player_id}
+            }
+        })
+        if(!sub){
+            const player = await this.playersService.resetFreezeAndInvites(request.player_id)
+            const plan = await this.plansService.doesPlanExist(request.plan_id);
+            const subscription = new Subscription();
+            subscription.player = player;
+            subscription.plan = plan
+            subscription.beginDate = request.beginDate
+            subscription.endDate = request.endDate
+            subscription.payedMoney = request.payedMoney
+            subscription.creationDate = request.creationDate
+            return await this.subscriptionsRepo.save(subscription);
+        }
+        //return new BadRequestException("This player is already subscribed")
     }
 
     async updateDate(request , requestId:number){

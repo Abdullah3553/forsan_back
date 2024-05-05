@@ -10,7 +10,7 @@ import { CoachesService } from '../../../coaches/service/coaches.service';
 import * as moment from 'moment';
 
 @Injectable()
-export class SubscriptionsService {
+export class  SubscriptionsService {
   constructor(
     @InjectRepository(PtSubscription)
     protected readonly ptSubscriptionsRepo: Repository<PtSubscription>,
@@ -178,5 +178,35 @@ export class SubscriptionsService {
     return {
         totalIncome: totalIncome
     }
+  }
+
+  async getDetailedIncome() {
+    const allPlans = await this.plansService.getAll();
+    const subsObject = [];
+    
+    const promises = allPlans.data.map(async (plan) => {
+      const todaySubscriptions = await this.ptSubscriptionsRepo.find({
+        where: {
+            beginDate: moment().format("yyyy-MM-DD"),
+            plan: plan
+        }
+      });
+
+      if (todaySubscriptions && todaySubscriptions.length > 0) {
+        let totalMoney = 0;
+        todaySubscriptions.forEach(sub => {
+          totalMoney += sub.payedMoney;
+        });
+        subsObject.push({
+          totalNumberOfSubscriptions: todaySubscriptions.length,
+          planName: plan.name,
+          payedMoney: totalMoney
+        });
+      }
+    });
+
+    await Promise.all(promises);
+    return subsObject;
 }
+
 }
