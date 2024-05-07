@@ -1,10 +1,11 @@
-import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Inject, Injectable, NotFoundException, forwardRef} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
 import {LogsService} from "src/logsModule/service/logs.service";
+import { SubscriptionsService } from "src/subscriptions/services/subscriptions.service";
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,6 +16,8 @@ export class PlayersServices {
         @InjectRepository(Player)
         private readonly playersRepo: Repository<Player>,
         private readonly logsService: LogsService,
+        @Inject(forwardRef(() => SubscriptionsService))
+        private readonly subscriptionsService: SubscriptionsService
     ) {
     }
 
@@ -323,6 +326,7 @@ export class PlayersServices {
                         relations: ['subscriptions']
                     })
                     await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
+                    this.subscriptionsService.updateAttendance(player.id);
                 }
                 return {
                     items: this.dataFormat(data[0]),
@@ -338,8 +342,10 @@ export class PlayersServices {
                     take: limit,
                     skip: offset
                 })
+                const player = this.dataFormat(data[0]);
+                await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
                 return {
-                    items: this.dataFormat(data[0]),
+                    items: player,
                     count: data[1]
                 }
             }

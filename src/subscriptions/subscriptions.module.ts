@@ -6,10 +6,15 @@ import { SubscriptionsController } from './controllers/subscriptions.controller'
 import {PlayersModule} from "../players/players.module";
 import {PlansModule} from "../plans/plans.module";
 import {PartialSubscriptionsService} from "./services/partialSubscriptions.service";
+import { logsModule } from 'src/logsModule/logs.module';
+import { Log } from 'src/logsModule/entities/logs.entitiy';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Subscription]),
+        forwardRef(()=>Log),
+        TypeOrmModule.forFeature([Log]),
+        logsModule,
         forwardRef(()=>PlansModule),
         PlayersModule
     ],

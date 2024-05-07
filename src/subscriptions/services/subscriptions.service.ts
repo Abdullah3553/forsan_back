@@ -6,6 +6,7 @@ import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
 import * as moment from "moment";
+import { Log } from 'src/logsModule/entities/logs.entitiy';
 
 @Injectable()
 export class SubscriptionsService {
@@ -13,7 +14,9 @@ export class SubscriptionsService {
         @InjectRepository(Subscription)
         private readonly subscriptionsRepo : Repository<Subscription>,
         private readonly playersService : PlayersServices,
-        private readonly plansService: PlansService
+        private readonly plansService: PlansService,
+        @InjectRepository(Log)
+        private readonly logsRepo: Repository<Log>
     ) {}
 
 
@@ -73,7 +76,7 @@ export class SubscriptionsService {
                 }
             },
             order: {
-                id: "DESC",
+                endDate: "DESC",
             },
             take:limit,
             skip:offset
@@ -145,6 +148,28 @@ export class SubscriptionsService {
         });
         return {
             totalIncome: totalIncome
+        }
+    }
+
+    async updateAttendance(playerId){
+        const playerLogs = await this.logsRepo.count({
+            where:{
+                logId: playerId,
+                dayDate: moment().format('yyyy-MM-DD')
+            }
+        })
+        const playerSub = await this.subscriptionsRepo.findOne({
+            where:{
+                player:{
+                    id:playerId
+                },
+                endDate : MoreThanOrEqual(moment().format('yyyy-MM-DD'))
+            }
+        })
+        if(playerLogs == 1 && playerSub){
+            
+            playerSub.attendance++;
+            await this.subscriptionsRepo.update(playerSub.id, playerSub);
         }
     }
 }

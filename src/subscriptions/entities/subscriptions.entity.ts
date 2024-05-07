@@ -24,6 +24,10 @@ export class Subscription {
     @Column('date')
     creationDate:string
 
+    @Column({
+        default: 0
+    })
+    attendance:number
     //Relations :-
 
     @ManyToOne( () => Player, player => player.id,{
