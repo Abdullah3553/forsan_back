@@ -19,6 +19,7 @@ import { outComeModule } from 'src/outCome/outCome.module';
 import { CsvModule } from '../csv/csv.module';
 import { PTModule } from '../pt/pt.module';
 import { CoachesModule } from 'src/coaches/coaches.module';
+import { PhotosModule } from 'src/photos/photos.module';
 @Module({
   imports: [
     AuthModule,
@@ -37,7 +38,8 @@ import { CoachesModule } from 'src/coaches/coaches.module';
     outComeModule,
     CsvModule,
     PTModule,
-    CoachesModule
+    CoachesModule,
+    PhotosModule
   ],
   controllers: [AppController],
   providers: [AppService],
