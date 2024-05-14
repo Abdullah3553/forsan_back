@@ -31,7 +31,8 @@ export class AuthService {
             user: {
                 id: _admin.id,
                 username: _admin.username,
-                name: _admin.name
+                name: _admin.name,
+                role: _admin.role
             },
             accessToken: token
         }
