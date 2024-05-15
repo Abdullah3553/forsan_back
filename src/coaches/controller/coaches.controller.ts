@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwtAuthGuard';
-import {CoachesService} from 'src/coaches/service/coaches.service'
+import { JwtAuthGuard } from '../../auth/guards/jwtAuthGuard';
+import {CoachesService} from '../../coaches/service/coaches.service'
 import { CreateCoachRequest } from '../requests/createCoachRequest';
 import { UpdateCoachRequest } from '../requests/updateCoachRequest';
 

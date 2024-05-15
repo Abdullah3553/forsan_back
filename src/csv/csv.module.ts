@@ -3,7 +3,7 @@ import { CsvController } from './csv.controller';
 import {CSVService} from "./csv.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Player} from "../players/entities/players.entity";
-import { ActivityPlayer } from 'src/activityPlayers/entities/activityPlayers.entity';
+import { ActivityPlayer } from '../activityPlayers/entities/activityPlayers.entity';
 
 @Module({
   imports: [

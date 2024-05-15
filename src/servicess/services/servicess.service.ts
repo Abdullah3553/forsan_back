@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import {Service} from "../entities/servicess.entity";
-import { LogsService } from "src/logsModule/service/logs.service";
+import { LogsService } from "../../logsModule/service/logs.service";
 
 @Injectable()
 export class ServicessServices {

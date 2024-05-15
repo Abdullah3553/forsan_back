@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import moment from "moment";
-import { Activity } from "src/activities/entities/activities.entity";
-import { ActivitiesService } from "src/activities/services/activities.service";
-import { ActivityPlayerSubscription } from "src/activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
-import { ActivityPlayerSubscriptionsService } from "src/activityPlayerSubscriptions/services/activityPlayerSubscriptions.service";
+import { Activity } from "../../activities/entities/activities.entity";
+import { ActivitiesService } from "../../activities/services/activities.service";
+import { ActivityPlayerSubscription } from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
+import { ActivityPlayerSubscriptionsService } from "../../activityPlayerSubscriptions/services/activityPlayerSubscriptions.service";
 import { Repository } from "typeorm";
 import { ActivityIncome } from "../entities/activitiesIncome.entity";
 

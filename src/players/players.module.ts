@@ -3,7 +3,7 @@ import {forwardRef, Module} from "@nestjs/common";
 import { PlayersController } from "./controller/players.controller";
 import {PlayersServices} from "./services/players.service";
 import {Player} from "./entities/players.entity";
-import { logsModule } from "src/logsModule/logs.module";
+import { logsModule } from "../logsModule/logs.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
 
 

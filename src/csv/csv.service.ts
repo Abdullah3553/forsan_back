@@ -4,7 +4,7 @@ import {Player} from "../players/entities/players.entity";
 import {Repository} from "typeorm";
 
 import { Parser } from "json2csv";
-import { ActivityPlayer } from 'src/activityPlayers/entities/activityPlayers.entity';
+import { ActivityPlayer } from '../activityPlayers/entities/activityPlayers.entity';
 
 @Injectable()
 export class CSVService {

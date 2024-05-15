@@ -1,6 +1,6 @@
 import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {LogsService} from "src/logsModule/service/logs.service";
+import {LogsService} from "../../logsModule/service/logs.service";
 import {Repository} from "typeorm";
 import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";

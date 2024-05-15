@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LogsService } from 'src/logsModule/service/logs.service';
-import { PtSubscription } from 'src/pt/subscrpitions/entities/subscriptions.entity'
+import { LogsService } from '../../../logsModule/service/logs.service';
+import { PtSubscription } from '../../../pt/subscrpitions/entities/subscriptions.entity'
 import { CreateSubscriptionRequest } from '../requests/createSubscriptionRequest';
 import { PlanService } from '../../plan/services/plan.service';
 import { PlayersServices } from '../../../players/services/players.service';

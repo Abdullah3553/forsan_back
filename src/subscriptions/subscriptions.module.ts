@@ -6,8 +6,8 @@ import { SubscriptionsController } from './controllers/subscriptions.controller'
 import {PlayersModule} from "../players/players.module";
 import {PlansModule} from "../plans/plans.module";
 import {PartialSubscriptionsService} from "./services/partialSubscriptions.service";
-import { logsModule } from 'src/logsModule/logs.module';
-import { Log } from 'src/logsModule/entities/logs.entitiy';
+import { logsModule } from '../logsModule/logs.module';
+import { Log } from '../logsModule/entities/logs.entitiy';
 
 @Module({
     imports: [

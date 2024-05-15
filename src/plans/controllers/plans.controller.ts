@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, Param, Post, UseGuards, Query} from '@nestjs/common';
 import {PlansService} from "../services/plans.service";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
-import { JwtAuthGuard } from 'src/auth/guards/jwtAuthGuard';
+import { JwtAuthGuard } from '../../auth/guards/jwtAuthGuard';
 
 @Controller('plan')
 @UseGuards(JwtAuthGuard)

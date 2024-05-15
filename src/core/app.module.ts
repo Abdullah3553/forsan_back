@@ -14,12 +14,12 @@ import { ServicesIncomeModule } from '../servicesIncome/servicesIncome.module';
 import { ActivityPlayerSubscriptionsModule } from '../activityPlayerSubscriptions/activityPlayerSubscriptions.module';
 import { AdminsModule } from '../admins/admins.module';
 import { AuthModule } from '../auth/auth.module';
-import { logsModule } from 'src/logsModule/logs.module';
+import { logsModule } from '../logsModule/logs.module';
 import { outComeModule } from 'src/outCome/outCome.module';
 import { CsvModule } from '../csv/csv.module';
 import { PTModule } from '../pt/pt.module';
-import { CoachesModule } from 'src/coaches/coaches.module';
-import { PhotosModule } from 'src/photos/photos.module';
+import { CoachesModule } from '../coaches/coaches.module';
+import { PhotosModule } from '../photos/photos.module';
 @Module({
   imports: [
     AuthModule,

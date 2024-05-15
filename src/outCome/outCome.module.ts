@@ -1,6 +1,6 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { logsModule } from "src/logsModule/logs.module";
+import { logsModule } from "../logsModule/logs.module";
 import { OutCome } from "./entities/outCome.entity";
 import { outComeController } from "./controller/outComeController";
 import { OutComeService } from "./services/outCome.service";

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "src/auth/guards/jwtAuthGuard";
+import { JwtAuthGuard } from "../../auth/guards/jwtAuthGuard";
 import { CreateNewActivityPlayerRequest } from "../requests/createNewActivityPlayer.request";
 import { ActivityPlayersService } from "../services/activityPlayers.service";
 

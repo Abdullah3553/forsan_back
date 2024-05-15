@@ -1,5 +1,5 @@
 import {Body, Controller, Delete, Get, Post, Query, UseGuards} from "@nestjs/common";
-import {JwtAuthGuard} from "src/auth/guards/jwtAuthGuard";
+import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
 import {LogsService} from "../service/logs.service";
 
 

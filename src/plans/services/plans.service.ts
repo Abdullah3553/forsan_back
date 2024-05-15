@@ -4,7 +4,7 @@ import {Plan} from "../entities/plans.entity";
 import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
-import { LogsService } from 'src/logsModule/service/logs.service';
+import { LogsService } from '../../logsModule/service/logs.service';
 
 @Injectable()
 export class PlansService {

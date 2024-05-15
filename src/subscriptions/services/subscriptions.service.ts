@@ -6,7 +6,7 @@ import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
 import * as moment from "moment";
-import { Log } from 'src/logsModule/entities/logs.entitiy';
+import { Log } from '../../logsModule/entities/logs.entitiy';
 
 @Injectable()
 export class SubscriptionsService {

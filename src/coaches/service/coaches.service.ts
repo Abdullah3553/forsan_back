@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Coach } from 'src/coaches/entities/coaches.entities'
-import { LogsService } from "src/logsModule/service/logs.service";
-import { SubscriptionsService } from 'src/pt/subscrpitions/services/subscriptions.service';
+import { Coach } from '../../coaches/entities/coaches.entities'
+import { LogsService } from "../../logsModule/service/logs.service";
+import { SubscriptionsService } from '../../pt/subscrpitions/services/subscriptions.service';
 import { Repository } from 'typeorm';
 
 @Injectable()

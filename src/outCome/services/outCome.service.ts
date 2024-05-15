@@ -1,7 +1,7 @@
 import {Injectable, InternalServerErrorException} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {MoreThanOrEqual, Repository} from "typeorm";
-import { LogsService } from "src/logsModule/service/logs.service";
+import { LogsService } from "../../logsModule/service/logs.service";
 import { OutCome } from "../entities/outCome.entity";
 import { CreateNewOutComeRequest } from "../requests/createNewOutcome.request";
 import * as moment from "moment";

@@ -4,8 +4,8 @@ import { MoreThanOrEqual, Repository } from 'typeorm';
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
-import {LogsService} from "src/logsModule/service/logs.service";
-import { SubscriptionsService } from "src/subscriptions/services/subscriptions.service";
+import {LogsService} from "../../logsModule/service/logs.service";
+import { SubscriptionsService } from "../../subscriptions/services/subscriptions.service";
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

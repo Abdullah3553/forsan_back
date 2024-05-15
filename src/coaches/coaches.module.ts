@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { CoachesController } from './controller/coaches.controller';
 import { CoachesService } from './service/coaches.service';
-import { logsModule } from 'src/logsModule/logs.module';
+import { logsModule } from '../logsModule/logs.module';
 import { Coach } from './entities/coaches.entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PTSubscriptionsModule } from 'src/pt/subscrpitions/subscriptions.module';
+import { PTSubscriptionsModule } from '../pt/subscrpitions/subscriptions.module';
 
 @Module({
   imports: [

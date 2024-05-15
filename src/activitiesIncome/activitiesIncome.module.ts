@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ActivityPlayerSubscriptionsModule } from "src/activityPlayerSubscriptions/activityPlayerSubscriptions.module";
+import { ActivityPlayerSubscriptionsModule } from "../activityPlayerSubscriptions/activityPlayerSubscriptions.module";
 import { ActivitiesIncomeController } from "./controllers/activitiesIncome.controller";
 import { ActivityIncome } from "./entities/activitiesIncome.entity";
 import { ActivitiesIncomeService } from "./services/activitiesIncome.services";

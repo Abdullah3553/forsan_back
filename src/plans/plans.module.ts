@@ -4,7 +4,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {Plan} from "./entities/plans.entity";
 import { PlansService } from './services/plans.service';
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
-import { logsModule } from 'src/logsModule/logs.module';
+import { logsModule } from '../logsModule/logs.module';
 
 @Module({
   imports: [

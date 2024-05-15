@@ -1,4 +1,4 @@
-import { Activity } from "src/activities/entities/activities.entity";
+import { Activity } from "../../activities/entities/activities.entity";
 import { Column, Entity, JoinColumn,ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import {ActivityPlayer} from "../../activityPlayers/entities/activityPlayers.entity";
 

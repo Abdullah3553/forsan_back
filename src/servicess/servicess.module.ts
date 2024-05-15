@@ -3,7 +3,7 @@ import { Module } from "@nestjs/common";
 import { ServicessController } from "./controller/servicessController";
 import { ServicessServices } from "./services/servicess.service";
 import {Service} from "./entities/servicess.entity";
-import { logsModule } from "src/logsModule/logs.module";
+import { logsModule } from "../logsModule/logs.module";
 
 @Module({
     imports: [
