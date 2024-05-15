@@ -1,4 +1,4 @@
-import { ActivityPlayerSubscription } from "src/activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
+import { ActivityPlayerSubscription } from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
