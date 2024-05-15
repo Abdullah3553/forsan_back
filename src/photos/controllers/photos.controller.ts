@@ -10,7 +10,7 @@ import {
     UseInterceptors
   } from '@nestjs/common';
   import { FileInterceptor } from '@nestjs/platform-express';
-  import { Response } from 'express';
+  import { Response , Express} from 'express';
   import {unlink, readdirSync} from "fs";
   import {randomInt} from "crypto";
   
