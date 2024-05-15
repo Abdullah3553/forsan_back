@@ -108,10 +108,6 @@ export class ActivityPlayerSubscriptionsService {
 
     async editSubscription(body, id:number) {
         const subscription = await this.doesSubscriptionExist(id)
-        console.log("sub : ", subscription);
-        console.log("body : ", body);
-        console.log("id : ", id);
-
         subscription.activity = body.activity
         subscription.activityPlayer = body.activityPlayer
         subscription.beginDate = body.beginDate.toString()
