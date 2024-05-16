@@ -39,14 +39,7 @@ export class SubscriptionsController {
     }
     @Post("update/:id")
     update(@Body() body, @Param() parametars){
-        return this.subscriptionsService.updateDate(
-        {
-            beginDate: body.beginDate,
-            endDate: body.endDate,
-            payedMoney: body.payedMoney,
-            plan: body.plan_id
-        }
-        , parametars.id)
+        return this.subscriptionsService.updateDate(body, parametars.id)
     }
 
     

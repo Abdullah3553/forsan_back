@@ -1,15 +1,12 @@
 import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {MoreThan, Repository} from "typeorm";
+import {Repository} from "typeorm";
 import {ActivityPlayerSubscription} from "../entities/activityPlayerSubscriptions.entity";
 import {ActivitiesService} from "../../activities/services/activities.service";
 import {ActivityPlayersService} from "../../activityPlayers/services/activityPlayers.service";
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
 import * as moment from "moment/moment";
-import {ActivityPlayer} from "../../activityPlayers/entities/activityPlayers.entity";
 import {LogsService} from "../../logsModule/service/logs.service";
-import {of} from "rxjs";
-
 
 @Injectable()
 export class ActivityPlayerSubscriptionsService {
@@ -65,7 +62,7 @@ export class ActivityPlayerSubscriptionsService {
 
     async newSubscription(request: CreateNewActivityPlayerSubscriptionRequest) {
         const check = await this.activityPlayerSubscriptionRepo.query(`SELECT *
-                                                                       FROM \`activityPlayerSubscriptions\`
+                                                                       FROM \`activity_player_subscription\`
                                                                        WHERE \`endDate\` >= '${request.endDate}'
                                                                          AND \`activityId\` = ${request.activity_id}
                                                                          AND \`activityPlayerId\` = ${request.player_id} ` )
@@ -111,12 +108,16 @@ export class ActivityPlayerSubscriptionsService {
 
     async editSubscription(body, id:number) {
         const subscription = await this.doesSubscriptionExist(id)
+        console.log("sub : ", subscription);
+        console.log("body : ", body);
+        console.log("id : ", id);
+
         subscription.activity = body.activity
         subscription.activityPlayer = body.activityPlayer
         subscription.beginDate = body.beginDate.toString()
         subscription.endDate = body.endDate.toString()
         subscription.price = body.price
-        await this.activityPlayerSubscriptionRepo.save(subscription)
+        await this.activityPlayerSubscriptionRepo.update(id, subscription)
         await this.logsService.createNewLog(subscription.id, `edited subscription for ${subscription.activityPlayer.name} activity player`, 'activityPlayers')
         return this.getSinglePlayer(10, 1, body.activityPlayer.id)
     }

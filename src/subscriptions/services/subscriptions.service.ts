@@ -125,11 +125,18 @@ export class SubscriptionsService {
         sub.beginDate = request.beginDate
         sub.endDate = request.endDate
         sub.payedMoney = request.payedMoney
-        return this.subscriptionsRepo.save(sub)
+        const newSub = await this.subscriptionsRepo.update(sub.id, sub)
+        return newSub;
     }
 
     async doesSubscriptionExist(id:number){
-        const sub = await this.subscriptionsRepo.findOne({where:{id:id}})
+        const sub = await this.subscriptionsRepo.findOne(
+            {
+                where:{
+                    player:{id:id}
+                }
+            }
+        )
         if(!sub){
             throw new BadRequestException("Subscription doesn't exist")
         }
