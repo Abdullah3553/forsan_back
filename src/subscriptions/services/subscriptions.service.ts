@@ -162,9 +162,12 @@ export class SubscriptionsService {
         const playerLogs = await this.logsRepo.count({
             where:{
                 logId: playerId,
-                dayDate: moment().format('yyyy-MM-DD')
+                dayDate: moment().format('yyyy-MM-DD'),
+                logSource: "signed"
             }
         })
+        console.log("playerLogs : ", playerLogs);
+        
         const playerSub = await this.subscriptionsRepo.findOne({
             where:{
                 player:{
@@ -173,8 +176,9 @@ export class SubscriptionsService {
                 endDate : MoreThanOrEqual(moment().format('yyyy-MM-DD'))
             }
         })
-        if(playerLogs == 1 && playerSub){
-            
+        console.log("playerSub : ", playerSub);
+        
+        if(playerLogs == 1 && playerSub){            
             playerSub.attendance++;
             await this.subscriptionsRepo.update(playerSub.id, playerSub);
         }

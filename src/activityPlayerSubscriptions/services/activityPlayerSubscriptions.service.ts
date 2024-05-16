@@ -117,4 +117,48 @@ export class ActivityPlayerSubscriptionsService {
         await this.logsService.createNewLog(subscription.id, `edited subscription for ${subscription.activityPlayer.name} activity player`, 'activityPlayers')
         return this.getSinglePlayer(10, 1, body.activityPlayer.id)
     }
+
+    async getDetailedIncome() {
+        const allActivities = await this.activityService.getAll();
+        const subsObject = [];
+        
+        const promises = allActivities.items.map(async (activity) => {
+          const todaySubscriptions = await this.activityPlayerSubscriptionRepo.find({
+            where: {
+                beginDate: moment().format("yyyy-MM-DD"),
+                activity: activity
+            }
+          });
+    
+          if (todaySubscriptions && todaySubscriptions.length > 0) {
+            let totalMoney = 0;
+            todaySubscriptions.forEach(sub => {
+              totalMoney += sub.price;
+            });
+            subsObject.push({
+              totalNumberOfSubscriptions: todaySubscriptions.length,
+              activityName: activity.name,
+              payedMoney: totalMoney
+            });
+          }
+        });
+    
+        await Promise.all(promises);
+        return subsObject;
+      }
+
+      async getTodayIncome(){
+        const subs = await this.activityPlayerSubscriptionRepo.find({
+            where:{
+                beginDate: moment().format("yyyy-MM-DD")
+            }
+        })
+        let totalIncome = 0;
+        subs.forEach(sub => {
+            totalIncome += sub.price;
+        });
+        return {
+            totalIncome: totalIncome
+        }
+      }
 }

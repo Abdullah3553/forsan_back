@@ -207,6 +207,6 @@ export class  SubscriptionsService {
 
     await Promise.all(promises);
     return subsObject;
-}
+  }
 
 }

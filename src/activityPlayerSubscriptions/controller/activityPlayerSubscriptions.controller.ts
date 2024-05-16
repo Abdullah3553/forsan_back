@@ -18,6 +18,15 @@ export class ActivityPlayerSubscriptionsController {
         return this.activityPlayerSubService.newSubscription(body)
     }
 
+    @Get("detailedIncome")
+    getDetailedIncome(){
+      return this.activityPlayerSubService.getDetailedIncome();
+    }
+
+    @Get("TotalIncome")
+    getTodayIncome(){
+        return this.activityPlayerSubService.getTodayIncome();
+    }
 
     @Post('/updateDate/:id')
     updateDate(@Body() body, @Param() parametars){

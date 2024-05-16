@@ -15,7 +15,7 @@ export class ActivitiesService {
         private readonly logsService: LogsService
     ) {}
 
-    async getAll(limit, page){
+    async getAll(limit?, page?){
         limit = limit || 5
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0

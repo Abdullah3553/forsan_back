@@ -296,6 +296,7 @@ export class PlayersServices {
         limit = limit || 10
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
+        console.log("options : ", searchOption);
         switch (searchOption) {
             case "id": {
                 const data = await this.playersRepo.findAndCount({
@@ -325,7 +326,7 @@ export class PlayersServices {
                         where: {barCode: searchElement},
                         relations: ['subscriptions']
                     })
-                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
+                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "signed")
                     this.subscriptionsService.updateAttendance(player.id);
                 }
                 return {
