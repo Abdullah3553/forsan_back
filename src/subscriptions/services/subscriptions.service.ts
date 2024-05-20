@@ -20,9 +20,27 @@ export class SubscriptionsService {
     ) {}
 
 
+    async updateSelectedSubscriptionForPlayer(player, requestBody){
+        
+        const currentSub = await this.subscriptionsRepo.findOne({
+            where:{
+                player: player,
+                endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD"))
+            }
+        })        
+        const newSubscribedPlan = await this.plansService.getById(requestBody.plan);
+
+        currentSub.beginDate = requestBody.beginDate;
+        currentSub.endDate = requestBody.endDate;
+        currentSub.plan = newSubscribedPlan;
+        
+        await this.subscriptionsRepo.update(currentSub.id, currentSub);
+    }
+
     getAll(){
         return this.subscriptionsRepo.find()
     }
+
     async getAllToday(todayDate:string){
         const subscriptions = await this.subscriptionsRepo.find({
             where:{
@@ -31,7 +49,7 @@ export class SubscriptionsService {
         })
         const plans = await this.plansService.getAll()
         const indexedPlans = [];
-        let res = [];
+        const res = [];
         for(let i=0;i<plans.length;i++){
             if(plans[i].isActivated){
                 indexedPlans[plans[i].id] = {

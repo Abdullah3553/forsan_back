@@ -28,6 +28,11 @@ export class SubscriptionsController {
         return this.subscriptionsService.getTodayIncome();
     }
 
+    @Get("SelectedSubscription")
+    updateSelectedSubscriptionForPlayer(playerId, beginDate){
+        return this.subscriptionsService.updateSelectedSubscriptionForPlayer(playerId, beginDate);
+    }
+
     @Get('/:id')
     getAllForPlayer(@Param() param, @Query() {limit, page}){
         return this.subscriptionsService.getAllForPlayer(param.id, limit, page)

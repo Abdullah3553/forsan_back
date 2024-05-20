@@ -1,5 +1,6 @@
 import {  IsNotEmpty,  IsString} from "class-validator"
-export class CreateNewPlayerRequest {
+import { Column } from "typeorm"
+export class UpdatePlayerRequest {
     
     @IsNotEmpty()
     @IsString()
@@ -9,21 +10,21 @@ export class CreateNewPlayerRequest {
     @IsString()
     phoneNumber: string
 
-    // @IsDecimal()
-    // height: string
-
-    // @IsString()
-    // trainingPlan: string
-
-    // @IsString()
-    // dietPlan: string
-
     //@IsString()
     barCode: string
 
     //@IsString()
     photo:string
 
-    // @IsNotEmpty()
-    // plan: number
+    planId: string
+
+    @Column({
+        type: 'date'
+    })
+    beginDate: string | Date
+
+    @Column({
+        type: 'date'
+    })
+    endDate: string | Date
 }

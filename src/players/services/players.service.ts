@@ -6,6 +6,7 @@ import {Player} from "../entities/players.entity";
 import * as moment from "moment";
 import {LogsService} from "../../logsModule/service/logs.service";
 import { SubscriptionsService } from "../../subscriptions/services/subscriptions.service";
+import { UpdatePlayerRequest } from "../requests/updatePlayer";
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,12 +42,12 @@ export class PlayersServices {
         }
     }
 
-    async getSignedPlayersPaging(limit, page) {
-        limit = limit || 10
-        limit = Math.abs(Number(limit));
-        const offset = Math.abs((page - 1) * limit)
-        return;
-    }
+    // async getSignedPlayersPaging(limit, page) {
+    //     limit = limit || 10
+    //     limit = Math.abs(Number(limit));
+    //     const offset = Math.abs((page - 1) * limit)
+    //     return;
+    // }
 
     async getSignedinPlayersData(limit, page) {
         limit = limit || 10
@@ -164,21 +165,18 @@ export class PlayersServices {
         }
     }
 
-    //Edit player
-    async editPlayer(newInf: CreateNewPlayerRequest, requestedId: number) {
+    async editPlayer(newInf: UpdatePlayerRequest, requestedId: number) {
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
         await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
-        //newPlayerInfo.height = newInf.height
-        //newPlayerInfo.dietPlan = newInf.dietPlan
-        //newPlayerInfo.trainingPlan = newInf.trainingPlan
         newPlayerInfo.barCode = newInf.barCode
         await this.logsService.createNewLog(requestedId, `edited ${newInf.name} player`, "players")
         if (newInf.photo !== null) {
             newPlayerInfo.photo = newInf.photo
         }
         const res = await this.playersRepo.save(newPlayerInfo)
+        await this.subscriptionsService.updateSelectedSubscriptionForPlayer(newPlayerInfo, newInf);
         const subs = res.subscriptions
         delete res.subscriptions
         return {

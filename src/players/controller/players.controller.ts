@@ -2,6 +2,7 @@ import {Controller, Get, Post, Body, Param, Delete, UseGuards, Query} from "@nes
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import { PlayersServices } from "../services/players.service";
 import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
+import { UpdatePlayerRequest } from "../requests/updatePlayer";
 
 
 @Controller('player')
@@ -64,7 +65,7 @@ export class PlayersController {
     }
 
     @Post("/edit/:id")
-    editPlayer(@Body() body: CreateNewPlayerRequest, @Param() params){
+    editPlayer(@Body() body: UpdatePlayerRequest, @Param() params){
         return this.playersService.editPlayer(body, params.id);
     }
 
