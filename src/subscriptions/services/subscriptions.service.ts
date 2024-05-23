@@ -7,6 +7,7 @@ import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
 import * as moment from "moment";
 import { Log } from '../../logsModule/entities/logs.entitiy';
+import * as TelegramBot from 'node-telegram-bot-api';
 
 @Injectable()
 export class SubscriptionsService {
@@ -27,7 +28,15 @@ export class SubscriptionsService {
                 player: player,
                 endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD"))
             }
-        })        
+        })       
+        
+        const oldData = {
+            plan: currentSub.plan.id,
+            beginDate: moment(currentSub.beginDate).format("yyyy-MM-DD"),
+            endDate: moment(currentSub.endDate).format("yyyy-MM-DD"),
+            payedMoney: currentSub.payedMoney
+        }
+        this.editedData(oldData, requestBody, player.id)
         const newSubscribedPlan = await this.plansService.getById(requestBody.plan);
 
         currentSub.beginDate = requestBody.beginDate;
@@ -35,6 +44,26 @@ export class SubscriptionsService {
         currentSub.plan = newSubscribedPlan;
         
         await this.subscriptionsRepo.update(currentSub.id, currentSub);
+    }
+
+    async editedData(oldData, newData, playerId) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        const changedData = [];
+        for (const key in oldData) {
+            if (oldData.hasOwnProperty(key) && newData.hasOwnProperty(key)) {
+                if (oldData[key] !== newData[key]) {
+                    if(key === 'plan'){
+                        const oldPlanName = (await this.plansService.getById(oldData[key])).name
+                        const newPlanName = (await this.plansService.getById(newData[key])).name
+                        changedData.push({ field: key, newValue: newPlanName, oldValue: oldPlanName });
+                    }else
+                        changedData.push({ field: key, newValue: newData[key], oldValue: oldData[key] });
+                }
+            }
+        }
+        changedData.forEach(item => {
+            bot.sendMessage(process.env.Telegram_ChatId, `subscription for player with id: ${playerId} has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+        });
     }
 
     getAll(){
@@ -83,7 +112,7 @@ export class SubscriptionsService {
         }
     }
 
-    async getAllForPlayer(playerId:number, limit: number, page: number){
+    async getAllForPlayer(playerId:number, limit?: number, page?: number){
         limit = limit || 3
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0

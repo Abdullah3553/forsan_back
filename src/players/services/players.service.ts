@@ -7,6 +7,7 @@ import * as moment from "moment";
 import {LogsService} from "../../logsModule/service/logs.service";
 import { SubscriptionsService } from "../../subscriptions/services/subscriptions.service";
 import { UpdatePlayerRequest } from "../requests/updatePlayer";
+import * as TelegramBot from 'node-telegram-bot-api';
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -165,8 +166,20 @@ export class PlayersServices {
         }
     }
 
+    getIfSubChanged(changedData){
+        let flag = 0;        
+        changedData.forEach(item => {
+            if(item === 'beginDate' || item === 'endDate' || item === 'payedMoney' || item.field === 'plan'){
+                flag = 1;
+            }
+        });
+        return flag;
+    }
+
     async editPlayer(newInf: UpdatePlayerRequest, requestedId: number) {
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
+        const changedData = await this.editedData(newPlayerInfo, newInf)
+        const curSub = await this.subscriptionsService.getAllForPlayer(requestedId);
         await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
@@ -176,7 +189,8 @@ export class PlayersServices {
             newPlayerInfo.photo = newInf.photo
         }
         const res = await this.playersRepo.save(newPlayerInfo)
-        await this.subscriptionsService.updateSelectedSubscriptionForPlayer(newPlayerInfo, newInf);
+        if(this.getIfSubChanged(changedData))
+            await this.subscriptionsService.updateSelectedSubscriptionForPlayer(newPlayerInfo, newInf);
         const subs = res.subscriptions
         delete res.subscriptions
         return {
@@ -187,6 +201,35 @@ export class PlayersServices {
                 endDate: moment(subs[subs.length - 1].endDate).format('yyyy-MM-DD')
             }
         }
+    }
+
+    editedData(oldData, newData) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+
+        const old = {
+            name: oldData.name,
+            barCode: oldData.barCode,
+            phoneNumber: oldData.phoneNumber,
+            plan: oldData.subscriptions[oldData.subscriptions.length-1].plan.id,
+            beginDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].beginDate).format("yyyy-MM-DD"),
+            endDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].endDate).format("yyyy-MM-DD"),
+            payedMoney: oldData.subscriptions[oldData.subscriptions.length-1].payedMoney
+        }        
+        const changedData = [];
+        for (const key in old) {
+            if (old.hasOwnProperty(key) && newData.hasOwnProperty(key)) {
+                if (old[key] !== newData[key]) {
+                    changedData.push({ field: key, newValue: newData[key], oldValue: old[key] });
+                }
+            }
+        }
+        changedData.forEach(item => {
+            if(item.field !== 'beginDate' && item.field !== 'endDate' && item.field !== 'payedMoney' && item.field !== 'plan'){
+                bot.sendMessage(process.env.Telegram_ChatId, `Player with id: ${oldData.id} has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+            }
+        });
+        
+        return changedData;
     }
 
     async inviteFriend(requestId: number, invites: number) {
@@ -255,6 +298,11 @@ export class PlayersServices {
         return this.playersRepo.save(player)
     }
 
+    test(){
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        
+        bot.sendMessage(process.env.Telegram_ChatId, 'Hello, this message from meeeeeee yaaaayyy');
+    }
 
     // Validation methods
     isEndedSubscription(subscription) {
@@ -291,6 +339,7 @@ export class PlayersServices {
     }
 
     async searchByOption(searchElement: any, searchOption: string, limit, page) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         limit = limit || 10
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
@@ -324,7 +373,8 @@ export class PlayersServices {
                         where: {barCode: searchElement},
                         relations: ['subscriptions']
                     })
-                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "signed")
+                    await this.logsService.createNewLog(player.id, `player with id: ${player.id} signed in`, "signed")
+                    bot.sendMessage(process.env.Telegram_ChatId, `player with id: ${player.id} signed in`);
                     this.subscriptionsService.updateAttendance(player.id);
                 }
                 return {

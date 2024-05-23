@@ -18,6 +18,8 @@ export class UpdatePlayerRequest {
 
     planId: string
 
+    payedMoney: string
+
     @Column({
         type: 'date'
     })
