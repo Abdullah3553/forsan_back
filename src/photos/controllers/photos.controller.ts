@@ -69,8 +69,6 @@ import {
     @Get('/:name')
     getFile(@Param('name') name: string, @Res() res: Response) {
       try{
-        console.log("/photo not photos bakaaaaa");
-        
         return res.sendFile(name, { root: 'storage' });
       }catch (err){
         throw new Error(err)
