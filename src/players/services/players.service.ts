@@ -8,6 +8,7 @@ import {LogsService} from "../../logsModule/service/logs.service";
 import { SubscriptionsService } from "../../subscriptions/services/subscriptions.service";
 import { UpdatePlayerRequest } from "../requests/updatePlayer";
 import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "src/dataConfig/userContext/user-context.service";
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,7 +20,8 @@ export class PlayersServices {
         private readonly playersRepo: Repository<Player>,
         private readonly logsService: LogsService,
         @Inject(forwardRef(() => SubscriptionsService))
-        private readonly subscriptionsService: SubscriptionsService
+        private readonly subscriptionsService: SubscriptionsService,
+        private readonly userContextService: UserContextService
     ) {
     }
 
@@ -132,17 +134,16 @@ export class PlayersServices {
         //         message: "Player photo is missing"
         //     })
         // }
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         let player = new Player();
         if (!await this.doesPhoneNumberExist(newInput.phoneNumber, player.id)) {
             player.name = newInput.name
             player.photo = newInput.photo
             player.phoneNumber = newInput.phoneNumber
-            //player.height = newInput.height
-            //player.dietPlan = newInput.dietPlan
-            //player.trainingPlan = newInput.trainingPlan
             player.barCode = newInput.barCode
             player = await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added ${newInput.name} player with id ${player.id}`);
             return player
         } else {
             throw new BadRequestException("Phone Number is already in use!")
@@ -159,6 +160,8 @@ export class PlayersServices {
         //         throw new BadRequestException({message:"Photo error ..."})
         //     }
         // })
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted player with id ${id}`);
         await this.logsService.createNewLog(id, `deleted ${player.name} player`, "players")
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
@@ -225,7 +228,7 @@ export class PlayersServices {
         }
         changedData.forEach(item => {
             if(item.field !== 'beginDate' && item.field !== 'endDate' && item.field !== 'payedMoney' && item.field !== 'plan'){
-                bot.sendMessage(process.env.Telegram_ChatId, `Player with id: ${oldData.id} has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+                bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited player with id: ${oldData.id} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
             }
         });
         
@@ -296,12 +299,6 @@ export class PlayersServices {
         player.freeze = 0
         player.invited = 0
         return this.playersRepo.save(player)
-    }
-
-    test(){
-        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
-        
-        bot.sendMessage(process.env.Telegram_ChatId, 'Hello, this message from meeeeeee yaaaayyy');
     }
 
     // Validation methods

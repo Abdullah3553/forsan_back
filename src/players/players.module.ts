@@ -5,13 +5,15 @@ import {PlayersServices} from "./services/players.service";
 import {Player} from "./entities/players.entity";
 import { logsModule } from "../logsModule/logs.module";
 import {SubscriptionsModule} from "../subscriptions/subscriptions.module";
+import { UserContextModule } from "src/dataConfig/userContext/user-context.module";
 
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Player]),
         logsModule,
-        forwardRef(()=>SubscriptionsModule)
+        forwardRef(()=>SubscriptionsModule),
+        UserContextModule
     ],
     controllers: [PlayersController],
     providers: [PlayersServices],

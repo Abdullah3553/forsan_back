@@ -3,6 +3,7 @@ import {LoginRequest} from "./requests/login.request";
 import {AdminsService} from "../admins/admins.service";
 import {Admin} from "../admins/entity/admin.entity";
 import {JwtService} from "@nestjs/jwt";
+import { UserContextService } from 'src/dataConfig/userContext/user-context.service';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     constructor(
         private readonly adminsService: AdminsService,
         private readonly jwtService: JwtService,
-
+        private readonly userContextService: UserContextService
     ) {}
 
     /*
@@ -26,6 +27,7 @@ export class AuthService {
             })
         }
         const _admin = admin instanceof Admin ? admin : null;
+        this.userContextService.setUsername(_admin.username);
         const token = await this.sign(_admin);
         return {
             user: {
