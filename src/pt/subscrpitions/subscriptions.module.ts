@@ -7,6 +7,7 @@ import { SubscriptionsController } from './controllers/subscriptions.controller'
 import { PTPlanModule } from '../plan/plan.module';
 import { CoachesModule } from '../../coaches/coaches.module';
 import { PlayersModule } from '../../players/players.module';
+import { UserContextModule } from '../../dataConfig/userContext/user-context.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { PlayersModule } from '../../players/players.module';
     logsModule,
     PTPlanModule,
     PlayersModule,
-    forwardRef(() => CoachesModule)
+    forwardRef(() => CoachesModule),
+    UserContextModule
   ],
   providers: [
     SubscriptionsService

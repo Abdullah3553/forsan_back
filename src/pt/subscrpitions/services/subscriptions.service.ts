@@ -8,6 +8,8 @@ import { PlanService } from '../../plan/services/plan.service';
 import { PlayersServices } from '../../../players/services/players.service';
 import { CoachesService } from '../../../coaches/service/coaches.service';
 import * as moment from 'moment';
+import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "../../../dataConfig/userContext/user-context.service";
 
 @Injectable()
 export class  SubscriptionsService {
@@ -18,7 +20,8 @@ export class  SubscriptionsService {
     private readonly plansService: PlanService,
     private readonly playersService: PlayersServices,
     @Inject(forwardRef(() => CoachesService))
-    private coachesService: CoachesService
+    private coachesService: CoachesService,
+    private readonly userContextService: UserContextService
   ) {}
 
   async getAll(limit, page){
@@ -39,6 +42,8 @@ export class  SubscriptionsService {
   }
 
   async create(requestBody: CreateSubscriptionRequest){
+    const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+    
     const plan = (await this.plansService.findById(requestBody.planId)).data;
     const endDate = new Date(requestBody.beginDate);
     endDate.setDate(endDate.getDate() + Number(plan.duration)+1);
@@ -51,7 +56,8 @@ export class  SubscriptionsService {
     });
     const newSub = await this.ptSubscriptionsRepo.save(subscription);
     await this.coachesService.updateIncome(requestBody.coachId);
-    await this.logsService.createNewLog(subscription.id, `updated ${subscription.id} pt subscription`, "Subscriptions");
+    await this.logsService.createNewLog(subscription.id, `created ${subscription.id} pt subscription`, "Subscriptions");
+    bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added pt subscription for player with id ${requestBody.playerId}`);
     return {
       message: 'Subscription created successfully',
       data: newSub
@@ -63,21 +69,17 @@ export class  SubscriptionsService {
     if (!subscription.data) {
       throw new NotFoundException('Subscription not found');
     }
+    const newSub = {
+      beginDate: requestBody.beginDate,
+      endDate: requestBody.endDate,
+      payedMoney: requestBody.payedMoney,
+      plan: (await this.plansService.findById(requestBody.plan)).data,
+      coach: (await this.coachesService.findById(requestBody.coach)).data
+    }
+    await this.ptSubscriptionsRepo.update(id, newSub);
 
-    if (requestBody.planId) {
-      const planData = (await this.plansService.findById(requestBody.planId)).data;
-      await this.ptSubscriptionsRepo.update(id, { plan: planData });
-    }
-
-    else if (requestBody.coachId) {
-      const coachData = (await this.coachesService.findById(requestBody.coachId)).data;
-      await this.ptSubscriptionsRepo.update(id, { coach: coachData });
-    }
-    else{
-      await this.ptSubscriptionsRepo.update(id, requestBody);
-    }
     const updatedSubscription = (await this.findById(id)).data;
-    await this.coachesService.updateIncome(subscription.data.coach.id);
+    await this.coachesService.updateIncome(updatedSubscription.coach.id, subscription.data.payedMoney, subscription.data.coach.id);
     // await this.logsService.createNewLog(updatedSubscription.id, `updated ${updatedSubscription.name} Coach`, "Coaches");
     return {
       message: 'Subscription updated successfully',
@@ -112,6 +114,15 @@ export class  SubscriptionsService {
       message:"Subscription fetched successfully",
       data: subscription
     }
+  }
+
+  async findNotPayedForCoach(id){
+    return await this.ptSubscriptionsRepo.find({
+      where:{
+        coach:{id: id},
+        payed: "No" 
+      }
+    })
   }
 
   async findByCoachId(id, limit?, page?){
@@ -154,7 +165,7 @@ export class  SubscriptionsService {
     }
     return {
       message:"Subscriptions fetched successfully",
-      data: subscriptions[0],
+      items: subscriptions[0],
       count: subscriptions[1]
     }
   }

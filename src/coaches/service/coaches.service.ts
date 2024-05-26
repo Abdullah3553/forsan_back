@@ -78,20 +78,25 @@ export class CoachesService {
         }
       }
 
-      async updateIncome(id){
-        const subscriptions = await this.subsService.findByCoachId(id);
-       // const curDate = new Date();
-        //const modifiedCurDate =  curDate.toISOString().slice(0, 10);
-        let totalIncome = 0;        
-        for (const sub of subscriptions.data){
+      async updateIncome(newCoachId, oldPayed?, oldCoachId?){
+        const subscriptionsForNewCoach = await this.subsService.findNotPayedForCoach(newCoachId);
+        const subscriptionsForOldCoach = await this.subsService.findNotPayedForCoach(oldCoachId);
+        const totalIncomeNew = this.calculateTotalIncome(subscriptionsForNewCoach);
+        const totalIncomeOld = this.calculateTotalIncome(subscriptionsForOldCoach);  
+
+        await this.update({ptIncome: totalIncomeNew}, newCoachId);
+        await this.update({ptIncome: totalIncomeOld}, oldCoachId);
+      }
+
+      calculateTotalIncome(subscriptions){
+        let totalIncome = 0;      
+        for (const sub of subscriptions){
           if(sub.payed === "No"){
             totalIncome += sub.payedMoney;
           }
         }
-        
-        await this.update({ptIncome: totalIncome}, id);
+        return totalIncome;
       }
-
       async resetIncome(id){
         await this.update({ptIncome: 0}, id);
         await this.subsService.updatePayedState(id);

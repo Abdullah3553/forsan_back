@@ -8,7 +8,7 @@ import {LogsService} from "../../logsModule/service/logs.service";
 import { SubscriptionsService } from "../../subscriptions/services/subscriptions.service";
 import { UpdatePlayerRequest } from "../requests/updatePlayer";
 import * as TelegramBot from 'node-telegram-bot-api';
-import { UserContextService } from "src/dataConfig/userContext/user-context.service";
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

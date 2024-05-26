@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../auth/guards/jwtAuthGuard';
 import { SubscriptionsService } from '../services/subscriptions.service';
 import { CreateSubscriptionRequest } from '../requests/createSubscriptionRequest';
@@ -42,7 +42,7 @@ export class SubscriptionsController {
       return this.service.create(body);
   }
 
-  @Patch("/:id")
+  @Put("/:id")
   update(@Body() body: UpdateSubscriptionRequest, @Param() params){
       return this.service.update(body, params.id);
   }
