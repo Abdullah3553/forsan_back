@@ -182,7 +182,7 @@ export class PlayersServices {
     async editPlayer(newInf: UpdatePlayerRequest, requestedId: number) {
         const newPlayerInfo = await this.doesPlayerExist(requestedId)
         const changedData = await this.editedData(newPlayerInfo, newInf)
-        const curSub = await this.subscriptionsService.getAllForPlayer(requestedId);
+        await this.subscriptionsService.getAllForPlayer(requestedId);
         await this.doesPhoneNumberExist(newInf.phoneNumber, requestedId)
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber

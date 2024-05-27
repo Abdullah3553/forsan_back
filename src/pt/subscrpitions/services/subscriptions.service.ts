@@ -65,21 +65,18 @@ export class  SubscriptionsService {
   }
 
   async update(requestBody, id){
-    const subscription = await this.findById(id);
-    if (!subscription.data) {
+    const oldSubscription = (await this.findById(id)).data;
+    if (!oldSubscription) {
       throw new NotFoundException('Subscription not found');
     }
-    const newSub = {
-      beginDate: requestBody.beginDate,
-      endDate: requestBody.endDate,
-      payedMoney: requestBody.payedMoney,
+    await this.ptSubscriptionsRepo.update(id, {
+      ...requestBody,
       plan: (await this.plansService.findById(requestBody.plan)).data,
       coach: (await this.coachesService.findById(requestBody.coach)).data
-    }
-    await this.ptSubscriptionsRepo.update(id, newSub);
-
+    });
     const updatedSubscription = (await this.findById(id)).data;
-    await this.coachesService.updateIncome(updatedSubscription.coach.id, subscription.data.payedMoney, subscription.data.coach.id);
+    this.editedData(oldSubscription, updatedSubscription)
+    await this.coachesService.updateIncome(updatedSubscription.coach.id, oldSubscription.payedMoney, oldSubscription.coach.id);
     // await this.logsService.createNewLog(updatedSubscription.id, `updated ${updatedSubscription.name} Coach`, "Coaches");
     return {
       message: 'Subscription updated successfully',
@@ -87,7 +84,36 @@ export class  SubscriptionsService {
     };
   }
 
+  editedData(oldData, newData) {
+    const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+    const extractData = (data) => ({
+      beginDate: data.beginDate,
+      endDate: data.endDate,
+      payedMoney: data.payedMoney,
+      plan: data.plan.name,
+      coach: data.coach.name
+    });
+    
+    const old = extractData(oldData);
+    const newD = extractData(newData);
+     
+    const changedData = [];
+    for (const key in old) {
+        if (old.hasOwnProperty(key) && newD.hasOwnProperty(key)) {
+            if (old[key] !== newD[key]) {
+                changedData.push({ field: key, newValue: newD[key], oldValue: old[key] });
+            }
+        }
+    }
+    changedData.forEach(item => {
+      bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited PT subscription for player with id: ${newData.player.id} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+    });
+    
+    return changedData;
+}
+
   async delete(id){
+    const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
     const subscription = (await this.findById(id)).data;
     if (!subscription) {
       throw new NotFoundException('Subscription not found');
@@ -95,6 +121,7 @@ export class  SubscriptionsService {
     await this.ptSubscriptionsRepo.delete(id);
     await this.coachesService.updateIncome(subscription.coach.id);
     //await this.logsService.createNewLog(coach.id, `deleted ${coach.name} Plan`, "PT Plans");
+    bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted PT subscription for player with id: ${id}`);
     return {
       message: 'Subscription deleted successfully.',
       data: null,

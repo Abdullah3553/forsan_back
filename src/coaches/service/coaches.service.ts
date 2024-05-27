@@ -79,13 +79,14 @@ export class CoachesService {
       }
 
       async updateIncome(newCoachId, oldPayed?, oldCoachId?){
+        if(oldCoachId){
+          const subscriptionsForOldCoach = await this.subsService.findNotPayedForCoach(oldCoachId);
+          const totalIncomeOld = this.calculateTotalIncome(subscriptionsForOldCoach);
+          await this.update({ptIncome: totalIncomeOld}, oldCoachId);
+        }
         const subscriptionsForNewCoach = await this.subsService.findNotPayedForCoach(newCoachId);
-        const subscriptionsForOldCoach = await this.subsService.findNotPayedForCoach(oldCoachId);
         const totalIncomeNew = this.calculateTotalIncome(subscriptionsForNewCoach);
-        const totalIncomeOld = this.calculateTotalIncome(subscriptionsForOldCoach);  
-
         await this.update({ptIncome: totalIncomeNew}, newCoachId);
-        await this.update({ptIncome: totalIncomeOld}, oldCoachId);
       }
 
       calculateTotalIncome(subscriptions){
