@@ -110,7 +110,7 @@ export class  SubscriptionsService {
     });
     
     return changedData;
-}
+  }
 
   async delete(id){
     const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
