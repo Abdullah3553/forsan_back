@@ -5,7 +5,8 @@ import {Repository} from "typeorm";
 import {CreateNewPlanRequest} from "../requests/createNewPlan.request";
 import {PartialSubscriptionsService} from "../../subscriptions/services/partialSubscriptions.service";
 import { LogsService } from '../../logsModule/service/logs.service';
-
+import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 @Injectable()
 export class PlansService {
 
@@ -13,7 +14,8 @@ export class PlansService {
         @InjectRepository(Plan)
         private readonly plansRepo:  Repository<Plan>,
         private readonly partialSubscriptionService : PartialSubscriptionsService,
-        private readonly logsService: LogsService
+        private readonly logsService: LogsService,
+        private readonly userContextService: UserContextService
     ) {}
 
     getAll () {
@@ -49,6 +51,7 @@ export class PlansService {
 
     async newPlan (req: CreateNewPlanRequest) {
         // store plan
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const newPlan = new Plan()
         newPlan.name = req.name
         newPlan.months = req.months
@@ -59,6 +62,7 @@ export class PlansService {
         newPlan.freezeDays = req.freezeDays
         const item = await this.plansRepo.save(newPlan)
         await this.logsService.createNewLog(item.id, `added ${req.name} Plan`, "Plans")
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added ${req.name} Plan`);
         return item
     }
 
@@ -74,16 +78,46 @@ export class PlansService {
         result.isActivated = newInf.isActivated
         result.invites = newInf.invites
         result.freezeDays =newInf.freezeDays
-        return this.plansRepo.save(result)
+        const updatedPlan = this.plansRepo.save(result)
+        this.editedData(result, updatedPlan);
+        return updatedPlan;
+    }
+
+    editedData(oldData, newData) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        const extractData = (data) => ({
+          name: data.name,
+          description: data.description,
+          months: data.months,
+          invites: data.invites,
+          freezeDays: data.freezeDays
+        });
+        const old = extractData(oldData);
+        const newD = extractData(newData);
+        const changedData = [];
+        for (const key in old) {
+            if (old.hasOwnProperty(key) && newD.hasOwnProperty(key)) {
+                if (old[key] !== newD[key]) {
+                    changedData.push({ field: key, newValue: newD[key], oldValue: old[key] });
+                }
+            }
+        }
+        changedData.forEach(item => {
+          bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited plan: ${old.name} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+        });
+        
+        return changedData;
     }
 
     async deletePlan(id: number) {
-
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         if(!await this.partialSubscriptionService.doesPlanHasActiveSubscriptions(id) && await this.doesPlanExist(id)){
             //if this condition is true , that means the plan is ok to be deleted
             const item = await this.doesPlanExist(id)
             await this.logsService.createNewLog(id, `Deleted ${item.name} Plan`, "Plans")
             await this.plansRepo.delete(id);
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted ${item.name} Plan`);
+    
             return {message: 'Plan Deleted'};
         }
         // if the condition is not true, each function call will throw an exception if it's false
@@ -131,11 +165,6 @@ export class PlansService {
             })
         }
         return plan
-    }
-
-    async test(body){
-        return {message:"test"}
-
     }
 
 }
