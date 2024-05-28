@@ -4,11 +4,13 @@ import { ActivitiesController } from "./controller/activitiesController";
 import { ActivitiesService } from "./services/activities.service";
 import {Activity} from "./entities/activities.entity";
 import { logsModule } from "../logsModule/logs.module";
+import { UserContextModule } from "../dataConfig/userContext/user-context.module";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Activity]),
-        logsModule
+        logsModule,
+        UserContextModule
     ],
     controllers: [ActivitiesController],
     providers: [ActivitiesService],

@@ -6,7 +6,8 @@ import {ActivityPlayer} from "../entities/activityPlayers.entity";
 import {CreateNewActivityPlayerRequest} from "../requests/createNewActivityPlayer.request";
 import {ActivityPlayerSubscription} from "../../activityPlayerSubscriptions/entities/activityPlayerSubscriptions.entity";
 import * as moment from "moment";
-
+import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 
 @Injectable()
 export class ActivityPlayersService {
@@ -16,7 +17,8 @@ export class ActivityPlayersService {
         private readonly actPlayerRepo: Repository<ActivityPlayer>,
         @InjectRepository(ActivityPlayerSubscription)
         private readonly actPlayerSubsRepo: Repository<ActivityPlayerSubscription>,
-        private readonly logsService: LogsService
+        private readonly logsService: LogsService,
+        private readonly userContextService: UserContextService
     ) {}
 
 
@@ -45,12 +47,14 @@ export class ActivityPlayersService {
 
     async newActivityPlayer(newInput: CreateNewActivityPlayerRequest) {
         const holder = await this.actPlayerRepo.findOne({where: {phoneNumber: newInput.phoneNumber}})
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         if (!holder) {
             const newPlayer = new ActivityPlayer()
             newPlayer.name = newInput.name
             newPlayer.phoneNumber = newInput.phoneNumber
             const item = await this.actPlayerRepo.save(newPlayer)
             await this.logsService.createNewLog(item.id, `added ${item.name} Activityplayer`, "activity players")
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added ${item.name} activity player`);
             return item;
         } else
             throw new BadRequestException("PhoneNumber is already exist!");
@@ -58,11 +62,12 @@ export class ActivityPlayersService {
 
     async editActivityPlayer(newInput, reqId) {
         const newActPlayer = await this.doesActivityPlayerExist(reqId)
+        const oldActPlayerData = await this.doesActivityPlayerExist(reqId)
         newActPlayer.name = newInput.name
         newActPlayer.phoneNumber = newInput.phoneNumber
         const item = await this.actPlayerRepo.save(newActPlayer)
         await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
-            
+        this.editedData(oldActPlayerData, newInput)
         // const sub = await this.actPlayerSubsRepo.findOne(newInput.sub_id)
         // sub.beginDate = newInput.beginDate;
         // sub.endDate = newInput.endDate
@@ -72,10 +77,38 @@ export class ActivityPlayersService {
         return await this.getAll(10, 1);
     }
 
+    editedData(oldData, newData) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        const extractData = (data) => ({
+          name: data.name,
+          coachName: data.coachName,
+          coachPhoneNumber: data.coachPhoneNumber,
+          price: data.price,
+          description: data.description
+        });
+        const old = extractData(oldData);
+        const newD = extractData(newData);
+        const changedData = [];
+        for (const key in old) {
+            if (old.hasOwnProperty(key) && newD.hasOwnProperty(key)) {
+                if (old[key] !== newD[key]) {
+                    changedData.push({ field: key, newValue: newD[key], oldValue: old[key] });
+                }
+            }
+        }
+        changedData.forEach(item => {
+          bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited activity: ${old.name} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+        });
+        
+        return changedData;
+    }
+
     async deleteActivityPlayer(id: number) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const activityPlayer = await this.doesActivityPlayerExist(id)
         await this.logsService.createNewLog(id, `deleted ${activityPlayer.name} Activityplayer`, "activity players")
         await this.actPlayerRepo.remove(activityPlayer)
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted ${activityPlayer.name} activity player`);
         return {
             message: "Player Deleted!"
         }
