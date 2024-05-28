@@ -67,13 +67,7 @@ export class ActivityPlayersService {
         newActPlayer.phoneNumber = newInput.phoneNumber
         const item = await this.actPlayerRepo.save(newActPlayer)
         await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
-        this.editedData(oldActPlayerData, newInput)
-        // const sub = await this.actPlayerSubsRepo.findOne(newInput.sub_id)
-        // sub.beginDate = newInput.beginDate;
-        // sub.endDate = newInput.endDate
-        // sub.activity = newInput.activity
-        // await this.actPlayerSubsRepo.save(sub);
-        // await this.logsService.createNewLog(item.id, `edited ${item.name} Activityplayer`, "activity players")
+        this.editedData(oldActPlayerData, newActPlayer)
         return await this.getAll(10, 1);
     }
 
@@ -81,10 +75,7 @@ export class ActivityPlayersService {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const extractData = (data) => ({
           name: data.name,
-          coachName: data.coachName,
-          coachPhoneNumber: data.coachPhoneNumber,
-          price: data.price,
-          description: data.description
+          phoneNumber: data.phoneNumber
         });
         const old = extractData(oldData);
         const newD = extractData(newData);
@@ -97,7 +88,7 @@ export class ActivityPlayersService {
             }
         }
         changedData.forEach(item => {
-          bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited activity: ${old.name} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+          bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited activity player: ${old.name} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
         });
         
         return changedData;

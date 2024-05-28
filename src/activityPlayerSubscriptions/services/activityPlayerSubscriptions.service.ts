@@ -7,7 +7,8 @@ import {ActivityPlayersService} from "../../activityPlayers/services/activityPla
 import {CreateNewActivityPlayerSubscriptionRequest} from "../requests/createNewActivityPlayerSubscription.request";
 import * as moment from "moment/moment";
 import {LogsService} from "../../logsModule/service/logs.service";
-
+import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 @Injectable()
 export class ActivityPlayerSubscriptionsService {
 
@@ -17,24 +18,9 @@ export class ActivityPlayerSubscriptionsService {
         private readonly activityService: ActivitiesService,
         private readonly activityPlayerService: ActivityPlayersService,
         private readonly logsService: LogsService,
+        private readonly userContextService: UserContextService
     ) {
     }
-
-    /*
-
-   findAndCount({
-            where: {
-                activityPlayer: {
-                    id: playerId
-                }
-            },
-            take: limit,
-            skip: offset,
-        })
-        query(`
-            SELECT * FROM \`activityPlayerSubscriptions\` WHERE \`activityPlayerId\` = ${playerId} LIMIT ${limit} OFFSET ${offset}
-        `)
-     */
 
     async getSinglePlayer(limit, page ,playerId: number) {
         limit = limit || 10
@@ -55,10 +41,6 @@ export class ActivityPlayerSubscriptionsService {
             count: data[1]
         }
     }
-
-    // async getAll() {
-    // }
-
 
     async newSubscription(request: CreateNewActivityPlayerSubscriptionRequest) {
         const check = await this.activityPlayerSubscriptionRepo.query(`SELECT *
@@ -108,14 +90,47 @@ export class ActivityPlayerSubscriptionsService {
 
     async editSubscription(body, id:number) {
         const subscription = await this.doesSubscriptionExist(id)
+        const oldSubscription = await this.doesSubscriptionExist(id)
         subscription.activity = body.activity
         subscription.activityPlayer = body.activityPlayer
         subscription.beginDate = body.beginDate.toString()
         subscription.endDate = body.endDate.toString()
         subscription.price = body.price
         await this.activityPlayerSubscriptionRepo.update(id, subscription)
+        const updatedSubscription = await this.doesSubscriptionExist(id)
+        this.editedData(oldSubscription, updatedSubscription)
         await this.logsService.createNewLog(subscription.id, `edited subscription for ${subscription.activityPlayer.name} activity player`, 'activityPlayers')
         return this.getSinglePlayer(10, 1, body.activityPlayer.id)
+    }
+
+    editedData(oldData, newData) {
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
+        const extractData = (data) => ({
+            playerName: data.activityPlayer.name,
+            activity: data.activity.name,
+            beginDate: data.beginDate,
+            endDate: data.endDate,
+            price: data.price
+        });
+        const old = extractData(oldData);
+        const newD = extractData(newData);
+        console.log("old : ", old);
+        console.log("new : ", newD);
+        
+        
+        const changedData = [];
+        for (const key in old) {
+            if (old.hasOwnProperty(key) && newD.hasOwnProperty(key)) {
+                if (old[key] !== newD[key]) {
+                    changedData.push({ field: key, newValue: newD[key], oldValue: old[key] });
+                }
+            }
+        }
+        changedData.forEach(item => {
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited activity subscription for player: ${old.playerName} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
+        });
+        
+        return changedData;
     }
 
     async getDetailedIncome() {
@@ -145,9 +160,9 @@ export class ActivityPlayerSubscriptionsService {
     
         await Promise.all(promises);
         return subsObject;
-      }
+    }
 
-      async getTodayIncome(){
+    async getTodayIncome(){
         const subs = await this.activityPlayerSubscriptionRepo.find({
             where:{
                 beginDate: moment().format("yyyy-MM-DD")
@@ -160,5 +175,5 @@ export class ActivityPlayerSubscriptionsService {
         return {
             totalIncome: totalIncome
         }
-      }
+    }
 }
