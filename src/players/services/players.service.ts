@@ -1,6 +1,6 @@
 import {BadRequestException, Inject, Injectable, NotFoundException, forwardRef} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { ILike, MoreThanOrEqual, Repository } from 'typeorm';
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
@@ -340,12 +340,25 @@ export class PlayersServices {
         limit = limit || 10
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
-        console.log("options : ", searchOption);
         switch (searchOption) {
             case "id": {
                 const data = await this.playersRepo.findAndCount({
                     where: {
                         id: Number(searchElement)
+                    },
+                    relations: ["subscriptions"],
+                    take: limit,
+                    skip: offset
+                })
+                return {
+                    items: this.dataFormat(data[0]),
+                    count: data[1]
+                }
+            }
+            case "name":{
+                const data = await this.playersRepo.findAndCount({
+                    where :{
+                        name: ILike(`${searchElement}%`)
                     },
                     relations: ["subscriptions"],
                     take: limit,
