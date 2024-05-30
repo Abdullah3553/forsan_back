@@ -28,6 +28,11 @@ export class SubscriptionsController {
         return this.subscriptionsService.getTodayIncome();
     }
 
+    @Get("/thisMonth")
+    getAllForCurrentMonth(){
+        return this.subscriptionsService.getAllForCurrentMonth();
+    }
+
     @Get("SelectedSubscription")
     updateSelectedSubscriptionForPlayer(playerId, beginDate){
         return this.subscriptionsService.updateSelectedSubscriptionForPlayer(playerId, beginDate);

@@ -1,7 +1,7 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Subscription} from "../entities/subscriptions.entity";
-import {MoreThanOrEqual, Repository} from "typeorm";
+import {Between, MoreThanOrEqual, Repository} from "typeorm";
 import {SubscribeRequest} from "../requests/subscribe.request";
 import {PlayersServices} from "../../players/services/players.service";
 import {PlansService} from "../../plans/services/plans.service";
@@ -99,6 +99,17 @@ export class SubscriptionsService {
         }
         return res
 
+    }
+
+    async getAllForCurrentMonth(){
+        const startOfMonth = moment().startOf('month').format("YYYY-MM-DD");
+        const endOfMonth = moment().endOf('month').format("YYYY-MM-DD");
+
+        return await this.subscriptionsRepo.count({
+            where: {
+                beginDate: Between(startOfMonth, endOfMonth)
+            }
+        });
     }
 
     async getAllActiveCount(){
