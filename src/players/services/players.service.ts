@@ -45,13 +45,6 @@ export class PlayersServices {
         }
     }
 
-    // async getSignedPlayersPaging(limit, page) {
-    //     limit = limit || 10
-    //     limit = Math.abs(Number(limit));
-    //     const offset = Math.abs((page - 1) * limit)
-    //     return;
-    // }
-
     async getSignedinPlayersData(limit, page) {
         limit = limit || 10
         limit = Math.abs(Number(limit));
@@ -110,6 +103,20 @@ export class PlayersServices {
             invited: player.invited
         }
 
+    }
+
+    async getLastSignInPlayers(limit, page, absentDays?){
+        const allPlayers = await this.logsService.getLastSignInPlayers(limit, page, absentDays);
+        const playersData = await Promise.all(
+            allPlayers[0].map(async player => {
+                return await this.viewPlayer(player.logId);
+            })
+        );
+
+        return {
+            "data": playersData,
+            "count": allPlayers[1]
+        }
     }
 
     async getPlayersNumber() {

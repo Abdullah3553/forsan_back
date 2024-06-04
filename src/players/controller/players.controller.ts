@@ -23,6 +23,11 @@ export class PlayersController {
         return this.playersService.getSignedinPlayersData(limit, page);
     }
 
+    @Get("/getAbsentPlayers")
+    getLastSignInPlayers(@Query() {limit, page, absentDays}){
+        return this.playersService.getLastSignInPlayers(limit, page, absentDays);
+    }
+
     @Get('/number')
     getPlayersNumber(){
         return this.playersService.getPlayersNumber()

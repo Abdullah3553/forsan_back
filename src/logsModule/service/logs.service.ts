@@ -3,8 +3,7 @@ import {REQUEST} from "@nestjs/core";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Request} from "express";
 import * as moment from 'moment'
-import { throwIfEmpty } from "rxjs";
-import {Between, getConnection, In, LessThanOrEqual, MoreThanOrEqual, Repository} from "typeorm";
+import {Between, In, Repository} from "typeorm";
 import {Log} from "../entities/logs.entitiy";
 
 
@@ -70,6 +69,23 @@ export class LogsService {
             console.log("Error in creating new log: ", e)
             return false
         }
+    }
+
+    async getLastSignInPlayers(limit, page, absentDays?){
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+
+        const today = new Date(moment().format("yyyy-MM-DD"))
+        const date = moment(new Date(today.setDate(today.getDate() - (absentDays || 10)))).format("yyyy-MM-DD")
+        return await this.logRepo.findAndCount({
+            where:{
+                dayDate: date,
+                logSource: "signed"
+            },
+            take: limit,
+            skip: offset,
+        })
     }
 
     async getAt(body,limit?,page?) {
