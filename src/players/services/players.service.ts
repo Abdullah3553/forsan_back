@@ -26,7 +26,7 @@ export class PlayersServices {
     }
 
     async getAll(limit, page) {
-        limit = limit || 10
+        limit = limit || 6
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
         const data = await this.playersRepo.findAndCount({
@@ -107,12 +107,18 @@ export class PlayersServices {
 
     async getLastSignInPlayers(limit, page, absentDays?){
         const allPlayers = await this.logsService.getLastSignInPlayers(limit, page, absentDays);
-        const playersData = await Promise.all(
-            allPlayers[0].map(async player => {
-                return await this.viewPlayer(player.logId);
-            })
-        );
-
+        let playersData;
+        console.log("allPlayers[1] : ", allPlayers[1]);
+        
+        if(allPlayers[1] > 0){
+            playersData = await Promise.all(                
+                allPlayers[0].map(async player => {
+                    console.log("rre");
+                    
+                    return await this.viewPlayer(player.logId);
+                })
+            );
+        }
         return {
             "data": playersData,
             "count": allPlayers[1]
@@ -347,141 +353,167 @@ export class PlayersServices {
         limit = limit || 10
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
-        switch (searchOption) {
-            case "id": {
-                const data = await this.playersRepo.findAndCount({
-                    where: {
-                        id: Number(searchElement)
-                    },
-                    relations: ["subscriptions"],
-                    take: limit,
-                    skip: offset
-                })
-                return {
-                    items: this.dataFormat(data[0]),
-                    count: data[1]
-                }
-            }
-            case "name":{
-                const data = await this.playersRepo.findAndCount({
-                    where :{
-                        name: ILike(`${searchElement}%`)
-                    },
-                    relations: ["subscriptions"],
-                    take: limit,
-                    skip: offset
-                })
-                return {
-                    items: this.dataFormat(data[0]),
-                    count: data[1]
-                }
-            }
-            case "barCode": {
-                const data = await this.playersRepo.findAndCount({
-                    where: {
-                        barCode: searchElement
-                    },
-                    relations: ["subscriptions"],
-                    take: limit,
-                    skip: offset
-                })
-                if (data) {
-                    const player = await this.playersRepo.findOne({
-                        where: {barCode: searchElement},
-                        relations: ['subscriptions']
+        if(searchElement){
+            switch (searchOption) {
+                case "id": {
+                    const data = await this.playersRepo.findAndCount({
+                        where: {
+                            id: Number(searchElement)
+                        },
+                        relations: ["subscriptions"],
+                        take: limit,
+                        skip: offset
                     })
-                    await this.logsService.createNewLog(player.id, `player with id: ${player.id} signed in`, "signed")
-                    bot.sendMessage(process.env.Telegram_ChatId, `player with id: ${player.id} signed in`);
-                    this.subscriptionsService.updateAttendance(player.id);
-                }
-                return {
-                    items: this.dataFormat(data[0]),
-                    count: data[1]
-                }
-            }
-            case 'phone': {
-                const data = await this.playersRepo.findAndCount({
-                    where: {
-                        phoneNumber: searchElement
-                    },
-                    relations: ["subscriptions"],
-                    take: limit,
-                    skip: offset
-                })
-                const player = this.dataFormat(data[0]);
-                await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
-                return {
-                    items: player,
-                    count: data[1]
-                }
-            }
-            case'beginDate':
-            case 'endDate': {
-                const sql = `select p.id,
-                                    p.name,
-                                    p.phoneNumber,
-                                    sub.beginDate,
-                                    sub.endDate,
-                                    sub.planId,
-                                    pl.name as "planName"
-                             FROM players as p
-                                      INNER JOIN subscriptions as sub on p.id = sub.playerId
-                                      inner join plans as pl on sub.planId = pl.id
-                             where DATE (sub.${searchOption}) = "${searchElement}"`;
-                let count = await this.playersRepo.query(sql + ";");
-                count = count.length
-                const res = await this.playersRepo.query(sql + ` limit ${limit} offset ${offset};`), vstdPlayers = [],
-                    res2 = []
-                for (let i = 0; i < res.length; i++) {
-
-                    if (!vstdPlayers[res[i].id]) {
-                        vstdPlayers[res[i].id] = true
-                        res2.push({
-                            id: res[i].id,
-                            name: res[i].name,
-                            phoneNumber: res[i].phoneNumber,
-                            subscription: {
-                                beginDate: moment(res[i].beginDate).format("yyyy-MM-DD"),
-                                endDate: moment(res[i].endDate).format("yyyy-MM-DD"),
-                                plan: {
-                                    id: res[i].planId,
-                                    name: res[i].planName
-                                }
-                            }
-                        })
+                    return {
+                        items: this.dataFormat(data[0]),
+                        count: data[1]
                     }
                 }
-                return {
-                    items: res2,
-                    count: count
+                case "name":{
+                    const data = await this.playersRepo.findAndCount({
+                        where :{
+                            name: ILike(`${searchElement}%`)
+                        },
+                        relations: ["subscriptions"],
+                        take: limit,
+                        skip: offset
+                    })
+                    return {
+                        items: this.dataFormat(data[0]),
+                        count: data[1]
+                    }
                 }
-            }
-            case "plan": {
-                if (searchElement) {
+                case "barCode": {
+                    const data = await this.playersRepo.findAndCount({
+                        where: {
+                            barCode: searchElement
+                        },
+                        relations: ["subscriptions"],
+                        take: limit,
+                        skip: offset
+                    })
+                    if (data) {
+                        const player = await this.playersRepo.findOne({
+                            where: {barCode: searchElement},
+                            relations: ['subscriptions']
+                        })
+                        await this.logsService.createNewLog(player.id, `player with id: ${player.id} signed in`, "signed")
+                        bot.sendMessage(process.env.Telegram_ChatId, `player ${player.name} with id: ${player.id} signed in`);
+                        this.subscriptionsService.updateAttendance(player.id);
+                    }
+                    return {
+                        items: this.dataFormat(data[0]),
+                        count: data[1]
+                    }
+                }
+                case 'phone': {
+                    const data = await this.playersRepo.findAndCount({
+                        where: {
+                            phoneNumber: searchElement
+                        },
+                        relations: ["subscriptions"],
+                        take: limit,
+                        skip: offset
+                    })
+                    const player = this.dataFormat(data[0]);
+                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
+                    return {
+                        items: player,
+                        count: data[1]
+                    }
+                }
+                case'beginDate':
+                case 'endDate': {
+                    const sql = `select p.id,
+                                        p.name,
+                                        p.phoneNumber,
+                                        sub.beginDate,
+                                        sub.endDate,
+                                        sub.planId,
+                                        pl.name as "planName"
+                                FROM player as p
+                                        INNER JOIN subscription as sub on p.id = sub.playerId
+                                        inner join plan as pl on sub.planId = pl.id
+                                where DATE (sub.${searchOption}) = "${searchElement}"`;
+                    let count = await this.playersRepo.query(sql + ";");
+                    count = count.length
+                    const res = await this.playersRepo.query(sql + ` limit ${limit} offset ${offset};`), vstdPlayers = [],
+                        res2 = []
+                    for (let i = 0; i < res.length; i++) {
+
+                        if (!vstdPlayers[res[i].id]) {
+                            vstdPlayers[res[i].id] = true
+                            res2.push({
+                                id: res[i].id,
+                                name: res[i].name,
+                                phoneNumber: res[i].phoneNumber,
+                                subscription: {
+                                    beginDate: moment(res[i].beginDate).format("yyyy-MM-DD"),
+                                    endDate: moment(res[i].endDate).format("yyyy-MM-DD"),
+                                    plan: {
+                                        id: res[i].planId,
+                                        name: res[i].planName
+                                    }
+                                }
+                            })
+                        }
+                    }
+                    return {
+                        items: res2,
+                        count: count
+                    }
+                }
+                case "plan": {
+                    if (searchElement) {
+                        const players = await this.playersRepo.find({
+                            relations: ["subscriptions"]
+                        })
+                        let res = []
+                        for (let i = 0; i < players.length; i++) {
+                            let isInPlan = false
+                            const notInPlanSubscriptionsId = []
+                            for (let j = players[i].subscriptions.length - 1; j > -1; j--) {
+                                if (players[i].subscriptions[j].plan.id === Number(searchElement)) {
+                                    if (moment(players[i].subscriptions[j].endDate).isAfter(moment()))
+                                        isInPlan = true
+                                } else {
+                                    notInPlanSubscriptionsId.push(j)
+                                }
+                            }
+                            if (isInPlan) {
+                                for (let j = 0; j < notInPlanSubscriptionsId.length; j++) {
+                                    players[i].subscriptions.splice(notInPlanSubscriptionsId[j], 1)
+                                }
+                                res.push(players[i])
+                            }
+                        }
+                        res = this.dataFormat(res)
+                        const res2 = []
+                        for (let i = offset, cont = 0; i < res.length; i++, cont++) {
+                            if (cont === limit) break;
+                            res2.push(res[i])
+                        }
+                        return {
+                            items: res2,
+                            count: res.length
+                        }
+                    } else {
+                        return await this.getAll(limit, page)
+                    }
+                }
+                case "ended": {
                     const players = await this.playersRepo.find({
                         relations: ["subscriptions"]
                     })
-                    let res = []
-                    for (let i = 0; i < players.length; i++) {
-                        let isInPlan = false
-                        const notInPlanSubscriptionsId = []
-                        for (let j = players[i].subscriptions.length - 1; j > -1; j--) {
-                            if (players[i].subscriptions[j].plan.id === Number(searchElement)) {
-                                if (moment(players[i].subscriptions[j].endDate).isAfter(moment()))
-                                    isInPlan = true
-                            } else {
-                                notInPlanSubscriptionsId.push(j)
-                            }
-                        }
-                        if (isInPlan) {
-                            for (let j = 0; j < notInPlanSubscriptionsId.length; j++) {
-                                players[i].subscriptions.splice(notInPlanSubscriptionsId[j], 1)
-                            }
-                            res.push(players[i])
+                    let res = this.dataFormat(players), res2 = []
+                    for (let i = 0; i < res.length; i++) {
+                        if (moment(res[i].subscription.endDate).isBefore(moment())) {
+                            // this is ended subscriber player
+                            res2.push(res[i])
                         }
                     }
-                    res = this.dataFormat(res)
-                    const res2 = []
+                    res = res2
+                    res2 = []
                     for (let i = offset, cont = 0; i < res.length; i++, cont++) {
                         if (cont === limit) break;
                         res2.push(res[i])
@@ -490,34 +522,10 @@ export class PlayersServices {
                         items: res2,
                         count: res.length
                     }
-                } else {
+                }
+                default:
                     return await this.getAll(limit, page)
-                }
             }
-            case "ended": {
-                const players = await this.playersRepo.find({
-                    relations: ["subscriptions"]
-                })
-                let res = this.dataFormat(players), res2 = []
-                for (let i = 0; i < res.length; i++) {
-                    if (moment(res[i].subscription.endDate).isBefore(moment())) {
-                        // this is ended subscriber player
-                        res2.push(res[i])
-                    }
-                }
-                res = res2
-                res2 = []
-                for (let i = offset, cont = 0; i < res.length; i++, cont++) {
-                    if (cont === limit) break;
-                    res2.push(res[i])
-                }
-                return {
-                    items: res2,
-                    count: res.length
-                }
-            }
-            default:
-                return await this.getAll(limit, page)
         }
     }
 
