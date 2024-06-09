@@ -241,4 +241,13 @@ export class SubscriptionsService {
             await this.subscriptionsRepo.update(playerSub.id, playerSub);
         }
     }
+
+    async deleteSubscription(playerId){
+        const sub = await this.subscriptionsRepo.findOne({
+            where:{
+                player :{id: playerId}
+            }
+        })
+        this.subscriptionsRepo.delete(sub.id)
+    }
 }
