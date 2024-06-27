@@ -177,6 +177,7 @@ export class PlayersServices {
         bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted player with id ${id}`);
         await this.logsService.createNewLog(id, `deleted ${player.name} player`, "players")
         await this.subscriptionsService.deleteSubscription(id);
+        
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
