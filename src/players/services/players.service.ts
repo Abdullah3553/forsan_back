@@ -178,6 +178,7 @@ export class PlayersServices {
         await this.logsService.createNewLog(id, `deleted ${player.name} player`, "players")
         await this.subscriptionsService.deleteSubscription(id);
         
+        
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
