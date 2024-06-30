@@ -31,7 +31,8 @@ export class PlansService {
     }
 
     async getActivePlans(limit, page){
-        limit = limit || 5
+        const numberOfActive = await this.getActivePlansCount();
+        limit = limit || numberOfActive;
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
         const data = await this.plansRepo.findAndCount(
@@ -57,7 +58,7 @@ export class PlansService {
         newPlan.months = req.months
         newPlan.price = req.price
         newPlan.description = req.description
-        newPlan.isActivated = req.isActivated
+        newPlan.isActivated = true
         newPlan.invites = req.invites
         newPlan.freezeDays = req.freezeDays
         const item = await this.plansRepo.save(newPlan)
@@ -134,6 +135,14 @@ export class PlansService {
         await this.logsService.createNewLog(id, `Activated ${plan.name} Plan`, "Plans")
         plan.isActivated = true
         return this.plansRepo.save(plan);
+    }
+
+    async getActivePlansCount(){
+        return await this.plansRepo.count({
+            where:{
+                isActivated: true
+            }
+        })
     }
 
     //we create an object to get the current plan status
