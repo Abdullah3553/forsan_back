@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwtAuthGuard';
 import {CoachesService} from '../../coaches/service/coaches.service'
 import { CreateCoachRequest } from '../requests/createCoachRequest';
@@ -13,8 +13,8 @@ export class CoachesController {
     ){}
 
     @Get("/")
-    getAll(){
-        return this.CoachService.getAll();
+    getAll(@Query() {limit, page}){
+        return this.CoachService.getAll(limit, page);
     }
 
     @Get('/:id')

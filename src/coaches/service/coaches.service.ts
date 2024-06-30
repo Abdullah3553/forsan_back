@@ -16,12 +16,18 @@ export class CoachesService {
         private readonly logsService: LogsService
       ) {}
     
-      async getAll(){
-        const coaches = await this.CoachRepo.find();
+      async getAll(limit?, page?){
+        limit = limit || 5
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+        const coaches = await this.CoachRepo.findAndCount({
+          take: limit,
+          skip: offset,
+        });
         return {
             message: "Coaches fetched successfully.",
-            data: coaches,
-            count: coaches.length
+            data: coaches[0],
+            count: coaches[1]
         }
       }
 
