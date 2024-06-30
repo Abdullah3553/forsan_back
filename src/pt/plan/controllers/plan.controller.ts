@@ -17,6 +17,11 @@ export class PlanController {
     return this.service.getAll(limit, page);
   }
 
+  @Get('/count')
+  getAllPlansCount(){
+    return this.service.getPlansCount();
+  }
+
   @Get('/:id')
   getById(@Param() param) {
     return this.service.findById(param.id);

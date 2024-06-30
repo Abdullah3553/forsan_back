@@ -17,6 +17,9 @@ export class PlanService {
 
 
   async getAll(limit?, page?) {
+    const test = await this.getPlansCount();
+    console.log(test);
+    
     limit = limit || 5
     limit = Math.abs(Number(limit));
     const offset = Math.abs((page - 1) * limit) || 0
@@ -32,6 +35,10 @@ export class PlanService {
       data: allPlans[0],
       count: allPlans[1],
     };
+  }
+
+  async getPlansCount(){
+    return await this.ptPlansRepo.count();
   }
 
   async create(requestBody){
