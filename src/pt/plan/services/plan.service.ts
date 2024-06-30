@@ -21,7 +21,7 @@ export class PlanService {
     limit = Math.abs(Number(limit));
     const offset = Math.abs((page - 1) * limit) || 0
 
-    const allPlans = await this.ptPlansRepo.find(
+    const allPlans = await this.ptPlansRepo.findAndCount(
       {
         take: limit,
         skip: offset,
@@ -29,8 +29,8 @@ export class PlanService {
     );
     return {
       message: 'Plans fetched successfully.',
-      data: allPlans,
-      count: allPlans.length,
+      data: allPlans[0],
+      count: allPlans[1],
     };
   }
 
