@@ -179,10 +179,14 @@ export class SubscriptionsService {
     }
 
     async updateDate(request , requestId:number){
+        console.log("request : ", request);
+        
         const sub = await this.doesSubscriptionExist(requestId)
         sub.beginDate = request.beginDate
         sub.endDate = request.endDate
         sub.payedMoney = request.payedMoney
+        sub.plan.invites = request.invitations
+        sub.plan.freezeDays = request.freezes
         const newSub = await this.subscriptionsRepo.update(sub.id, sub)
         return newSub;
     }

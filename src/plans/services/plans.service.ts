@@ -66,11 +66,11 @@ export class PlansService {
         return item
     }
 
-    async updatePlan (newInf: CreateNewPlanRequest, id: number) {
+    async updatePlan (newInf: CreateNewPlanRequest, id: number, playerName?: string) {
         //To get the current plan's data from the data base
         //We search by id in the plans data base and then update the data
         const result = await this.doesPlanExist(id)
-        await this.logsService.createNewLog(id, `Updated ${result.name} Plan`, "Plans")
+        await this.logsService.createNewLog(id, `Updated ${playerName} Plan`, "Plans")
         result.name = newInf.name
         result.months = newInf.months
         result.price = newInf.price

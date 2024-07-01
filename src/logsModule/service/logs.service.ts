@@ -5,6 +5,7 @@ import {Request} from "express";
 import * as moment from 'moment'
 import {Between, In, Repository} from "typeorm";
 import {Log} from "../entities/logs.entitiy";
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 
 
 @Injectable({scope: Scope.REQUEST})
@@ -15,6 +16,7 @@ export class LogsService {
         private readonly logRepo: Repository<Log>,
         @Inject(REQUEST)
         private request: Request,
+        private readonly userContextService: UserContextService
     ) {
     }
 
@@ -54,9 +56,9 @@ export class LogsService {
     }
 
     async createNewLog(logId: number, logType: string, logSource: string) {
-        const user: any = this.request.user
+       //const user: any = this.request.user
         const log = new Log()
-        log.adminName = user.username
+        log.adminName = this.userContextService.getUsername()
         log.dayDate = moment().format("YYYY-MM-DD")
         log.dayTime = moment().format("hh:mm:ss A")
         log.logId = logId
