@@ -16,6 +16,11 @@ export class PlansController {
         return this.plansService.getAll();
     }
 
+    @Get('/activeCount')
+    getActiveCount(){
+        return this.plansService.getActivePlansCount();
+    }
+
     @Get('/AllActive')
     getActivePlans(@Query() {limit, page}){
         return this.plansService.getActivePlans(limit, page)

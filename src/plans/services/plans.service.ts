@@ -31,8 +31,7 @@ export class PlansService {
     }
 
     async getActivePlans(limit, page){
-        const numberOfActive = await this.getActivePlansCount();
-        limit = limit || numberOfActive;
+        limit = limit || 5;
         limit = Math.abs(Number(limit));
         const offset = Math.abs((page - 1) * limit) || 0
         const data = await this.plansRepo.findAndCount(
