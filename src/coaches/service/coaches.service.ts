@@ -31,6 +31,10 @@ export class CoachesService {
         }
       }
 
+      async getAllCoachesCount(){
+        return await this.CoachRepo.count();
+      }
+
       async create(requestBody){
         let newCoach = new Coach();
         newCoach = requestBody;

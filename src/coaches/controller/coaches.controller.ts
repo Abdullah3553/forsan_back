@@ -17,6 +17,11 @@ export class CoachesController {
         return this.CoachService.getAll(limit, page);
     }
 
+    @Get('/count')
+    getAllCoachesCount(){
+        return this.CoachService.getAllCoachesCount();
+    }
+    
     @Get('/:id')
     getById(@Param() param) {
         return this.CoachService.findById(param.id);
