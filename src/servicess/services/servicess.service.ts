@@ -4,6 +4,8 @@ import { Repository } from "typeorm";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import {Service} from "../entities/servicess.entity";
 import { LogsService } from "../../logsModule/service/logs.service";
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
+import * as TelegramBot from 'node-telegram-bot-api';
 
 @Injectable()
 export class ServicessServices {
@@ -12,7 +14,8 @@ export class ServicessServices {
     constructor(
         @InjectRepository(Service)
         private readonly serviceRepo:  Repository<Service>,
-        private readonly logsService: LogsService
+        private readonly logsService: LogsService,
+        private readonly userContextService: UserContextService
     ) {}
 
     // Add New Service Method
@@ -41,8 +44,10 @@ export class ServicessServices {
 
     //edit a service
     async editService(requestId : number, request:CreateNewServiceRequest){
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const searched_service = await this.doesServiceExist(requestId)
         await this.logsService.createNewLog(requestId, `edited ${request.name} service`, "service")
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited the session price from ${searched_service.price} to ${request.price}`);
         searched_service.name = request.name
         searched_service.price = request.price
         return this.serviceRepo.save(searched_service)

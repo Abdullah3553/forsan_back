@@ -5,6 +5,8 @@ import {ServiceIncome} from "../entities/servicesIncome.entity";
 import {ServicessServices} from "../../servicess/services/servicess.service";
 import {Service} from "../../servicess/entities/servicess.entity";
 import {LogsService} from "../../logsModule/service/logs.service";
+import * as TelegramBot from 'node-telegram-bot-api';
+import { UserContextService } from "../../dataConfig/userContext/user-context.service";
 
 @Injectable()
 export class ServicesIncomeService {
@@ -13,7 +15,8 @@ export class ServicesIncomeService {
         @InjectRepository(ServiceIncome)
         private readonly serviceIncomeRepo: Repository<ServiceIncome>,
         private readonly servicessService : ServicessServices,
-        private readonly logsService: LogsService
+        private readonly logsService: LogsService,
+        private readonly userContextService: UserContextService
     ) {}
 
     getTodayServiceIncome(todayDate:string){
@@ -21,6 +24,7 @@ export class ServicesIncomeService {
     }
 
     async buyService(requestId:number, todayDate:string, quantity:number){
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         quantity = Number(quantity)
         quantity = quantity || 1
         const service = await this.servicessService.doesServiceExist(requestId)
@@ -29,6 +33,7 @@ export class ServicesIncomeService {
         serviceIncome.soldItems+=quantity
         const item = await this.serviceIncomeRepo.save(serviceIncome)
         await this.logsService.createNewLog(item.id, `purchased new service ${service.name}`, "services")
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} sold a new session`);
         return item
     }
 

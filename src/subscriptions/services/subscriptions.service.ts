@@ -179,8 +179,6 @@ export class SubscriptionsService {
     }
 
     async updateDate(request , requestId:number){
-        console.log("request : ", request);
-        
         const sub = await this.doesSubscriptionExist(requestId)
         sub.beginDate = request.beginDate
         sub.endDate = request.endDate
