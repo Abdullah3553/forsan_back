@@ -20,12 +20,13 @@ export class ServicessServices {
 
     // Add New Service Method
     async newService(request : CreateNewServiceRequest){
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const newService = new Service()
         newService.name = request.name
         newService.price = request.price
         const item = await this.serviceRepo.save(newService)
         await this.logsService.createNewLog(item.id, `added new ${request.name} service`, "services")
-
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added a new service with name ${request.name} and price ${request.price}`);
         return item
     }
 
@@ -54,9 +55,11 @@ export class ServicessServices {
 
     // delete a service
     async deleteService(requestId : number){
+        const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const item = await this.doesServiceExist(requestId)
         await this.logsService.createNewLog(requestId, `deleted ${item.name} service`, "service")
         await this.serviceRepo.remove(item)
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted ${item.name} service`);
         return {message:"The service has been deleted."}
     }
 
@@ -65,7 +68,7 @@ export class ServicessServices {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         const searched_service = await this.doesServiceExist(requestId)
         await this.logsService.createNewLog(requestId, `edited ${request.name} service`, "service")
-        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited the session price from ${searched_service.price} to ${request.price}`);
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited the ${searched_service.name} price from ${searched_service.price} to ${request.price}`);
         searched_service.name = request.name
         searched_service.price = request.price
         return this.serviceRepo.save(searched_service)
