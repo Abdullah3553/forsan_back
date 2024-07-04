@@ -29,9 +29,27 @@ export class ServicessServices {
         return item
     }
 
+    async getById(id){
+        return await this.serviceRepo.findOne({
+            where:{
+                id: id
+            }
+        })
+    }
+
     //view all services
-    async getAll(){
-        return await this.serviceRepo.find()
+    async getAll(limit?, page?){
+        limit = limit || 5;
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+        const allServices = await this.serviceRepo.findAndCount({
+            take: limit,
+            skip: offset
+        });
+        return {
+            items: allServices[0],
+            count: allServices[1]
+        }
     }
 
     // delete a service

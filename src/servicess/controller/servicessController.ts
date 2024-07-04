@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Delete, Param, UseGuards} from "@nestjs/common";
+import {Controller, Get, Post, Body, Delete, Param, UseGuards, Query} from "@nestjs/common";
 import { CreateNewServiceRequest } from "../requests/createNewServiceRequest";
 import { ServicessServices } from "../services/servicess.service";
 import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
@@ -19,8 +19,13 @@ export class ServicessController {
     }
     // View All services
     @Get('/')
-    getAll(){
-        return this.servicessService.getAll()
+    getAll(@Query() {limit, page}){
+        return this.servicessService.getAll(limit, page)
+    }
+
+    @Get('/:id')
+    getServiceById(@Param() params){
+        return this.servicessService.getById(params.id);
     }
 
     //delete a service

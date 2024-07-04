@@ -19,8 +19,12 @@ export class ServicesIncomeService {
         private readonly userContextService: UserContextService
     ) {}
 
-    getTodayServiceIncome(todayDate:string){
-        return this.serviceIncomeRepo.find({where:{dayDate:todayDate}})
+    async getTodayServiceIncome(todayDate:string){
+        const servicesIncome = await this.serviceIncomeRepo.find({where:{dayDate:todayDate}});
+        servicesIncome.forEach(service => {
+            (service as any).totalIncome = service.payedMoney * service.soldItems;
+        });
+        return servicesIncome;
     }
 
     async buyService(requestId:number, todayDate:string, quantity:number){
@@ -33,7 +37,7 @@ export class ServicesIncomeService {
         serviceIncome.soldItems+=quantity
         const item = await this.serviceIncomeRepo.save(serviceIncome)
         await this.logsService.createNewLog(item.id, `purchased new service ${service.name}`, "services")
-        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} sold a new session`);
+        bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} sold ${quantity} new ${service.name}`);
         return item
     }
 
