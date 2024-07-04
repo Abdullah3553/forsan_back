@@ -1,4 +1,4 @@
-import {  IsNotEmpty,  IsString} from "class-validator"
+import {  IsNotEmpty,  IsOptional,  IsString} from "class-validator"
 import { Column } from "typeorm"
 export class UpdatePlayerRequest {
     
@@ -12,6 +12,10 @@ export class UpdatePlayerRequest {
 
     //@IsString()
     barCode: string
+
+    @IsString()
+    @IsOptional()
+    trainingPlan?: string
 
     //@IsString()
     photo:string

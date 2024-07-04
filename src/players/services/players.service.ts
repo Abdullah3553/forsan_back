@@ -154,6 +154,7 @@ export class PlayersServices {
             player.photo = newInput.photo
             player.phoneNumber = newInput.phoneNumber
             player.barCode = newInput.barCode
+            player.trainingPlan = newInput.trainingPlan
             player = await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
             bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added ${newInput.name} player with id ${player.id}`);
@@ -203,6 +204,7 @@ export class PlayersServices {
         newPlayerInfo.name = newInf.name
         newPlayerInfo.phoneNumber = newInf.phoneNumber
         newPlayerInfo.barCode = newInf.barCode
+        newPlayerInfo.trainingPlan = newInf.trainingPlan
         await this.logsService.createNewLog(requestedId, `edited ${newInf.name} player`, "players")
         if (newInf.photo !== null) {
             newPlayerInfo.photo = newInf.photo
