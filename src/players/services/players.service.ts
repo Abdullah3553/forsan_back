@@ -226,7 +226,8 @@ export class PlayersServices {
 
     editedData(oldData, newData) {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
-
+        console.log(newData);
+        
         const old = {
             name: oldData.name,
             barCode: oldData.barCode,
@@ -234,7 +235,7 @@ export class PlayersServices {
             plan: oldData.subscriptions[oldData.subscriptions.length-1].plan.id,
             beginDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].beginDate).format("yyyy-MM-DD"),
             endDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].endDate).format("yyyy-MM-DD"),
-            payedMoney: oldData.subscriptions[oldData.subscriptions.length-1].payedMoney
+            payedMoney: oldData.subscriptions[oldData.subscriptions.length-1].payedMoney,
         }        
         const changedData = [];
         for (const key in old) {
@@ -249,7 +250,15 @@ export class PlayersServices {
                 bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited player with id: ${oldData.id} and has changed the ${item.field} from ${item.oldValue} to ${item.newValue}`);
             }
         });
-        
+        if(newData["freezes"]){
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited player with id: ${oldData.id} and added ${newData["freezes"]} freezes days`);
+        }
+        if(newData["invitations"]){
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited player with id: ${oldData.id} and added ${newData["invitations"]} invitations`);
+        }
+        if(newData["trainingPlan"]){
+            bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} edited player with id: ${oldData.id} added note : ${newData["trainingPlan"]}`);
+        }
         return changedData;
     }
 

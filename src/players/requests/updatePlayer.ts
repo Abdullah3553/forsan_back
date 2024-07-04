@@ -24,6 +24,8 @@ export class UpdatePlayerRequest {
 
     payedMoney: string
 
+    
+
     @Column({
         type: 'date'
     })
