@@ -6,7 +6,6 @@ import {JwtModule} from "@nestjs/jwt";
 import {PassportModule} from "@nestjs/passport";
 import {JWT_SECRET} from "../core/config";
 import {JwtStrategy} from "./jwtStrategy";
-import { UserContextService } from 'src/dataConfig/userContext/user-context.service';
 import { UserContextModule } from 'src/dataConfig/userContext/user-context.module';
 
 @Module({
