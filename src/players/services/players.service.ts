@@ -358,7 +358,7 @@ export class PlayersServices {
         return false
     }
 
-    async searchByOption(searchElement: any, searchOption: string, limit, page) {
+    async searchByOption(searchElement: any, searchOption: string, limit, page/*, adminName*/) {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         limit = limit || 10
         limit = Math.abs(Number(limit));
@@ -407,6 +407,7 @@ export class PlayersServices {
                             where: {barCode: searchElement},
                             relations: ['subscriptions']
                         })
+                        /*this.userContextService.setUsername(adminName);*/
                         await this.logsService.createNewLog(player.id, `player with id: ${player.id} signed in`, "signed")
                         bot.sendMessage(process.env.Telegram_ChatId, `player ${player.name} with id: ${player.id} signed in`);
                         this.subscriptionsService.updateAttendance(player.id);

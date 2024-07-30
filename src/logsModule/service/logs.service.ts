@@ -65,6 +65,8 @@ export class LogsService {
         log.logSource = logSource
         log.log = logType
         try {
+            console.log(log);
+            
             await this.logRepo.save(log)
             return true
         } catch (e) {
@@ -110,6 +112,7 @@ export class LogsService {
     }
 
     async deleteAll(){
+        // really dangerous 
         return await this.logRepo.clear()
     }
 

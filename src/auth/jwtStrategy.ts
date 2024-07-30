@@ -4,11 +4,14 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import {JWT_SECRET} from "../core/config";
 import {AdminsService} from "../admins/admins.service";
 import {Admin} from "../admins/entity/admin.entity";
+import { UserContextService } from "../dataConfig/userContext/user-context.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        private readonly adminsService: AdminsService
+        private readonly adminsService: AdminsService,
+        private readonly userContextService: UserContextService
+
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,13 +20,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: any) {    
+            
         const user_id = payload.id
         const admin = await this.adminsService.getAdminById(user_id);
         if (typeof admin === "boolean" && admin === false) {
             throw new UnauthorizedException();
         } else {
             const _admin = admin instanceof Admin ? admin : null;
+            this.userContextService.setUsername(_admin.username)
             return {id: _admin.id, username: _admin.username }
         }
     }

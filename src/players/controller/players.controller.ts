@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Param, Delete, UseGuards, Query} from "@nestjs/common";
+import {Controller, Get, Post, Body, Param, Delete, UseGuards, Query, Request} from "@nestjs/common";
 import { CreateNewPlayerRequest } from "../requests/createNewPlayerRequest";
 import { PlayersServices } from "../services/players.service";
 import {JwtAuthGuard} from "../../auth/guards/jwtAuthGuard";
@@ -59,14 +59,14 @@ export class PlayersController {
         return this.playersService.freezePlayer(parameters.id, body.freezeDays)
     }
 
-    @Post("/test")
+    /*@Post("/test")
     async test(@Body() body, @Query() {limit, page}){
-            return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page)
-    }
+            return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page, 'hamda')
+    }*/
 
     @Post("/search")
-    async search(@Body() body, @Query() {limit, page}){
-        return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page)
+    async search(@Body() body, @Query() {limit, page}/*, @Request() request*/){
+        return await this.playersService.searchByOption(body.searchElement, body.searchOption, limit, page/*, request.user.username*/)
     }
 
     @Post("/edit/:id")
