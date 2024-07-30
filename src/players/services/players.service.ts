@@ -108,13 +108,9 @@ export class PlayersServices {
     async getLastSignInPlayers(limit, page, absentDays?){
         const allPlayers = await this.logsService.getLastSignInPlayers(limit, page, absentDays);
         let playersData;
-        console.log("allPlayers[1] : ", allPlayers[1]);
-        
         if(allPlayers[1] > 0){
             playersData = await Promise.all(                
                 allPlayers[0].map(async player => {
-                    console.log("rre");
-                    
                     return await this.viewPlayer(player.logId);
                 })
             );
