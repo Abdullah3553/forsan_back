@@ -1,4 +1,4 @@
-import {Controller, Get, Res} from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import {CSVService} from "./csv.service";
 import {Response} from "express";
 
@@ -10,13 +10,13 @@ export class CsvController {
     }
 
     @Get("/")
-    async genPlayersExcel(@Res() response: Response) {
-        const resContent = await this.csvService.forPlayers();
+    async genPlayersExcel(@Res() response: Response, @Query('searchElement') searchElement, @Query('searchOption') searchOption ) {
+        const resContent = await this.csvService.forPlayers(searchElement, searchOption);
         response.writeHead(200, {
-            'Content-Type': 'text/csv',
+            'Content-Type': 'text/csv; charset=utf-8',
             'Content-Disposition': 'attachment; filename=players.csv'
         })
-        response.end(resContent,'binary')
+        response.end(resContent,'utf-8')
 
     }
 }

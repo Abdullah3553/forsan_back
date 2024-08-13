@@ -25,6 +25,7 @@ import { PhotosModule } from '../photos/photos.module';
     AuthModule,
     TypeOrmModule.forRoot(db_config),
     PlansModule,
+    CsvModule,
     PlayersModule,
     SubscriptionsModule,
     ActivitiesModule,
@@ -36,7 +37,6 @@ import { PhotosModule } from '../photos/photos.module';
     AdminsModule,
     logsModule,
     outComeModule,
-    CsvModule,
     PTModule,
     CoachesModule,
     PhotosModule
