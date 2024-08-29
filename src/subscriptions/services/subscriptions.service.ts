@@ -218,6 +218,7 @@ export class SubscriptionsService {
         }
     }
 
+
     async updateAttendance(playerId){
         const playerLogs = await this.logsRepo.count({
             where:{
@@ -226,7 +227,6 @@ export class SubscriptionsService {
                 logSource: "signed"
             }
         })
-        console.log("playerLogs : ", playerLogs);
         
         const playerSub = await this.subscriptionsRepo.findOne({
             where:{
@@ -236,7 +236,6 @@ export class SubscriptionsService {
                 endDate : MoreThanOrEqual(moment().format('yyyy-MM-DD'))
             }
         })
-        console.log("playerSub : ", playerSub);
         
         if(playerLogs == 1 && playerSub){            
             playerSub.attendance++;

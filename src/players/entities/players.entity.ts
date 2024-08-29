@@ -50,6 +50,9 @@ export class Player {
     })
     barCode: string
 
+    @Column('date')
+    lastSeen:string
+    
     // each player has many subs
     @OneToMany(() => Subscription, sub => sub.player)
     subscriptions: Subscription[]

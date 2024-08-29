@@ -84,6 +84,7 @@ export class LogsService {
         const date = moment(new Date(today.setDate(today.getDate() - (absentDays || 10)))).format("yyyy-MM-DD")
         
         const holder = await this.logRepo.findAndCount({
+            
             where:{
                 dayDate: date,
                 logSource: "signed"

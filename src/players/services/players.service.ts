@@ -82,6 +82,10 @@ export class PlayersServices {
             where: {id: id},
             relations: ['subscriptions']
         })
+        const lastSeen: Date = new Date(player.lastSeen);
+        const today: Date = new Date();
+
+        const numOfDays = Math.floor(Number(today.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24));
         if (!player) {
             throw new NotFoundException({message: "Player Not Found"})
         }
@@ -94,6 +98,8 @@ export class PlayersServices {
             dietPlan: player.dietPlan,
             trainingPlan: player.trainingPlan,
             barCode: player.barCode,
+            absentDays: numOfDays,
+            lastSeen: player.lastSeen,
             subscription: {
                 ...player.subscriptions[player.subscriptions.length - 1],
                 beginDate: moment(player.subscriptions[player.subscriptions.length - 1].beginDate).format('yyyy-MM-DD'),
@@ -106,20 +112,39 @@ export class PlayersServices {
     }
 
     async getLastSignInPlayers(limit, page, absentDays?){
-        const allPlayers = await this.logsService.getLastSignInPlayers(limit, page, absentDays);
+        limit = limit || 10
+        limit = Math.abs(Number(limit));
+        const offset = Math.abs((page - 1) * limit) || 0
+
+        const today = new Date(moment().format("yyyy-MM-DD"))
+        const date = moment(new Date(today.setDate(today.getDate() - (absentDays || 7)))).format("yyyy-MM-DD")
+        
+        const allPlayers = await this.playersRepo.findAndCount({
+            where:{
+                lastSeen: MoreThanOrEqual(date)
+            },
+            take: limit,
+            skip: offset,
+            order: {
+                id: "desc"
+            }
+        })
         let playersData;
         if(allPlayers[1] > 0){
             playersData = await Promise.all(                
                 allPlayers[0].map(async player => {
-                    return await this.viewPlayer(player.logId);
+                    return await this.viewPlayer(player.id);
                 })
             );
         }
+        const filteredPlayersData = playersData.filter(item => item.lastSeen !== moment().format("yyyy-MM-DD"));
+
         return {
-            "data": playersData,
+            "data": filteredPlayersData,
             "count": allPlayers[1]
         }
     }
+
 
     async getPlayersNumber() {
         //const players = await this.playersRepo.find()
@@ -374,6 +399,7 @@ export class PlayersServices {
                         take: limit,
                         skip: offset
                     })
+                    await this.updateLastSeen(Number(searchElement))
                     return {
                         items: this.dataFormat(data[0]),
                         count: data[1]
@@ -407,6 +433,7 @@ export class PlayersServices {
                             where: {barCode: searchElement},
                             relations: ['subscriptions']
                         })
+                        await this.updateLastSeen(player.id)
                         /*this.userContextService.setUsername(adminName);*/
                         await this.logsService.createNewLog(player.id, `player with id: ${player.id} signed in`, "signed")
                         bot.sendMessage(process.env.Telegram_ChatId, `player ${player.name} with id: ${player.id} signed in`);
@@ -427,7 +454,8 @@ export class PlayersServices {
                         skip: offset
                     })
                     const player = this.dataFormat(data[0]);
-                    await this.logsService.createNewLog(player.id, `player : ${player.name} signed in`, "players")
+                    await this.updateLastSeen(player[0].id)
+                    await this.logsService.createNewLog(player[0].id, `player : ${player[0].id} signed in`, "players")
                     return {
                         items: player,
                         count: data[1]
@@ -588,6 +616,12 @@ export class PlayersServices {
             items: items,
             count: data[1]
         }
+    }
+
+    async updateLastSeen(playerId){
+        const playerData = await this.findById(playerId);
+        playerData.data.lastSeen = moment().format("yyyy-MM-DD");
+        await this.playersRepo.save(playerData.data);
     }
 
     async findById(id){
