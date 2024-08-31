@@ -1,6 +1,6 @@
 import {BadRequestException, Inject, Injectable, NotFoundException, forwardRef} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import { ILike, MoreThanOrEqual, Repository } from 'typeorm';
+import { And, Between, ILike, LessThan, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import {CreateNewPlayerRequest} from "../requests/createNewPlayerRequest";
 import {Player} from "../entities/players.entity";
 import * as moment from "moment";
@@ -9,6 +9,7 @@ import { SubscriptionsService } from "../../subscriptions/services/subscriptions
 import { UpdatePlayerRequest } from "../requests/updatePlayer";
 import * as TelegramBot from 'node-telegram-bot-api';
 import { UserContextService } from "../../dataConfig/userContext/user-context.service";
+import { format } from 'date-fns';
 
 @Injectable()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -114,14 +115,18 @@ export class PlayersServices {
     async getLastSignInPlayers(limit, page, absentDays?){
         limit = limit || 10
         limit = Math.abs(Number(limit));
+        absentDays = absentDays || 7 ;
         const offset = Math.abs((page - 1) * limit) || 0
 
-        const today = new Date(moment().format("yyyy-MM-DD"))
-        const date = moment(new Date(today.setDate(today.getDate() - (absentDays || 7)))).format("yyyy-MM-DD")
-        
+        const date1 = moment().toDate();
+        const date2 = moment().subtract(absentDays, 'days').toDate();
+        const MoreThanOrEqualDate = (date: Date) => MoreThanOrEqual(format(date, 'yyyy-MM-dd'))
+        const LessThanDate = (date: Date) => LessThan(format(date, 'yyyy-MM-dd'))
+
+        //console.log(date);
         const allPlayers = await this.playersRepo.findAndCount({
             where:{
-                lastSeen: MoreThanOrEqual(date)
+                lastSeen: And(MoreThanOrEqualDate(date2), LessThanDate(date1))
             },
             take: limit,
             skip: offset,
@@ -137,10 +142,8 @@ export class PlayersServices {
                 })
             );
         }
-        const filteredPlayersData = playersData.filter(item => item.lastSeen !== moment().format("yyyy-MM-DD"));
-
         return {
-            "data": filteredPlayersData,
+            "data": playersData,
             "count": allPlayers[1]
         }
     }
