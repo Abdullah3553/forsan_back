@@ -17,12 +17,12 @@ export class PlayersServices {
 
     // Creating player's object
     constructor(
-        @InjectRepository(Player)
-        private readonly playersRepo: Repository<Player>,
-        private readonly logsService: LogsService,
-        @Inject(forwardRef(() => SubscriptionsService))
-        private readonly subscriptionsService: SubscriptionsService,
-        private readonly userContextService: UserContextService
+      @InjectRepository(Player)
+      private readonly playersRepo: Repository<Player>,
+      private readonly logsService: LogsService,
+      @Inject(forwardRef(() => SubscriptionsService))
+      private readonly subscriptionsService: SubscriptionsService,
+      private readonly userContextService: UserContextService
     ) {
     }
 
@@ -86,7 +86,8 @@ export class PlayersServices {
         const lastSeen: Date = new Date(player.lastSeen);
         const today: Date = new Date();
 
-        const numOfDays = Math.floor(Number(today.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24));
+        // const numOfDays = Math.floor(Number(today.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24));
+        const numOfDays = moment().diff(moment(player.lastSeen), 'days')
         if (!player) {
             throw new NotFoundException({message: "Player Not Found"})
         }
@@ -136,10 +137,10 @@ export class PlayersServices {
         })
         let playersData;
         if(allPlayers[1] > 0){
-            playersData = await Promise.all(                
-                allPlayers[0].map(async player => {
-                    return await this.viewPlayer(player.id);
-                })
+            playersData = await Promise.all(
+              allPlayers[0].map(async player => {
+                  return await this.viewPlayer(player.id);
+              })
             );
         }
         return {
@@ -179,6 +180,7 @@ export class PlayersServices {
             player.phoneNumber = newInput.phoneNumber
             player.barCode = newInput.barCode
             player.trainingPlan = newInput.trainingPlan
+            player.lastSeen = moment().format("yyyy-MM-DD")
             player = await this.playersRepo.save(player)
             await this.logsService.createNewLog(player.id, `added ${newInput.name} player`, "players")
             bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} added ${newInput.name} player with id ${player.id}`);
@@ -202,8 +204,8 @@ export class PlayersServices {
         bot.sendMessage(process.env.Telegram_ChatId, `${this.userContextService.getUsername()} deleted player with id ${id}`);
         await this.logsService.createNewLog(id, `deleted ${player.name} player`, "players")
         await this.subscriptionsService.deleteSubscription(id);
-        
-        
+
+
         await this.playersRepo.delete(id) // delete mr player him self x)
         return {
             message: 'Player has been deleted!'
@@ -211,7 +213,7 @@ export class PlayersServices {
     }
 
     getIfSubChanged(changedData){
-        let flag = 0;        
+        let flag = 0;
         changedData.forEach(item => {
             if(item === 'beginDate' || item === 'endDate' || item === 'payedMoney' || item.field === 'plan'){
                 flag = 1;
@@ -251,7 +253,7 @@ export class PlayersServices {
     editedData(oldData, newData) {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
         console.log(newData);
-        
+
         const old = {
             name: oldData.name,
             barCode: oldData.barCode,
@@ -260,7 +262,7 @@ export class PlayersServices {
             beginDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].beginDate).format("yyyy-MM-DD"),
             endDate: moment(oldData.subscriptions[oldData.subscriptions.length-1].endDate).format("yyyy-MM-DD"),
             payedMoney: oldData.subscriptions[oldData.subscriptions.length-1].payedMoney,
-        }        
+        }
         const changedData = [];
         for (const key in old) {
             if (old.hasOwnProperty(key) && newData.hasOwnProperty(key)) {
@@ -473,14 +475,14 @@ export class PlayersServices {
                                         sub.endDate,
                                         sub.planId,
                                         pl.name as "planName"
-                                FROM player as p
-                                        INNER JOIN subscription as sub on p.id = sub.playerId
-                                        inner join plan as pl on sub.planId = pl.id
-                                where DATE (sub.${searchOption}) = "${searchElement}"`;
+                                 FROM player as p
+                                          INNER JOIN subscription as sub on p.id = sub.playerId
+                                          inner join plan as pl on sub.planId = pl.id
+                                 where DATE (sub.${searchOption}) = "${searchElement}"`;
                     let count = await this.playersRepo.query(sql + ";");
                     count = count.length
                     const res = await this.playersRepo.query(sql + ` limit ${limit} offset ${offset};`), vstdPlayers = [],
-                        res2 = []
+                      res2 = []
                     for (let i = 0; i < res.length; i++) {
 
                         if (!vstdPlayers[res[i].id]) {
@@ -578,7 +580,7 @@ export class PlayersServices {
             return []
         }
         return data.map((player: Player) => {
-            
+
             return {
                 id: player.id,
                 name: player.name,

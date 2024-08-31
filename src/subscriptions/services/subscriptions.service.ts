@@ -12,24 +12,24 @@ import * as TelegramBot from 'node-telegram-bot-api';
 @Injectable()
 export class SubscriptionsService {
     constructor(
-        @InjectRepository(Subscription)
-        private readonly subscriptionsRepo : Repository<Subscription>,
-        private readonly playersService : PlayersServices,
-        private readonly plansService: PlansService,
-        @InjectRepository(Log)
-        private readonly logsRepo: Repository<Log>
+      @InjectRepository(Subscription)
+      private readonly subscriptionsRepo : Repository<Subscription>,
+      private readonly playersService : PlayersServices,
+      private readonly plansService: PlansService,
+      @InjectRepository(Log)
+      private readonly logsRepo: Repository<Log>
     ) {}
 
 
     async updateSelectedSubscriptionForPlayer(player, requestBody){
-        
+
         const currentSub = await this.subscriptionsRepo.findOne({
             where:{
                 player: player,
                 endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD"))
             }
-        })       
-        
+        })
+
         const oldData = {
             plan: currentSub.plan.id,
             beginDate: moment(currentSub.beginDate).format("yyyy-MM-DD"),
@@ -42,7 +42,7 @@ export class SubscriptionsService {
         currentSub.beginDate = requestBody.beginDate;
         currentSub.endDate = requestBody.endDate;
         currentSub.plan = newSubscribedPlan;
-        
+
         await this.subscriptionsRepo.update(currentSub.id, currentSub);
     }
 
@@ -165,6 +165,7 @@ export class SubscriptionsService {
         })
         if(!sub){
             const player = await this.playersService.resetFreezeAndInvites(request.player_id)
+            player.lastSeen = moment().format("yyyy-MM-DD");
             const plan = await this.plansService.doesPlanExist(request.plan_id);
             const subscription = new Subscription();
             subscription.player = player;
@@ -191,11 +192,11 @@ export class SubscriptionsService {
 
     async doesSubscriptionExist(id:number){
         const sub = await this.subscriptionsRepo.findOne(
-            {
-                where:{
-                    player:{id:id}
-                }
-            }
+          {
+              where:{
+                  player:{id:id}
+              }
+          }
         )
         if(!sub){
             throw new BadRequestException("Subscription doesn't exist")
@@ -227,7 +228,7 @@ export class SubscriptionsService {
                 logSource: "signed"
             }
         })
-        
+
         const playerSub = await this.subscriptionsRepo.findOne({
             where:{
                 player:{
@@ -236,8 +237,8 @@ export class SubscriptionsService {
                 endDate : MoreThanOrEqual(moment().format('yyyy-MM-DD'))
             }
         })
-        
-        if(playerLogs == 1 && playerSub){            
+
+        if(playerLogs == 1 && playerSub){
             playerSub.attendance++;
             await this.subscriptionsRepo.update(playerSub.id, playerSub);
         }
