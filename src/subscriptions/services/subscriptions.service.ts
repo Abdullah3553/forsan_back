@@ -174,7 +174,7 @@ export class SubscriptionsService {
             subscription.endDate = request.endDate
             subscription.payedMoney = request.payedMoney
             subscription.creationDate = request.creationDate
-            bot.sendMessage(process.env.Telegram_ChatId, `subscription for player with id: ${request.player_id} has been made from ${subscription.beginDate} to ${subscription.endDate}`);
+            bot.sendMessage(process.env.Telegram_ChatId, `subscription for player with id: ${request.player_id} has been made with plan ${plan.name} from ${subscription.beginDate} to ${subscription.endDate}`);
             return await this.subscriptionsRepo.save(subscription);
         }
         //return new BadRequestException("This player is already subscribed")
