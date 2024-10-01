@@ -37,5 +37,10 @@ export class ActivitiesController {
         return this.activityService.viewById(parametars.id)
     }
 
+    @Get('/count')
+    getAllActivitiesCount(){
+        return this.activityService.getAllActivitiesCount();
+    }
+
 
 }

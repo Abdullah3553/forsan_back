@@ -17,6 +17,10 @@ export class ActivitiesService {
         private readonly userContextService: UserContextService
     ) {}
 
+    async getAllActivitiesCount(){
+        return await this.activityRepo.count();
+    }
+
     async getAll(limit?, page?){
         limit = limit || 5
         limit = Math.abs(Number(limit));
