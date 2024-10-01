@@ -162,8 +162,8 @@ export class SubscriptionsService {
                 player: {id: request.player_id}
             }
         })
-        console.log(sub);
         if(!sub){
+            const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
             const player = await this.playersService.resetFreezeAndInvites(request.player_id)
             player.lastSeen = moment().format("yyyy-MM-DD");
             const plan = await this.plansService.doesPlanExist(request.plan_id);
@@ -174,6 +174,7 @@ export class SubscriptionsService {
             subscription.endDate = request.endDate
             subscription.payedMoney = request.payedMoney
             subscription.creationDate = request.creationDate
+            bot.sendMessage(process.env.Telegram_ChatId, `subscription for player with id: ${request.player_id} has been made from ${subscription.beginDate} to ${subscription.endDate}`);
             return await this.subscriptionsRepo.save(subscription);
         }
         //return new BadRequestException("This player is already subscribed")
