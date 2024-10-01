@@ -158,7 +158,7 @@ export class SubscriptionsService {
     async subscribe(request: SubscribeRequest) {
         const sub = await this.subscriptionsRepo.findOne({
             where:{
-                endDate: MoreThanOrEqual(moment().add(2,'day').format("yyyy-MM-DD")),
+                endDate: MoreThanOrEqual(moment().add(1,'day').format("yyyy-MM-DD")),
                 player: {id: request.player_id}
             }
         })
