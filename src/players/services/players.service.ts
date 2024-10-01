@@ -216,7 +216,8 @@ export class PlayersServices {
     getIfSubChanged(changedData){
         let flag = 0;
         changedData.forEach(item => {
-            if(item === 'beginDate' || item === 'endDate' || item === 'payedMoney' || item.field === 'plan'){
+            console.log(item);
+            if(item.field === 'beginDate' || item.field === 'endDate' || item.field === 'payedMoney' || item.field === 'plan'){
                 flag = 1;
             }
         });
@@ -253,7 +254,6 @@ export class PlayersServices {
 
     editedData(oldData, newData) {
         const bot = new TelegramBot(process.env.Telegram_Bot_Token, {polling: true});
-        console.log(newData);
 
         const old = {
             name: oldData.name,

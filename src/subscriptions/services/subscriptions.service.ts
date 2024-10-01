@@ -158,10 +158,11 @@ export class SubscriptionsService {
     async subscribe(request: SubscribeRequest) {
         const sub = await this.subscriptionsRepo.findOne({
             where:{
-                endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD")),
+                endDate: MoreThanOrEqual(moment().add(2,'day').format("yyyy-MM-DD")),
                 player: {id: request.player_id}
             }
         })
+        console.log(sub);
         if(!sub){
             const player = await this.playersService.resetFreezeAndInvites(request.player_id)
             player.lastSeen = moment().format("yyyy-MM-DD");
