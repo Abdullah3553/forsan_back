@@ -25,11 +25,9 @@ export class SubscriptionsService {
 
         const currentSub = await this.subscriptionsRepo.findOne({
             where:{
-                player: player,
-                endDate: MoreThanOrEqual(moment().format("yyyy-MM-DD"))
+                id: player.subscriptions[player.subscriptions.length - 1].id,
             }
         })
-
         const oldData = {
             plan: currentSub.plan.id,
             beginDate: moment(currentSub.beginDate).format("yyyy-MM-DD"),
@@ -38,11 +36,12 @@ export class SubscriptionsService {
         }
         this.editedData(oldData, requestBody, player.id)
         const newSubscribedPlan = await this.plansService.getById(requestBody.plan);
-
+        console.log("new Plan");
+        console.log(newSubscribedPlan);
         currentSub.beginDate = requestBody.beginDate;
         currentSub.endDate = requestBody.endDate;
         currentSub.plan = newSubscribedPlan;
-
+        currentSub.payedMoney = requestBody.payedMoney;
         await this.subscriptionsRepo.update(currentSub.id, currentSub);
     }
 

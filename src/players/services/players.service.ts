@@ -132,7 +132,7 @@ export class PlayersServices {
             take: limit,
             skip: offset,
             order: {
-                id: "desc"
+                lastSeen: "desc"
             }
         })
         let playersData;
@@ -143,6 +143,7 @@ export class PlayersServices {
               })
             );
         }
+        playersData.sort((a, b) => a.absentDays - b.absentDays);
         return {
             "data": playersData,
             "count": allPlayers[1]
